@@ -86,6 +86,21 @@ ALIMENTOS = [
  ("gergelim","Gergelim",593,170150,"colher de sopa",8,"gordura"),
  ("noz","Noz",597,170187,"unidade",5,"gordura"),
  ("agua_coco","Água de coco",478,170174,"copo",200,"bebida"),
+ # Acrescentados para subir ferro e vitamina E com pouco volume. Medidas caseiras a conferir com tabela publicada.
+ ("semente_girassol","Semente de girassol torrada, sem casca e sem sal",None,170563,"colher de sopa",10,"gordura"),
+ ("semente_abobora","Semente de abóbora torrada, sem casca e sem sal",None,170557,"colher de sopa",10,"gordura"),
+ ("amendoa","Amêndoa torrada",587,170158,"unidade",1.2,"gordura"),
+ ("oleo_girassol","Óleo de girassol",269,171025,"colher de sopa",8,"gordura"),
+ # Cacau em po nao e gordura; fica neste grupo porque se usa como as sementes (por cima do iogurte) e o grupo nao entra na tabela de trocas.
+ ("cacau_po","Cacau em pó sem açúcar",None,169593,"colher de sopa",6,"gordura"),
+ ("agriao","Agrião",75,170068,"prato de sobremesa",20,"vegetal"),
+ # Opcoes para quem tem restricao (nao estao no cardapio base).
+ # Bebida de soja: so USDA, de proposito. A TACO 582 e a versao sem calcio adicionado e os valores dela passariam na frente.
+ # E um produto americano com calcio, vitamina A e vitamina D adicionados; a marca brasileira pode nao ter os tres.
+ ("bebida_soja","Bebida de soja com cálcio adicionado",None,172456,"copo",200,"laticinio"),
+ ("soja_cozida","Soja em grão cozida",None,174271,"colher de sopa cheia",25,"proteina"),
+ ("ervilha","Ervilha em conserva, escorrida",560,170013,"colher de sopa cheia",25,"leguminosa"),
+ ("tapioca","Tapioca com manteiga",551,None,"unidade pequena",50,"carboidrato"),
 ]
 
 # O que cada alimento contem, para as restricoes do perfil. Marcas usadas pelo app:
@@ -100,6 +115,7 @@ CONTEM = {
  "whey": ["leite"], "iogurte": ["leite"], "iogurte_desn": ["leite"], "leite": ["leite"], "leite_desn": ["leite"], "leite_po_desn": ["leite"],
  "queijo_minas": ["leite"], "ricota": ["leite"], "mozarela": ["leite"],
  "aveia": ["gluten"], "pao_integral": ["gluten"], "pao_frances": ["gluten"],
+ "tapioca": ["leite"],  # a da TACO leva manteiga
 }
 # Setor do mercado, para a lista de compras. Quem nao esta em SETOR_DA_CHAVE usa o setor do grupo.
 SETORES = ["Hortifrúti", "Carnes e peixes", "Frios e laticínios", "Padaria", "Mercearia", "Bebidas"]
@@ -107,7 +123,7 @@ SETOR_DO_GRUPO = {"proteina": "Carnes e peixes", "laticinio": "Frios e laticíni
                   "vegetal": "Hortifrúti", "fruta": "Hortifrúti", "gordura": "Mercearia", "bebida": "Bebidas"}
 SETOR_DA_CHAVE = {"ovo": "Frios e laticínios", "atum": "Mercearia", "sardinha": "Mercearia", "tofu": "Frios e laticínios", "whey": "Mercearia",
                   "leite_po_desn": "Mercearia", "pao_integral": "Padaria", "pao_frances": "Padaria", "batata_doce": "Hortifrúti", "batata": "Hortifrúti",
-                  "mandioca": "Hortifrúti", "abacate": "Hortifrúti"}
+                  "mandioca": "Hortifrúti", "abacate": "Hortifrúti", "bebida_soja": "Bebidas", "soja_cozida": "Mercearia"}
 
 # campo de saida -> (campo TACO, id do nutriente no USDA)
 NUTRIENTES = {
