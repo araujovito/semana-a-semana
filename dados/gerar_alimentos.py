@@ -30,7 +30,10 @@ ALIMENTOS = [
  ("leite","Leite integral",458,172217,"copo",200,"laticinio"),
  ("leite_desn","Leite desnatado",457,173432,"copo",200,"laticinio"),
  ("leite_po_desn","Leite em pó desnatado",456,170877,"colher de sopa",10,"laticinio"),
- ("queijo_minas","Queijo minas frescal",461,172223,"fatia média",30,"laticinio"),
+ # USDA 172224 (queso blanco) e nao 172223 (queso fresco): o queso fresco americano traz 2,7 ug de vitamina D por 100 g,
+ # quatro a sete vezes os outros queijos de leite integral da mesma base (0,4 a 0,7), sinal de leite com vitamina D adicionada.
+ # O minas frescal brasileiro e feito de leite sem adicao.
+ ("queijo_minas","Queijo minas frescal",461,172224,"fatia média",30,"laticinio"),
  ("ricota","Ricota",469,170851,"fatia média",35,"laticinio"),
  ("mozarela","Queijo mozarela",463,170845,"fatia",20,"laticinio"),
  ("feijao_carioca","Feijão carioca cozido",561,175200,"concha pequena",80,"leguminosa"),
