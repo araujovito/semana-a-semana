@@ -31,10 +31,10 @@ Object.assign(AC, {
   copiar(d) { copiar(texto(d.de)); },
   exportar() { compartilhar(JSON.stringify(E)); },
   importar() {
-    let j; try { j = JSON.parse(texto("imp")); } catch (e) { j = null; }
-    if (!j || j.v !== 1 || !j.perfil) { aviso("Texto inválido. Cole o conteúdo exportado inteiro."); return; }
+    let j; try { j = migrar(JSON.parse(texto("imp"))); } catch (e) { j = null; }
+    if (!j || !j.perfil) { aviso("Texto inválido. Cole o conteúdo exportado inteiro."); return; }
     if (!confirm("Substituir os dados deste celular pelos do texto colado?")) return;
-    E = Object.assign(vazio(), j); salvar(); aviso("Dados restaurados."); location.hash = "hoje"; render(true);
+    E = j; salvar(); aviso("Dados restaurados."); location.hash = "hoje"; render(true);
   },
   zerar() { if (!confirm("Apagar TODOS os dados deste celular? Não dá para desfazer.")) return; E = vazio(); salvar(); render(true); },
 });

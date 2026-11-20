@@ -37,7 +37,7 @@ FORM.perfil = function (f) {
     if (prot && (prot < 30 || prot > 250)) return aviso("Meta de proteína fora do intervalo esperado (30 a 250 g).");
     if (agua && (agua < 500 || agua > 6000)) return aviso("Meta de água em ml, por exemplo 2000.");
     const primeiro = !E.perfil;
-    E.perfil = { nome: (f.nome || "").trim(), sexo: f.sexo === "M" ? "M" : "F", nascimento: Math.round(nasc), altura: alt, peso: peso, atividade: num(f.atividade) || 1.2, metaKcal: kcal, metaProt: prot, metaAgua: agua };
+    E.perfil = Object.assign({}, PERFIL_NOVO, E.perfil, { nome: (f.nome || "").trim(), sexo: f.sexo === "M" ? "M" : "F", nascimento: Math.round(nasc), altura: alt, peso: peso, atividade: num(f.atividade) || 1.2, metaKcal: kcal, metaProt: prot, metaAgua: agua });
     salvar(); aviso("Perfil salvo.");
     if (primeiro) { location.hash = "hoje"; render(true); } else render();
 };

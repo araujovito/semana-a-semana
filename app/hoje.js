@@ -3,7 +3,7 @@
 
 function telaHoje() {
   const h = hoje(), m = metas(), r = dia(h), card = planoDaData(h);
-  const feito = somarPlano(card, card.refeicoes.map((x, i) => !!r.feitas[i]));
+  const feito = somarPlano(card, card.refeicoes.map((x, i) => !!r.comido[i]));
   const prot = feito.prot + r.protExtra;
   let out = "";
 
@@ -18,7 +18,7 @@ function telaHoje() {
   out += '<div class="cartao"><div class="linha"><h2 style="margin:0">Refeições de ' + (r.enjoo ? "hoje (dia de enjoo)" : esc(C.dias[diaSemana(h)].nome.toLowerCase())) + '</h2><button class="mini sec" data-ac="enjoo">' + (r.enjoo ? "Voltar ao normal" : "Dia de enjoo") + "</button></div>";
   card.refeicoes.forEach((ref, i) => {
     const p = somarItens(ref.itens);
-    out += '<label class="refeicao' + (r.feitas[i] ? " feita" : "") + '" style="margin:0;color:inherit;font-size:inherit"><input type="checkbox" data-mud="refeicao" data-i="' + i + '"' + (r.feitas[i] ? " checked" : "") + '><div class="txt"><div class="tipo">' + esc(ref.tipo) + '</div><div class="tit">' + esc(ref.titulo) + '</div><div class="sub">' + fmt(p.prot) + " g de proteína · " + fmt(p.kcal) + " kcal</div></div></label>";
+    out += '<label class="refeicao' + (r.comido[i] ? " feita" : "") + '" style="margin:0;color:inherit;font-size:inherit"><input type="checkbox" data-mud="refeicao" data-i="' + i + '"' + (r.comido[i] ? " checked" : "") + '><div class="txt"><div class="tipo">' + esc(ref.tipo) + '</div><div class="tit">' + esc(ref.titulo) + '</div><div class="sub">' + fmt(p.prot) + " g de proteína · " + fmt(p.kcal) + " kcal</div></div></label>";
   });
   out += '<div class="botoes"><button class="mini sec" data-ac="ir" data-para="plano">Ver porções e nutrientes</button></div></div>';
 
@@ -37,7 +37,7 @@ function relAlimentacao(de) {
   const ds = Object.keys(E.dias).filter(d => d >= de && d <= h).sort();
   let n = 0, sp = 0, sk = 0, sa = 0, enj = 0;
   ds.forEach(d => {
-    const r = dia(d), plano = planoDaData(d), marc = plano.refeicoes.map((x, i) => !!r.feitas[i]);
+    const r = dia(d), plano = planoDaData(d), marc = plano.refeicoes.map((x, i) => !!r.comido[i]);
     if (!marc.some(Boolean) && !r.agua && !r.protExtra) return;
     const t = somarPlano(plano, marc);
     n++; sp += t.prot + r.protExtra; sk += t.kcal; sa += r.agua; if (r.enjoo) enj++;
@@ -53,6 +53,6 @@ Object.assign(AC, {
   agua(d) { const h = hoje(), r = dia(h); r.agua = Math.max(0, r.agua + Number(d.ml)); gravarDia(h, r); render(); },
   prot(d) { const h = hoje(), r = dia(h); r.protExtra = Math.max(0, r.protExtra + Number(d.g)); gravarDia(h, r); render(); },
   caminhada(d) { const h = hoje(), r = dia(h); r.caminhada = Math.max(0, r.caminhada + Number(d.min)); gravarDia(h, r); render(); },
-  enjoo() { const h = hoje(), r = dia(h); r.enjoo = !r.enjoo; r.feitas = []; gravarDia(h, r); render(); },
+  enjoo() { const h = hoje(), r = dia(h); r.enjoo = !r.enjoo; r.comido = []; gravarDia(h, r); render(); },
 });
-MUD.refeicao = function (c) { const h = hoje(), r = dia(h); r.feitas[Number(c.dataset.i)] = c.checked; gravarDia(h, r); render(); };
+MUD.refeicao = function (c) { const h = hoje(), r = dia(h); r.comido[Number(c.dataset.i)] = c.checked ? { q: 1 } : null; gravarDia(h, r); render(); };

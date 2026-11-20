@@ -13,9 +13,39 @@ const LOCAIS = ["Abdômen esquerdo","Abdômen direito","Coxa esquerda","Coxa dir
 const SEMANA = ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
 
 /* ---------- estado ---------- */
-function vazio() { return { v: 1, perfil: null, doses: [], pesos: [], sintomas: [], treinos: [], dias: {}, ui: {} }; }
+/* Formato dos dados, versão 2 (a chave do localStorage continua "semana-a-semana.v1" para quem já usa não perder nada).
+   perfil     { nome, sexo, nascimento, altura, peso, atividade, metaKcal, metaProt, metaAgua,
+                diabetes, insulinaSulf, pilula: null (não respondeu) | true | false,
+                naoCome: [ids de RESTRICOES], naoGosta: [chaves de alimento] }
+   doses      [{ id, data, mg, local, obs }]
+   pesos      [{ id, data, kg, cintura }]
+   sintomas   [{ id, data, enjoo 0-3, intestino, vomito, refluxo, tontura, cansaco, dor, nota, glicemia (mg/dL, opcional) }]
+   treinos    [{ id, data, tipo "A"|"B", local, exercicios: [{ nome, carga, reps: [n por série] }] (opcional) }]
+   dias       { "AAAA-MM-DD": { enjoo, agua (ml), protExtra (g), caminhada (min),
+                comido: [por refeição: null | { q: 1 | 0.5 | 0.25 | 0, itens: [[chave, gramas]] (porção inteira do plano na hora em que marcou; ausente em registro antigo), outros: [[chave, gramas]] (comeu outra coisa) }] } }
+   trocas     { "dia.refeicao.item": chave do alimento escolhido }   dia 0-6 = segunda a domingo, 7 = dia de enjoo
+   caneta     null | objeto (doses restantes, validade, saída da geladeira)
+   suplementos, exames   listas
+   lembretes  { } horários dos lembretes do aparelho
+   ui         preferências de tela (aba aberta, local de treino) */
+const VERSAO = 2;
+function vazio() { return { v: VERSAO, perfil: null, doses: [], pesos: [], sintomas: [], treinos: [], dias: {}, trocas: {}, caneta: null, suplementos: [], exames: [], lembretes: {}, ui: {} }; }
+const PERFIL_NOVO = { diabetes: null, insulinaSulf: null, pilula: null, naoCome: [], naoGosta: [] };
+/* Recebe dados de qualquer versão (do aparelho ou de uma cópia de segurança) e devolve na versão atual, sem perder nada. Devolve null se não for um dado do app. */
+function migrar(j) {
+  if (!j || typeof j !== "object" || (j.v !== 1 && j.v !== 2)) return null;
+  const e = Object.assign(vazio(), j);
+  if (e.perfil) e.perfil = Object.assign({}, PERFIL_NOVO, e.perfil);
+  Object.keys(e.dias).forEach(d => {
+    const r = e.dias[d];
+    // v1 guardava só "feita ou não" por refeição; vira "comi tudo"
+    if (r.feitas) { if (!r.comido) r.comido = r.feitas.map(x => (x ? { q: 1 } : null)); delete r.feitas; }
+  });
+  e.v = VERSAO;
+  return e;
+}
 function carregar() {
-  try { const j = JSON.parse(localStorage.getItem(CHAVE)); if (j && j.v === 1) return Object.assign(vazio(), j); } catch (e) {}
+  try { const e = migrar(JSON.parse(localStorage.getItem(CHAVE))); if (e) return e; } catch (e) {}
   return vazio();
 }
 let E = carregar();
@@ -40,7 +70,7 @@ let tAviso;
 function aviso(t) { const el = document.getElementById("aviso"); el.textContent = t; el.hidden = false; clearTimeout(tAviso); tAviso = setTimeout(() => { el.hidden = true; }, 2600); }
 
 /* ---------- registro do dia ---------- */
-function dia(d) { return Object.assign({ enjoo: false, feitas: [], agua: 0, protExtra: 0, caminhada: 0 }, E.dias[d] || {}); }
+function dia(d) { return Object.assign({ enjoo: false, comido: [], agua: 0, protExtra: 0, caminhada: 0 }, E.dias[d] || {}); }
 function gravarDia(d, r) { E.dias[d] = r; salvar(); }
 
 /* ---------- barras de progresso ---------- */
