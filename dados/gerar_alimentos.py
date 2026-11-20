@@ -85,6 +85,27 @@ ALIMENTOS = [
  ("agua_coco","Água de coco",478,170174,"copo",200,"bebida"),
 ]
 
+# O que cada alimento contem, para as restricoes do perfil. Marcas usadas pelo app:
+#   leite (lactose/leite), ovo, peixe, carne_vermelha, porco, gluten, carne (qualquer carne, ave ou peixe: e o que a vegetariana nao come).
+# Aveia entra como gluten por cautela: no Brasil a aveia comum e rotulada "contem gluten" por contaminacao cruzada.
+# Alimento novo de origem animal ou com trigo/aveia/cevada/centeio TEM de entrar aqui.
+CONTEM = {
+ "frango_peito": ["carne"], "frango_sobrecoxa": ["carne"],
+ "carne_patinho": ["carne", "carne_vermelha"], "carne_moida": ["carne", "carne_vermelha"], "carne_musculo": ["carne", "carne_vermelha"],
+ "porco_lombo": ["carne", "porco"], "ovo": ["ovo"],
+ "atum": ["carne", "peixe"], "sardinha": ["carne", "peixe"], "salmao": ["carne", "peixe"], "merluza": ["carne", "peixe"], "tilapia": ["carne", "peixe"],
+ "whey": ["leite"], "iogurte": ["leite"], "iogurte_desn": ["leite"], "leite": ["leite"], "leite_desn": ["leite"], "leite_po_desn": ["leite"],
+ "queijo_minas": ["leite"], "ricota": ["leite"], "mozarela": ["leite"],
+ "aveia": ["gluten"], "pao_integral": ["gluten"], "pao_frances": ["gluten"],
+}
+# Setor do mercado, para a lista de compras. Quem nao esta em SETOR_DA_CHAVE usa o setor do grupo.
+SETORES = ["Hortifrúti", "Carnes e peixes", "Frios e laticínios", "Padaria", "Mercearia", "Bebidas"]
+SETOR_DO_GRUPO = {"proteina": "Carnes e peixes", "laticinio": "Frios e laticínios", "leguminosa": "Mercearia", "carboidrato": "Mercearia",
+                  "vegetal": "Hortifrúti", "fruta": "Hortifrúti", "gordura": "Mercearia", "bebida": "Bebidas"}
+SETOR_DA_CHAVE = {"ovo": "Frios e laticínios", "atum": "Mercearia", "sardinha": "Mercearia", "tofu": "Frios e laticínios", "whey": "Mercearia",
+                  "leite_po_desn": "Mercearia", "pao_integral": "Padaria", "pao_frances": "Padaria", "batata_doce": "Hortifrúti", "batata": "Hortifrúti",
+                  "mandioca": "Hortifrúti", "abacate": "Hortifrúti"}
+
 # campo de saida -> (campo TACO, id do nutriente no USDA)
 NUTRIENTES = {
  "kcal": ("energy_kcal", "1008"), "prot": ("protein_g", "1003"), "gord": ("lipid_g", "1004"),
@@ -120,7 +141,9 @@ def main():
         if isinstance(uid, str): uid = por_desc[uid]
         uid = str(uid) if uid else None
         t = taco.get(tid, {}) if tid else {}
-        item = {"nome": nome, "medida": medida, "gMedida": g_medida, "grupo": grupo,
+        setor = SETOR_DA_CHAVE.get(chave) or SETOR_DO_GRUPO[grupo]
+        assert setor in SETORES, chave
+        item = {"nome": nome, "medida": medida, "gMedida": g_medida, "grupo": grupo, "setor": setor, "contem": CONTEM.get(chave, []),
                 "fonte": ("TACO %d" % tid if tid else "") + (" + " if tid and uid else "") + ("USDA %s" % uid if uid else "")}
         for campo, (ct, cu) in NUTRIENTES.items():
             v = t.get(ct) if ct else None
@@ -129,6 +152,7 @@ def main():
             item[campo] = round(v, 2)
         saida[chave] = item
         print("%-17s %-40s | %s" % (chave, (t.get("description") or "-")[:40], desc.get(uid, "-")[:60]))
+    for chave in CONTEM: assert chave in saida, "CONTEM cita alimento inexistente: " + chave
     with open(os.path.join(RAIZ, "app", "alimentos.js"), "w", encoding="utf-8") as f:
         f.write("// Gerado por dados/gerar_alimentos.py. Valores por 100 g. Nao editar a mao.\n")
         f.write("window.ALIMENTOS = " + json.dumps(saida, ensure_ascii=False, indent=1) + ";\n")
