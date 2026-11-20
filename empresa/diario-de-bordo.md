@@ -1,0 +1,1 @@
+- 20/11 12:21 [direção] Empresa montada: organograma, briefing e regras escritos. Pesquisa, auditoria e engenharia começam agora.

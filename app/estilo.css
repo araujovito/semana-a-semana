@@ -1,0 +1,90 @@
+:root {
+  --fundo: #f4f6f5; --cartao: #ffffff; --texto: #17201e; --suave: #5d6b68; --linha: #dfe5e3;
+  --cor: #0f766e; --cor-clara: #d6efeb; --sobre-cor: #ffffff;
+  --ok: #15803d; --falta: #b45309; --alerta: #b91c1c; --alerta-fundo: #fdecec;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fundo: #101514; --cartao: #1a2220; --texto: #e8eeec; --suave: #9aa9a5; --linha: #2c3835;
+    --cor: #2dd4bf; --cor-clara: #173d38; --sobre-cor: #06201d;
+    --ok: #4ade80; --falta: #fbbf24; --alerta: #f87171; --alerta-fundo: #3a1a1a;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 16px/1.45 system-ui, -apple-system, Roboto, sans-serif; }
+#topo { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; background: var(--cor); color: var(--sobre-cor); }
+#topo h1 { margin: 0; font-size: 18px; font-weight: 600; }
+#btn-perfil { color: var(--sobre-cor); text-decoration: none; font-size: 14px; border: 1px solid currentColor; border-radius: 999px; padding: 4px 12px; }
+main { padding: 12px 12px 88px; max-width: 640px; margin: 0 auto; }
+#abas { position: fixed; bottom: 0; left: 0; right: 0; z-index: 5; display: flex; background: var(--cartao); border-top: 1px solid var(--linha);
+  padding-bottom: env(safe-area-inset-bottom); }
+#abas a { flex: 1; text-align: center; padding: 8px 0 10px; font-size: 12px; color: var(--suave); text-decoration: none; }
+#abas a .ic { display: block; font-size: 20px; line-height: 1.2; filter: grayscale(1); opacity: .7; }
+#abas a.ativa { color: var(--cor); font-weight: 600; }
+#abas a.ativa .ic { filter: none; opacity: 1; }
+
+.cartao { background: var(--cartao); border: 1px solid var(--linha); border-radius: 14px; padding: 14px; margin-bottom: 12px; }
+.cartao h2 { margin: 0 0 8px; font-size: 16px; }
+.cartao h3 { margin: 12px 0 4px; font-size: 14px; }
+.sub { color: var(--suave); font-size: 13px; }
+.linha { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.grande { font-size: 26px; font-weight: 700; line-height: 1.1; }
+.duas { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tres { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.alerta { background: var(--alerta-fundo); border-color: var(--alerta); }
+.alerta h2, .alerta strong { color: var(--alerta); }
+.destaque { background: var(--cor-clara); border-color: transparent; }
+
+button, .botao { font: inherit; border: 0; border-radius: 10px; padding: 10px 14px; background: var(--cor); color: var(--sobre-cor); font-weight: 600; cursor: pointer; }
+button.sec { background: transparent; color: var(--cor); border: 1px solid var(--cor); }
+button.mini { padding: 6px 10px; font-size: 13px; }
+button.perigo { background: transparent; color: var(--alerta); border: 1px solid var(--alerta); }
+.botoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 8px; }
+.chips button { flex: none; background: var(--cartao); color: var(--texto); border: 1px solid var(--linha); font-weight: 500; padding: 7px 12px; border-radius: 999px; font-size: 14px; }
+.chips button.ativa { background: var(--cor); color: var(--sobre-cor); border-color: var(--cor); }
+
+label { display: block; font-size: 13px; color: var(--suave); margin-top: 10px; }
+input, select, textarea { width: 100%; font: inherit; color: var(--texto); background: var(--fundo); border: 1px solid var(--linha); border-radius: 10px; padding: 10px; margin-top: 4px; }
+textarea { min-height: 90px; }
+input[type=checkbox] { width: 22px; height: 22px; margin: 0; flex: none; accent-color: var(--cor); }
+.marcas { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 6px; }
+.marcas label { display: flex; align-items: center; gap: 6px; margin: 0; font-size: 15px; color: var(--texto); }
+
+.barra { height: 8px; background: var(--linha); border-radius: 999px; overflow: hidden; margin-top: 4px; }
+.barra i { display: block; height: 100%; background: var(--cor); border-radius: 999px; }
+.barra.ok i { background: var(--ok); }
+.barra.falta i { background: var(--falta); }
+.nutri { margin-top: 8px; font-size: 14px; }
+.nutri .linha span:last-child { color: var(--suave); font-size: 13px; white-space: nowrap; }
+
+.refeicao { display: flex; gap: 12px; padding: 10px 0; border-top: 1px solid var(--linha); }
+.refeicao:first-of-type { border-top: 0; }
+.refeicao .txt { flex: 1; min-width: 0; }
+.refeicao .tipo { font-size: 12px; color: var(--suave); text-transform: uppercase; letter-spacing: .04em; }
+.refeicao .tit { font-weight: 600; }
+.refeicao ul { margin: 4px 0 0; padding-left: 18px; font-size: 14px; }
+.refeicao .prep { font-size: 13px; color: var(--suave); margin-top: 4px; }
+.feita .tit { text-decoration: line-through; color: var(--suave); }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 6px 4px; border-top: 1px solid var(--linha); vertical-align: top; }
+th { color: var(--suave); font-weight: 500; font-size: 12px; border-top: 0; }
+td.num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+td .x { background: none; color: var(--suave); padding: 0 6px; font-weight: 400; }
+
+details { border-top: 1px solid var(--linha); padding: 10px 0; }
+details:first-of-type { border-top: 0; }
+summary { font-weight: 600; cursor: pointer; }
+details p { margin: 8px 0 0; font-size: 15px; }
+details .como { color: var(--suave); font-size: 14px; }
+svg.graf { width: 100%; height: 150px; display: block; }
+svg.graf polyline { fill: none; stroke: var(--cor); stroke-width: 2.5; stroke-linejoin: round; }
+svg.graf circle { fill: var(--cor); }
+svg.graf text { fill: var(--suave); font-size: 11px; }
+svg.graf line { stroke: var(--linha); }
+#aviso { position: fixed; left: 16px; right: 16px; bottom: 84px; z-index: 9; background: var(--texto); color: var(--fundo); padding: 10px 14px; border-radius: 10px; text-align: center; font-size: 14px; }
+ul.lista { margin: 6px 0 0; padding-left: 18px; font-size: 15px; }
+ul.lista li { margin-bottom: 4px; }

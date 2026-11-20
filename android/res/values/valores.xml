@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="nome">Semana a Semana</string>
+    <color name="cor">#0f766e</color>
+    <color name="fundo">#f4f6f5</color>
+    <style name="Tema" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/cor</item>
+        <item name="android:navigationBarColor">@color/cor</item>
+        <item name="android:windowBackground">@color/fundo</item>
+        <item name="android:colorAccent">@color/cor</item>
+    </style>
+</resources>
