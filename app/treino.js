@@ -11,7 +11,8 @@ function faseTreino() {
 
 function telaTreino() {
   const local = E.ui.local || "casa", f = faseTreino(), px = proximoTreino(), h = hoje(), fezHoje = E.treinos.some(t => t.data === h);
-  let out = '<div class="chips"><button data-ac="local" data-v="casa" class="' + (local === "casa" ? "ativa" : "") + '">Em casa</button><button data-ac="local" data-v="academia" class="' + (local === "academia" ? "ativa" : "") + '">Na academia</button></div>';
+  let out = avisoHipoglicemia("treino");
+  out += '<div class="chips"><button data-ac="local" data-v="casa" class="' + (local === "casa" ? "ativa" : "") + '">Em casa</button><button data-ac="local" data-v="academia" class="' + (local === "academia" ? "ativa" : "") + '">Na academia</button></div>';
   out += '<div class="cartao destaque"><div class="sub">Semana ' + f.sem + " de treino · " + esc(f.fase.semanas) + '</div><p style="margin:6px 0 0">' + esc(f.fase.texto) + '</p><p class="sub" style="margin:8px 0 0">Nesta semana: ' + treinosDaSemana().length + " de 3 treinos. Próximo: treino " + px + ".</p></div>";
   ["A", "B"].forEach(tipo => {
     out += '<div class="cartao"><div class="linha"><h2 style="margin:0">Treino ' + tipo + "</h2>" + (fezHoje ? "" : '<button class="mini' + (tipo === px ? "" : " sec") + '" data-ac="treino" data-tipo="' + tipo + '">Concluí hoje</button>') + "</div>" +

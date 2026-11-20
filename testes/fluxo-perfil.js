@@ -11,7 +11,7 @@ const { abrir, ok, d, CHAVE } = require("./apoio");
   ok(true, "perfil salvo leva para Hoje"); await t.foto("1-hoje-vazio");
   ok((await t.ler()).perfil.peso === 95.4, "peso com vírgula é lido como 95,4");
   await p.click("#btn-perfil"); await p.waitForSelector("text=Como as metas são calculadas"); await t.foto("8-perfil");
-  await t.semRolagem("perfil");
+  await t.semRolagem("perfil"); await t.alvosDeToque("perfil");
   await p.reload(); ok(await p.locator("form[data-form=perfil] [name=altura]").inputValue() === "163", "dados persistem depois de recarregar");
 
   // Quem ja usava a versao 1 abre a versao nova sem perder nada.

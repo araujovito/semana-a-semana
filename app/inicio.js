@@ -12,7 +12,19 @@ function render(topo) {
   if (topo) window.scrollTo(0, 0);
 }
 
+/* Folha: painel que sobe de baixo para escolher algo (uma troca, um alimento). abrirFolha(titulo, html) mostra; fecharFolha() esconde.
+   Fecha também com toque fora dela e com o botão Fechar. render() não fecha a folha: quem escolheu chama fecharFolha(). */
+function abrirFolha(titulo, html) {
+  const f = document.getElementById("folha");
+  f.querySelector(".folha-corpo").innerHTML = '<div class="linha"><h2 style="margin:0">' + esc(titulo) + '</h2><button class="sec" data-ac="fecharFolha">Fechar</button></div>' + html;
+  f.hidden = false; f.querySelector(".folha-corpo").scrollTop = 0;
+}
+function fecharFolha() { document.getElementById("folha").hidden = true; }
+function folhaAberta() { return !document.getElementById("folha").hidden; }
+AC.fecharFolha = fecharFolha;
+
 document.addEventListener("click", e => {
+  if (e.target.id === "folha") { fecharFolha(); return; }
   const b = e.target.closest("[data-ac]"); if (!b || b.disabled) return;
   e.preventDefault(); AC[b.dataset.ac](b.dataset);
 });

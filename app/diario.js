@@ -10,8 +10,7 @@ function telaDiario() {
   if (sub === "sintomas") out += subSintomas();
   if (sub === "relatorio") {
     out += '<div class="cartao"><h2>Relatório para a consulta</h2><p class="sub" style="margin:0">Resumo dos últimos 30 dias, em texto, para mandar por WhatsApp ou mostrar ao médico.</p><textarea id="rel" readonly style="min-height:260px;font-size:13px">' + esc(relatorio()) + '</textarea><div class="botoes"><button data-ac="compartilhar" data-de="rel">Compartilhar</button><button class="sec" data-ac="copiar" data-de="rel">Copiar</button></div></div>';
-    out += '<div class="cartao"><h2>Cópia de segurança</h2><p class="sub" style="margin:0">Os registros ficam só neste celular. Se o app for desinstalado, eles se perdem. Exporte de vez em quando e guarde o texto (por exemplo, mandando para você mesma).</p><div class="botoes"><button class="sec" data-ac="exportar">Exportar tudo</button></div>' +
-      '<label>Restaurar: cole aqui o texto exportado<textarea id="imp"></textarea></label><div class="botoes"><button class="sec" data-ac="importar">Restaurar</button><button class="perigo" data-ac="zerar">Apagar todos os dados</button></div></div>';
+    out += cartaoCopia();
   }
   return out;
 }
@@ -29,12 +28,4 @@ Object.assign(AC, {
   apagar(d) { if (!confirm("Apagar este registro?")) return; E[d.lista] = E[d.lista].filter(x => x.id !== d.id); salvar(); render(); },
   compartilhar(d) { compartilhar(texto(d.de)); },
   copiar(d) { copiar(texto(d.de)); },
-  exportar() { compartilhar(JSON.stringify(E)); },
-  importar() {
-    let j; try { j = migrar(JSON.parse(texto("imp"))); } catch (e) { j = null; }
-    if (!j || !j.perfil) { aviso("Texto inválido. Cole o conteúdo exportado inteiro."); return; }
-    if (!confirm("Substituir os dados deste celular pelos do texto colado?")) return;
-    E = j; salvar(); aviso("Dados restaurados."); location.hash = "hoje"; render(true);
-  },
-  zerar() { if (!confirm("Apagar TODOS os dados deste celular? Não dá para desfazer.")) return; E = vazio(); salvar(); render(true); },
 });

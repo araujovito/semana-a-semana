@@ -39,6 +39,13 @@ async function abrir(opcoes) {
     foto: async n => { if (a.capturas) await p.screenshot({ path: path.join(a.capturas, n + ".png"), fullPage: true }); },
     ler: () => p.evaluate(k => JSON.parse(localStorage.getItem(k)), CHAVE),
     semRolagem: async nome => { const w = await p.evaluate(() => document.documentElement.scrollWidth), v = p.viewportSize().width; ok(w <= v, "sem rolagem horizontal em " + nome + " (" + w + " de " + v + " px)"); },
+    // Confere que todo botao, link, campo e titulo que abre/fecha visivel tem pelo menos 44 px de altura (e botao, 44 de largura).
+    alvosDeToque: async nome => {
+      const ruins = await p.evaluate(() => [...document.querySelectorAll("button, a, select, summary, input:not([type=checkbox]):not([type=radio]):not([type=hidden])")]
+        .filter(el => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0 && (r.height < 43.5 || (el.tagName === "BUTTON" && r.width < 43.5)); })
+        .map(el => el.tagName.toLowerCase() + " \"" + (el.textContent || el.name || "").trim().slice(0, 30) + "\" " + Math.round(el.getBoundingClientRect().width) + "x" + Math.round(el.getBoundingClientRect().height)));
+      ok(ruins.length === 0, "alvos de toque com 44 px ou mais em " + nome + (ruins.length ? ": " + ruins.slice(0, 6).join("; ") : ""));
+    },
     fechar: async () => { ok(erros.length === 0, "sem erros no console " + erros.join(" / ")); await b.close(); },
   };
 }

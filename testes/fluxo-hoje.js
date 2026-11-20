@@ -10,6 +10,6 @@ const { abrir, ok, estadoBase } = require("./apoio");
   await p.click("[data-ac=treino]"); await p.click("[data-ac=caminhada][data-min='10']");
   const e = await t.ler(), dia = Object.values(e.dias)[0];
   ok(dia.agua === 700 && dia.caminhada === 10 && e.treinos.length === 1, "água, caminhada e treino gravados");
-  await t.semRolagem("hoje"); await t.foto("5-hoje");
+  await t.semRolagem("hoje"); await t.alvosDeToque("hoje"); await t.foto("5-hoje");
   await t.fechar();
 })();

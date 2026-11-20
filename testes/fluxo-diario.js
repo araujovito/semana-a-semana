@@ -15,7 +15,7 @@ const { abrir, ok, d, estadoBase } = require("./apoio");
   await p.click("[data-ac=diario][data-v=relatorio]"); const rel = await p.inputValue("#rel"); console.log("-----\n" + rel + "\n-----");
   ok(/Semana 5/.test(rel) && /91,5 kg/.test(rel) && /Treinos de força: 1/.test(rel), "relatório traz dose, peso e treino");
   ok(/Média de proteína: \d+ g/.test(rel) && /Caminhada: 10 minutos/.test(rel), "relatório traz proteína e caminhada");
-  await t.semRolagem("diário");
+  await t.semRolagem("diário"); await t.alvosDeToque("diário");
   await p.click("#abas a[data-aba=hoje]"); await p.waitForSelector("text=Próxima aplicação");
   ok(await p.locator("text=Próxima aplicação").count() === 1, "Hoje mostra a próxima aplicação");
   await t.fechar();

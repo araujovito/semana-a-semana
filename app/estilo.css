@@ -90,3 +90,18 @@ svg.graf line { stroke: var(--linha); }
 #aviso { position: fixed; left: 16px; right: 16px; bottom: 84px; z-index: 9; background: var(--texto); color: var(--fundo); padding: 10px 14px; border-radius: 10px; text-align: center; font-size: 14px; }
 ul.lista { margin: 6px 0 0; padding-left: 18px; font-size: 15px; }
 ul.lista li { margin-bottom: 4px; }
+
+/* Alvo de toque: nada que se toca tem menos de 44 px. */
+button, .botao, select, input:not([type=checkbox]):not([type=radio]), summary { min-height: 44px; }
+button, .botao { min-width: 44px; }
+summary { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+summary::after { content: "▾"; color: var(--suave); flex: none; }
+details[open] > summary::after { content: "▴"; }
+summary::-webkit-details-marker { display: none; }
+td .x { min-height: 44px; min-width: 44px; padding: 0 8px; }
+#btn-perfil { min-height: 44px; display: inline-flex; align-items: center; }
+#abas a { min-height: 44px; }
+.marcas label { min-height: 44px; }
+/* Folha: painel que sobe de baixo (abrirFolha em inicio.js). */
+#folha { position: fixed; inset: 0; z-index: 20; background: rgba(0, 0, 0, .45); display: flex; align-items: flex-end; }
+#folha .folha-corpo { width: 100%; max-height: 85vh; overflow-y: auto; background: var(--cartao); border-radius: 16px 16px 0 0; padding: 16px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); }

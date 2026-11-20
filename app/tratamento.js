@@ -32,6 +32,9 @@ function cartaoTratamentoHoje() {
   return out;
 }
 
+/* Destaque do risco de hipoglicemia para quem tem diabetes e usa insulina ou sulfonilureia. onde: "treino" ou "guia". Devolve "" quando não se aplica. */
+function avisoHipoglicemia(onde) { return ""; }
+
 function subDoses() {
   const h = hoje();
   let out = "";
@@ -42,6 +45,7 @@ function subDoses() {
       '<label>Observação (opcional)<input name="obs" maxlength="120"></label><div class="botoes"><button>Salvar aplicação</button></div></form>';
     const ds = E.doses.slice().sort(porData).reverse();
     out += '<div class="cartao"><h2>Histórico</h2>' + (ds.length ? "<table><tr><th>Data</th><th>Dose</th><th>Local</th><th></th></tr>" + ds.map(d => "<tr><td>" + brAno(d.data) + "</td><td>" + fmt(d.mg, 1) + " mg</td><td>" + esc(d.local) + (d.obs ? '<div class="sub">' + esc(d.obs) + "</div>" : "") + '</td><td class="num"><button class="x" data-ac="apagar" data-lista="doses" data-id="' + d.id + '">apagar</button></td></tr>').join("") + "</table>" : '<p class="sub" style="margin:0">Nenhuma aplicação registrada.</p>') + "</div>";
+  out += cartaoCaneta();
   return out;
 }
 

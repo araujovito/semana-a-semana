@@ -24,6 +24,7 @@ function telaPerfil() {
       "<li>Gordura: 30% da energia. Carboidrato: o restante.</li><li>Fibra, vitaminas e minerais: valores de referência (DRIs) para o sexo e a idade.</li></ul>" +
       '<p class="sub">As metas se atualizam sozinhas a cada peso registrado. São estimativas de população; o médico ou o nutricionista podem definir outras.</p></div>';
   }
+  if (E.perfil) out += cartaoLembretes();
   return out;
 }
 

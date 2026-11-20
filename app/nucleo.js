@@ -100,3 +100,6 @@ function copiar(t) {
 
 /* Cada arquivo de tela acrescenta aqui as suas ações (clique em data-ac), formulários (data-form) e campos (data-mud). */
 const AC = {}, FORM = {}, MUD = {};
+/* Nutrientes que não vêm da comida (suplementos prescritos). Cada função recebe a data e devolve { campo: valor do dia }. */
+const EXTRAS_NUTRI = [];
+function somarExtras(data) { const t = {}; CAMPOS.forEach(c => { t[c] = 0; }); EXTRAS_NUTRI.forEach(f => { const x = f(data) || {}; Object.keys(x).forEach(c => { if (c in t) t[c] += x[c] || 0; }); }); return t; }
