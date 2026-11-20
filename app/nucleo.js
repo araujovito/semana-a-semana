@@ -15,8 +15,10 @@ const SEMANA = ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
 /* ---------- estado ---------- */
 /* Formato dos dados, versão 2 (a chave do localStorage continua "semana-a-semana.v1" para quem já usa não perder nada).
    perfil     { nome, sexo, nascimento, altura, peso, atividade, metaKcal, metaProt, metaAgua,
-                diabetes, insulinaSulf, pilula: null (não respondeu) | true | false,
+                gestante (grávida ou amamentando), diabetes, insulinaSulf, pilula: null (não respondeu) | true | false,
+                discreto: true = não mostrar calorias nem peso em destaque,
                 naoCome: [ids de RESTRICOES], naoGosta: [chaves de alimento] }
+   diaDose    dia habitual da aplicação, 0-6 = segunda a domingo; null = o dia da semana da primeira aplicação
    doses      [{ id, data, mg, local, obs }]
    pesos      [{ id, data, kg, cintura }]
    sintomas   [{ id, data, enjoo 0-3, intestino, vomito, refluxo, tontura, cansaco, dor, nota, glicemia (mg/dL, opcional) }]
@@ -29,27 +31,70 @@ const SEMANA = ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
    lembretes  { } horários dos lembretes do aparelho
    ui         preferências de tela (aba aberta, local de treino) */
 const VERSAO = 2;
-function vazio() { return { v: VERSAO, perfil: null, doses: [], pesos: [], sintomas: [], treinos: [], dias: {}, trocas: {}, caneta: null, suplementos: [], exames: [], lembretes: {}, ui: {} }; }
-const PERFIL_NOVO = { diabetes: null, insulinaSulf: null, pilula: null, naoCome: [], naoGosta: [] };
-/* Recebe dados de qualquer versão (do aparelho ou de uma cópia de segurança) e devolve na versão atual, sem perder nada. Devolve null se não for um dado do app. */
+function vazio() { return { v: VERSAO, perfil: null, diaDose: null, doses: [], pesos: [], sintomas: [], treinos: [], dias: {}, trocas: {}, caneta: null, suplementos: [], exames: [], lembretes: {}, ui: {} }; }
+const PERFIL_NOVO = { gestante: null, diabetes: null, insulinaSulf: null, pilula: null, discreto: false, naoCome: [], naoGosta: [] };
+/* Recebe dados de qualquer versão (do aparelho ou de uma cópia de segurança) e devolve na versão atual, sem perder nada.
+   Devolve null se não for um dado do app. Também confere os tipos: registro sem data válida sai, lista que não é lista vira lista vazia,
+   perfil sem altura, peso e nascimento válidos volta a ser pedido. Assim uma cópia estragada não deixa telas em branco nem "NaN". */
 function migrar(j) {
-  if (!j || typeof j !== "object" || (j.v !== 1 && j.v !== 2)) return null;
+  if (!j || typeof j !== "object" || Array.isArray(j) || (j.v !== 1 && j.v !== 2)) return null;
   const e = Object.assign(vazio(), j);
-  if (e.perfil) e.perfil = Object.assign({}, PERFIL_NOVO, e.perfil);
-  Object.keys(e.dias).forEach(d => {
-    const r = e.dias[d];
-    // v1 guardava só "feita ou não" por refeição; vira "comi tudo"
-    if (r.feitas) { if (!r.comido) r.comido = r.feitas.map(x => (x ? { q: 1 } : null)); delete r.feitas; }
+  const dataOk = s => typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s) && iso(deIso(s)) === s;
+  const numero = (x, min, max) => typeof x === "number" && isFinite(x) && x >= min && x <= max;
+  const objeto = x => (x && typeof x === "object" && !Array.isArray(x) ? x : {});
+  const registros = x => (Array.isArray(x) ? x : []).filter(r => r && typeof r === "object" && dataOk(r.data)).map(r => {
+    const id = String(r.id == null ? "" : r.id).replace(/[^A-Za-z0-9_-]/g, "");
+    return Object.assign({}, r, { id: id || novoId() });
   });
+  const p = e.perfil;
+  if (p && typeof p === "object" && numero(p.nascimento, 1900, 2100) && numero(p.altura, 100, 250) && numero(p.peso, 30, 400)) {
+    e.perfil = Object.assign({}, PERFIL_NOVO, p, { sexo: p.sexo === "M" ? "M" : "F", nome: String(p.nome == null ? "" : p.nome).slice(0, 40) });
+    if (!Array.isArray(e.perfil.naoCome)) e.perfil.naoCome = [];
+    if (!Array.isArray(e.perfil.naoGosta)) e.perfil.naoGosta = [];
+  } else e.perfil = null;
+  e.doses = registros(e.doses).filter(d => numero(d.mg, 0.1, 50));
+  e.pesos = registros(e.pesos).filter(x => numero(x.kg, 30, 400));
+  e.sintomas = registros(e.sintomas);
+  e.treinos = registros(e.treinos);
+  const dias = objeto(e.dias); e.dias = {};
+  Object.keys(dias).forEach(d => {
+    if (!dataOk(d) || !dias[d] || typeof dias[d] !== "object") return;
+    const r = Object.assign({}, dias[d]);
+    // v1 guardava só "feita ou não" por refeição; vira "comi tudo"
+    if (r.feitas) { if (!r.comido && Array.isArray(r.feitas)) r.comido = r.feitas.map(x => (x ? { q: 1 } : null)); delete r.feitas; }
+    if (!Array.isArray(r.comido)) r.comido = [];
+    ["agua", "protExtra", "caminhada"].forEach(c => { r[c] = numero(r[c], 0, 100000) ? r[c] : 0; });
+    r.enjoo = !!r.enjoo;
+    e.dias[d] = r;
+  });
+  e.trocas = objeto(e.trocas); e.lembretes = objeto(e.lembretes); e.ui = objeto(e.ui);
+  if (!(Number.isInteger(e.ui.diaPlano) && e.ui.diaPlano >= 0 && e.ui.diaPlano <= 7)) delete e.ui.diaPlano;
+  if (!Array.isArray(e.suplementos)) e.suplementos = [];
+  if (!Array.isArray(e.exames)) e.exames = [];
+  if (!(Number.isInteger(e.diaDose) && e.diaDose >= 0 && e.diaDose <= 6)) e.diaDose = null;
   e.v = VERSAO;
   return e;
 }
+/* ILEGIVEL guarda o texto que estava no aparelho quando o app não conseguiu entender (versão mais nova, arquivo danificado).
+   Enquanto ele existir, salvar() não grava nada: dado que não foi lido nunca é sobrescrito. A tela de início oferece as saídas. */
+let ILEGIVEL = null;
+let FALHA_SALVAR = false;
 function carregar() {
-  try { const e = migrar(JSON.parse(localStorage.getItem(CHAVE))); if (e) return e; } catch (e) {}
+  let bruto = null;
+  try { bruto = localStorage.getItem(CHAVE); } catch (x) { return vazio(); }
+  if (bruto == null) return vazio();
+  try { const e = migrar(JSON.parse(bruto)); if (e) return e; } catch (x) {}
+  ILEGIVEL = bruto;
   return vazio();
 }
-let E = carregar();
-function salvar() { try { localStorage.setItem(CHAVE, JSON.stringify(E)); } catch (e) { aviso("Não foi possível salvar neste aparelho."); } }
+/* Devolve true se gravou. Se não gravou, a faixa de erro fica na tela e as mensagens de sucesso ("registrado") não aparecem. */
+function salvar() {
+  let certo = false;
+  if (ILEGIVEL == null) { try { localStorage.setItem(CHAVE, JSON.stringify(E)); certo = true; } catch (x) {} }
+  FALHA_SALVAR = !certo;
+  const f = document.getElementById("erro-salvar"); if (f) f.hidden = certo;
+  return certo;
+}
 
 /* ---------- utilidades ---------- */
 const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -67,7 +112,8 @@ const diaSemana = s => (deIso(s).getDay() + 6) % 7;
 const inicioSemana = s => mais(s, -diaSemana(s));
 const porData = (a, b) => (a.data < b.data ? -1 : a.data > b.data ? 1 : 0);
 let tAviso;
-function aviso(t) { const el = document.getElementById("aviso"); el.textContent = t; el.hidden = false; clearTimeout(tAviso); tAviso = setTimeout(() => { el.hidden = true; }, 2600); }
+/* Mensagem curta no rodapé. Se a última gravação falhou, não mostra nada: a faixa de erro não pode ser coberta por um "registrado". */
+function aviso(t) { if (FALHA_SALVAR) return; const el = document.getElementById("aviso"); el.textContent = t; el.hidden = false; clearTimeout(tAviso); tAviso = setTimeout(() => { el.hidden = true; }, 2600); }
 
 /* ---------- registro do dia ---------- */
 function dia(d) { return Object.assign({ enjoo: false, comido: [], agua: 0, protExtra: 0, caminhada: 0 }, E.dias[d] || {}); }
@@ -103,3 +149,5 @@ const AC = {}, FORM = {}, MUD = {};
 /* Nutrientes que não vêm da comida (suplementos prescritos). Cada função recebe a data e devolve { campo: valor do dia }. */
 const EXTRAS_NUTRI = [];
 function somarExtras(data) { const t = {}; CAMPOS.forEach(c => { t[c] = 0; }); EXTRAS_NUTRI.forEach(f => { const x = f(data) || {}; Object.keys(x).forEach(c => { if (c in t) t[c] += x[c] || 0; }); }); return t; }
+
+let E = carregar();

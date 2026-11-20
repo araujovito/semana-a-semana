@@ -15,7 +15,11 @@ function achar() {
 }
 const ok = (c, m) => { if (!c) { console.log("FALHOU: " + m); process.exitCode = 1; } else console.log("ok: " + m); };
 // data de n dias atras, no formato AAAA-MM-DD
-const d = n => { const x = new Date(); x.setDate(x.getDate() - n); return x.getFullYear() + "-" + String(x.getMonth() + 1).padStart(2, "0") + "-" + String(x.getDate()).padStart(2, "0"); };
+// Relogio fixo: todo teste de ponta a ponta roda como se fosse sexta, 20/11/2026, 10h (hora local), para o resultado nao depender do dia em que roda.
+// abrir({ agora: "2026-11-23T23:58:00" }) escolhe outro instante; na pagina, window.__relogio("2026-11-24T08:00:00") muda a hora com o app aberto.
+const AGORA = "2026-11-20T10:00:00";
+let agoraDoTeste = AGORA;
+const d = n => { const x = new Date(agoraDoTeste); x.setDate(x.getDate() - n); return x.getFullYear() + "-" + String(x.getMonth() + 1).padStart(2, "0") + "-" + String(x.getDate()).padStart(2, "0"); };
 const URL_APP = "file://" + path.join(__dirname, "..", "app", "index.html");
 // Perfil pronto para os testes que nao sao sobre o perfil. Formato v2 (ver app/nucleo.js).
 function estadoBase(extra) {
@@ -30,8 +34,15 @@ async function abrir(opcoes) {
   const { chromium } = require(a.pw);
   const b = await chromium.launch({ executablePath: a.exe });
   const p = await b.newPage({ viewport: { width: o.largura || 390, height: o.altura || 800 }, deviceScaleFactor: 2, colorScheme: o.escuro ? "dark" : "light" });
+  agoraDoTeste = o.agora || AGORA;
+  await p.addInitScript(fixo => {
+    const Real = Date; let desvio = new Real(fixo).getTime() - Real.now();
+    class Relogio extends Real { constructor(...a) { if (a.length === 0) super(Real.now() + desvio); else super(...a); } static now() { return Real.now() + desvio; } }
+    window.Date = Relogio;
+    window.__relogio = quando => { desvio = new Real(quando).getTime() - Real.now(); };
+  }, agoraDoTeste);
   const erros = []; p.on("pageerror", e => erros.push(String(e))); p.on("console", m => { if (m.type() === "error") erros.push(m.text()); });
-  p.on("dialog", x => x.accept());
+  p.on("dialog", x => { erros.push("diálogo do navegador (use confirmar/alerta da página): " + x.message()); x.accept(); });
   const semear = async estado => { await p.goto(URL_APP); await p.evaluate(x => localStorage.setItem(x[0], JSON.stringify(x[1])), [CHAVE, estado]); await p.goto(URL_APP + "#" + (o.aba || "hoje")); await p.reload(); };
   if (o.estado) await semear(o.estado); else await p.goto(URL_APP + (o.aba ? "#" + o.aba : ""));
   return {
@@ -46,6 +57,11 @@ async function abrir(opcoes) {
         .map(el => el.tagName.toLowerCase() + " \"" + (el.textContent || el.name || "").trim().slice(0, 30) + "\" " + Math.round(el.getBoundingClientRect().width) + "x" + Math.round(el.getBoundingClientRect().height)));
       ok(ruins.length === 0, "alvos de toque com 44 px ou mais em " + nome + (ruins.length ? ": " + ruins.slice(0, 6).join("; ") : ""));
     },
+    // Dialogo da pagina: sim() toca no botao de confirmar, nao() no de cancelar ou "Entendi"; textoDialogo() devolve a pergunta.
+    sim: async () => { await p.click("#dialogo [data-ac=dialogoSim]"); },
+    nao: async () => { await p.click("#dialogo [data-ac=dialogoNao]"); },
+    textoDialogo: async () => ((await p.locator("#dialogo").isVisible()) ? p.locator("#dialogo-texto").textContent() : null),
+    relogio: async quando => { await p.evaluate(q => window.__relogio(q), quando); agoraDoTeste = quando; },
     fechar: async () => { ok(erros.length === 0, "sem erros no console " + erros.join(" / ")); await b.close(); },
   };
 }

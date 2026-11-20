@@ -23,9 +23,8 @@ function relatorio() {
 }
 
 Object.assign(AC, {
-  ir(d) { if (d.sub) E.ui.diario = d.sub; if (location.hash === "#" + d.para) render(true); else location.hash = d.para; },
   diario(d) { E.ui.diario = d.v; salvar(); render(); },
-  apagar(d) { if (!confirm("Apagar este registro?")) return; E[d.lista] = E[d.lista].filter(x => x.id !== d.id); salvar(); render(); },
+  apagar(d) { confirmar("Apagar este registro?", function () { E[d.lista] = E[d.lista].filter(x => x.id !== d.id); salvar(); render(); }, "Apagar"); },
   compartilhar(d) { compartilhar(texto(d.de)); },
   copiar(d) { copiar(texto(d.de)); },
 });

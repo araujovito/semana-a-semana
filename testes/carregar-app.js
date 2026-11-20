@@ -8,12 +8,14 @@ module.exports = function (estado, opcoes) {
   const o = opcoes || {}, dir = path.join(__dirname, "..", "app");
   const html = fs.readFileSync(path.join(dir, "index.html"), "utf8");
   const arquivos = [...html.matchAll(/<script src="([^"]+)"/g)].map(m => m[1]).filter(n => n !== "inicio.js");
-  const guardado = {}; if (estado) guardado["semana-a-semana.v1"] = JSON.stringify(estado);
+  // opcoes: { Date: classe de relogio falso, guardado: objeto que faz as vezes do localStorage, falhaAoGravar: true }
+  const guardado = o.guardado || {}; if (estado) guardado["semana-a-semana.v1"] = JSON.stringify(estado);
   const avisos = [];
   const ctx = { console, Date: o.Date || Date, Math, JSON, Intl, setTimeout, clearTimeout,
-    localStorage: { getItem: k => (k in guardado ? guardado[k] : null), setItem: (k, v) => { guardado[k] = String(v); }, removeItem: k => { delete guardado[k]; } },
+    localStorage: { getItem: k => (k in guardado ? guardado[k] : null), setItem: (k, v) => { if (o.falhaAoGravar) throw new Error("sem espaço"); guardado[k] = String(v); }, removeItem: k => { delete guardado[k]; } },
     document: { getElementById: () => ({ set textContent(t) { avisos.push(t); }, hidden: true, value: "" }), querySelectorAll: () => [], addEventListener() {} },
-    navigator: {}, location: { hash: "" }, confirm: () => true, alert: () => {}, render: () => {} };
+    navigator: {}, location: { hash: "" }, confirm: () => true, alert: () => {}, render: () => {},
+    confirmar: (t, f) => { if (f) f(); }, alerta: () => {}, irPara: () => {}, abrirFolha: () => {}, fecharFolha: () => {}, folhaAberta: () => false };
   ctx.window = ctx; vm.createContext(ctx);
   for (const a of arquivos) vm.runInContext(fs.readFileSync(path.join(dir, a), "utf8"), ctx, { filename: a });
   return { v: codigo => vm.runInContext(codigo, ctx), guardado, avisos, arquivos };

@@ -17,6 +17,7 @@
   <h1 id="titulo">Semana a Semana</h1>
   <a href="#perfil" id="btn-perfil" aria-label="Perfil e metas">Perfil</a>
 </header>
+<div id="erro-salvar" hidden role="alert">Não foi possível salvar neste celular. O que você acabou de registrar pode não ter ficado guardado. <button class="mini" data-ac="tentarSalvar">Tentar de novo</button></div>
 <main id="tela"></main>
 <nav id="abas">
   <a href="#hoje" data-aba="hoje"><span class="ic">☀</span>Hoje</a>
@@ -26,7 +27,8 @@
   <a href="#guia" data-aba="guia"><span class="ic">📖</span>Guia</a>
 </nav>
 <div id="folha" hidden><div class="folha-corpo" role="dialog" aria-modal="true"></div></div>
-<div id="aviso" hidden></div>
+<div id="dialogo" hidden><div class="dialogo-corpo" role="alertdialog" aria-modal="true" aria-describedby="dialogo-texto"></div></div>
+<div id="aviso" hidden role="status"></div>
 <script src="alimentos.js"></script>
 <script src="cardapio.js"></script>
 <script src="conteudo.js"></script>
