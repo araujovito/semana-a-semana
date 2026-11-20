@@ -1,1 +1,18 @@
 /* Estilos de: diário: aplicações, caneta, peso e sintomas. O que é comum a todas as telas fica em estilo.css. */
+
+/* peso e sintomas: linha do histórico, com o texto à esquerda e os botões "editar" e "apagar" à direita (cabe em 320 px) */
+.reg { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 0; border-top: 1px solid var(--linha); font-size: 14px; }
+h2 + .reg { border-top: 0; }
+.reg .txt { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.reg .acoes { flex: none; display: flex; }
+.reg .x { background: none; color: var(--suave); font-weight: 400; padding: 0 8px; }
+.reg .x.ed { color: var(--cor); }
+
+/* peso: gráfico no tempo, com as marcas de troca de dose */
+svg.graf.tempo { height: auto; aspect-ratio: 320 / 180; }
+svg.graf line.marca { stroke: var(--suave); stroke-dasharray: 2 3; }
+svg.graf text.dose { fill: var(--texto); font-size: 10px; }
+
+/* peso: tabela e gráfico dentro de um bloco que abre e fecha */
+.cartao details table { margin-top: 4px; }
+.cartao details svg.graf { margin-top: 8px; }
