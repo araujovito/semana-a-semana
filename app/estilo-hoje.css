@@ -1,1 +1,35 @@
 /* Estilos de: tela Hoje e registro do que comeu. O que é comum a todas as telas fica em estilo.css. */
+
+/* Barra de dias: anterior, data, seguinte. */
+.dias-nav { display: flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+.dias-nav button { flex: none; padding: 8px 10px; font-size: 14px; background: var(--cartao); }
+.dias-nav button:disabled { opacity: .35; cursor: default; }
+.dia-rotulo { flex: 1; min-width: 0; text-align: center; line-height: 1.2; }
+.dia-rotulo strong { font-size: 17px; }
+.faixa-dia { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; border: 2px solid var(--cor); }
+.faixa-dia > div { flex: 1 1 160px; }
+
+/* Aviso neutro (comer pouco): mesma cor dos outros cartões, só uma borda mais firme. Sem cor de alerta. */
+.aviso-pouco { border: 2px solid var(--suave); }
+.aviso-pouco p { margin: 0 0 6px; }
+
+/* Cartão do topo. */
+.grande small { font-size: 14px; font-weight: 600; }
+.agua-dia { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--linha); }
+.abre-micro { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; margin-top: 12px; text-align: left; font-weight: 600; }
+
+/* Refeição com as quatro opções de um toque. A caixa de marcar fica escondida dentro do rótulo, que é o botão.
+   "nada" tem a mesma cor das outras: é um registro como os demais. */
+.refeicao .marca { text-transform: none; letter-spacing: 0; }
+.opcoes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 8px; }
+label.opcao { position: relative; display: flex; align-items: center; justify-content: center; min-height: 52px; margin: 0; padding: 4px;
+  border: 1px solid var(--cor); border-radius: 10px; background: transparent; color: var(--cor);
+  font-size: 15px; font-weight: 600; line-height: 1.2; text-align: center; cursor: pointer; -webkit-user-select: none; user-select: none; }
+label.opcao input[type=checkbox] { position: absolute; width: 1px; height: 1px; margin: 0; opacity: 0; pointer-events: none; }
+label.opcao.ativa { background: var(--cor); color: var(--sobre-cor); }
+label.opcao:focus-within { outline: 2px solid var(--texto); outline-offset: 2px; }
+.contou { margin-top: 6px; }
+@media (max-width: 359px) {
+  .opcoes { grid-template-columns: 1fr 1fr; }
+  label.opcao { min-height: 48px; }
+}
