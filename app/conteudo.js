@@ -57,7 +57,7 @@ window.GUIA = [
   "Início com 2,5 mg uma vez por semana, por 4 semanas. Essa dose serve para o corpo se acostumar.",
   "Depois o médico pode subir de 2,5 em 2,5 mg, com pelo menos 4 semanas em cada dose: 5, 7,5, 10, 12,5 e no máximo 15 mg.",
   "Não há obrigação de chegar a 15 mg. Quem decide se sobe, mantém ou reduz é o médico, olhando resultado e efeitos colaterais.",
-  "O diário deste app mostra há quantas semanas ela está na dose atual, para levar à consulta.",
+  "O diário deste app mostra há quantas semanas você está na dose atual, para levar à consulta.",
  ]},
  { titulo: "Aplicação", corpo: [
   "Uma vez por semana, sempre no mesmo dia, em qualquer horário, com ou sem comida.",
@@ -72,7 +72,7 @@ window.GUIA = [
  ]},
  { titulo: "Como guardar", corpo: [
   "Na geladeira, entre 2 °C e 8 °C, dentro da embalagem original (protege da luz). Não congelar; se congelou, não usar.",
-  "Fora da geladeira, abaixo de 30 °C, o prazo citado nas bulas é de até 21 dias no total. Confira a bula da apresentação que ela comprou, porque o prazo depois do primeiro uso pode ser diferente.",
+  "Fora da geladeira, abaixo de 30 °C, o prazo citado nas bulas é de até 21 dias no total. Confira a bula da apresentação que você comprou, porque o prazo depois do primeiro uso pode ser diferente.",
   "Em viagem: bolsa térmica, sem encostar a caneta direto no gelo.",
  ]},
  { titulo: "Enjoo", corpo: [
