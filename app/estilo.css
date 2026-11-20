@@ -11,6 +11,8 @@
   }
 }
 * { box-sizing: border-box; }
+/* Sem isto, um display definido mais abaixo (como o da barra de abas) vence o atributo hidden. */
+[hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--fundo); color: var(--texto); font: 16px/1.45 system-ui, -apple-system, Roboto, sans-serif; }
 #topo { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between;
