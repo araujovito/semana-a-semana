@@ -19,9 +19,9 @@ window.CARDAPIO = {
   { nome: "Quarta", refeicoes: [
    { tipo: "Café da manhã", titulo: "Cuscuz com ovos e queijo", preparo: "Cuscuz no vapor, ovos mexidos ou cozidos, queijo por cima.", itens: [["cuscuz",80],["ovo",100],["queijo_minas",30]] },
    { tipo: "Lanche da manhã", titulo: "Goiaba e queijo minas", preparo: "Goiaba com casca, bem lavada. Meia goiaba cobre a vitamina C do dia.", itens: [["goiaba",85],["queijo_minas",30]] },
-   { tipo: "Almoço", titulo: "Tilápia grelhada, batata, brócolis e salada", preparo: "Peixe grelhado ou assado com limão. Batata cozida, sem fritura.", itens: [["tilapia",130],["batata",120],["brocolis",75],["cenoura_coz",50],["alface",30],["azeite",8]] },
+   { tipo: "Almoço", titulo: "Tilápia grelhada, batata, brócolis e salada", preparo: "Peixe grelhado ou assado com limão. Batata cozida, sem fritura.", itens: [["tilapia",130],["batata",160],["brocolis",75],["cenoura_coz",50],["alface",30],["azeite",8]] },
    { tipo: "Lanche da tarde", titulo: "Iogurte com mamão e linhaça", preparo: "Mamão e linhaça ajudam o intestino, que tende a ficar preso.", itens: [["iogurte",170],["mamao",100],["linhaca",10]] },
-   { tipo: "Jantar", titulo: "Lentilha com carne moída e abobrinha", preparo: "Refogue a carne moída, junte a lentilha cozida e a abobrinha em cubos.", itens: [["lentilha",120],["carne_moida",80],["abobrinha",90],["arroz_integral",50]] },
+   { tipo: "Jantar", titulo: "Lentilha com carne moída e abobrinha", preparo: "Refogue a carne moída, junte a lentilha cozida e a abobrinha em cubos.", itens: [["lentilha",120],["carne_moida",80],["abobrinha",90],["arroz_integral",75]] },
   ]},
   { nome: "Quinta", refeicoes: [
    { tipo: "Café da manhã", titulo: "Pão integral com ricota e tomate, laranja", preparo: "Ricota amassada com sal, orégano e um fio de azeite.", itens: [["pao_integral",50],["ricota",70],["tomate",40],["laranja",130]] },
