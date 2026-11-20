@@ -1,50 +1,11 @@
-// Teste de fluxo no navegador sem janela. Uso: node testes/fluxo.js <caminho do playwright-core> <executavel do chromium> [pasta de capturas]
-const path = require("path");
-const { chromium } = require(process.argv[2]);
-const saida = process.argv[4];
-const ok = (c, m) => { if (!c) { console.log("FALHOU: " + m); process.exitCode = 1; } else console.log("ok: " + m); };
-(async () => {
-  const b = await chromium.launch({ executablePath: process.argv[3] });
-  const p = await b.newPage({ viewport: { width: 390, height: 800 }, deviceScaleFactor: 2 });
-  const erros = []; p.on("pageerror", e => erros.push(String(e))); p.on("console", m => { if (m.type() === "error") erros.push(m.text()); });
-  p.on("dialog", d => d.accept());
-  const foto = async n => { if (saida) await p.screenshot({ path: path.join(saida, n + ".png"), fullPage: true }); };
-  await p.goto("file://" + path.join(__dirname, "..", "app", "index.html"));
-  ok(await p.locator("form[data-form=perfil]").count() === 1, "primeira abertura cai no perfil");
-  await p.fill("[name=nome]", "Teste"); await p.fill("[name=nascimento]", "1990"); await p.fill("[name=altura]", "163"); await p.fill("[name=peso]", "95,4");
-  await p.click("form[data-form=perfil] button");
-  await p.waitForSelector("text=Proteína hoje");
-  ok(true, "perfil salvo leva para Hoje"); await foto("1-hoje-vazio");
-  const metas = await p.evaluate(() => JSON.parse(localStorage.getItem("semana-a-semana.v1")).perfil);
-  ok(metas.peso === 95.4, "peso com vírgula é lido como 95,4");
-  await p.click("[data-ac=agua][data-ml='200']"); await p.click("[data-ac=agua][data-ml='500']");
-  await p.locator("[data-mud=refeicao]").nth(0).check(); await p.locator("[data-mud=refeicao]").nth(2).check();
-  const prot = await p.evaluate(() => document.querySelector(".grande").textContent);
-  ok(/\d+ g/.test(prot) && parseInt(prot) > 30, "proteína soma com refeições marcadas: " + prot);
-  await p.click("[data-ac=treino]"); await p.click("[data-ac=caminhada][data-min='10']");
-  await p.click("#abas a[data-aba=plano]"); await p.waitForSelector("text=Metas diárias"); await foto("2-plano");
-  ok(await p.locator(".refeicao").count() === 5, "plano mostra 5 refeições");
-  await p.click("[data-ac=diaPlano][data-i='7']"); ok(await p.locator("text=Canja").count() > 0, "dia de enjoo abre");
-  await p.locator("summary", { hasText: "Proteínas" }).click(); await foto("3-plano-enjoo");
-  await p.click("#abas a[data-aba=diario]"); await p.waitForSelector("form[data-form=dose]");
-  const d = n => { const x = new Date(); x.setDate(x.getDate() - n); return x.getFullYear() + "-" + String(x.getMonth() + 1).padStart(2, "0") + "-" + String(x.getDate()).padStart(2, "0"); };
-  for (const n of [28, 21, 14, 7]) { await p.fill("form[data-form=dose] [name=data]", d(n)); await p.click("form[data-form=dose] button"); }
-  ok(await p.locator("table tr").count() === 5, "4 aplicações no histórico");
-  const locais = await p.evaluate(() => JSON.parse(localStorage.getItem("semana-a-semana.v1")).doses.map(x => x.local));
-  ok(new Set(locais).size === 4, "local sugerido roda a cada aplicação: " + locais.join(" | "));
-  await p.click("[data-ac=diario][data-v=peso]");
-  for (const [n, kg] of [[21, "94"], [14, "93,1"], [7, "92,2"], [0, "91,5"]]) { await p.fill("[name=data]", d(n)); await p.fill("[name=kg]", kg); await p.fill("[name=cintura]", "100"); await p.click("form[data-form=peso] button"); }
-  ok(await p.locator("svg.graf circle").count() === 5, "gráfico de peso com 5 pontos"); await foto("4-peso");
-  await p.click("[data-ac=diario][data-v=sintomas]"); await p.selectOption("[name=enjoo]", "2"); await p.check("[name=refluxo]"); await p.fill("[name=nota]", "pior no dia seguinte"); await p.click("form[data-form=sintoma] button");
-  await p.click("[data-ac=diario][data-v=relatorio]"); const rel = await p.inputValue("#rel"); console.log("-----\n" + rel + "\n-----");
-  ok(/Semana 5/.test(rel) && /91,5 kg/.test(rel) && /Treinos de força: 1/.test(rel), "relatório traz dose, peso e treino");
-  await p.click("#abas a[data-aba=hoje]"); await p.waitForSelector("text=Próxima aplicação"); await foto("5-hoje");
-  ok(await p.locator("text=Próxima aplicação").count() === 1, "Hoje mostra a próxima aplicação");
-  await p.click("#abas a[data-aba=treino]"); await p.waitForSelector("text=Treino A"); await p.click("[data-ac=local][data-v=academia]"); ok(await p.locator("text=Leg press").count() > 0, "treino de academia abre"); await foto("6-treino");
-  await p.click("#abas a[data-aba=guia]"); await p.waitForSelector("text=Como o remédio age"); ok(await p.locator("details").count() >= 15, "guia com os artigos"); await foto("7-guia");
-  await p.click("#btn-perfil"); await p.waitForSelector("text=Como as metas são calculadas"); await foto("8-perfil");
-  const largura = await p.evaluate(() => document.documentElement.scrollWidth); ok(largura <= 390, "sem rolagem horizontal (" + largura + "px)");
-  await p.reload(); ok(await p.locator("form[data-form=perfil] [name=altura]").inputValue() === "163", "dados persistem depois de recarregar");
-  ok(erros.length === 0, "sem erros no console " + erros.join(" / "));
-  await b.close();
-})();
+// Roda todos os testes de ponta a ponta (testes/fluxo-*.js), um de cada vez. Uso igual ao de sempre:
+//   node testes/fluxo.js <caminho do playwright-core> <executavel do chromium> [pasta de capturas]
+const fs = require("fs"), path = require("path"), { spawnSync } = require("child_process");
+let falhas = 0;
+for (const f of fs.readdirSync(__dirname).filter(n => /^fluxo-.*\.js$/.test(n)).sort()) {
+  console.log("== " + f);
+  const r = spawnSync(process.execPath, [path.join(__dirname, f)].concat(process.argv.slice(2)), { stdio: "inherit" });
+  if (r.status !== 0) { falhas++; console.log("FALHOU: " + f + " terminou com erro"); }
+}
+console.log(falhas ? "PONTA A PONTA: " + falhas + " arquivo(s) com falha" : "PONTA A PONTA: tudo verde");
+process.exit(falhas ? 1 : 0);
