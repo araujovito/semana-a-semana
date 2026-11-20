@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="nome">Semana a Semana</string>
+    <!-- Título do evento que o botão "Pôr no calendário" propõe. Discreto de propósito: o calendário aparece em outros aparelhos e na tela bloqueada. -->
+    <string name="evento_aplicacao">Semana a Semana: aplicação</string>
     <color name="cor">#0f766e</color>
+    <!-- As três cores abaixo têm versão escura em values-night/valores.xml e acompanham as de app/estilo.css. -->
     <color name="fundo">#f4f6f5</color>
+    <color name="barra_status">#0f766e</color>
+    <color name="barra_navegacao">#ffffff</color>
+    <bool name="barra_navegacao_clara">true</bool>
     <style name="Tema" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/cor</item>
-        <item name="android:navigationBarColor">@color/cor</item>
+        <item name="android:statusBarColor">@color/barra_status</item>
+        <item name="android:navigationBarColor">@color/barra_navegacao</item>
+        <item name="android:windowLightNavigationBar">@bool/barra_navegacao_clara</item>
         <item name="android:windowBackground">@color/fundo</item>
         <item name="android:colorAccent">@color/cor</item>
     </style>

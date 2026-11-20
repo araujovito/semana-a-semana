@@ -1,1 +1,6 @@
-/* Estilos de: lembretes e cópia de segurança. O que é comum a todas as telas fica em estilo.css. */
+/* Estilos de: calendário e cópia de segurança. O que é comum a todas as telas fica em estilo.css. */
+
+/* PROVISÓRIO (o definitivo é de estilo.css): com o teclado aberto a barra de abas some e a tela ganha o espaço dela. Ver ligarTeclado() em aparelho.js. */
+body.teclado #abas { display: none; }
+body.teclado main { padding-bottom: 12px; }
+body.teclado #aviso { bottom: 12px; }

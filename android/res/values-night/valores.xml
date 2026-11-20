@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Modo escuro do sistema. O tema escuro também é o que faz a WebView usar o CSS escuro (prefers-color-scheme). -->
+<resources>
+    <color name="fundo">#101514</color>
+    <color name="barra_status">#101514</color>
+    <color name="barra_navegacao">#1a2220</color>
+    <bool name="barra_navegacao_clara">false</bool>
+    <style name="Tema" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@color/barra_status</item>
+        <item name="android:navigationBarColor">@color/barra_navegacao</item>
+        <item name="android:windowLightNavigationBar">@bool/barra_navegacao_clara</item>
+        <item name="android:windowBackground">@color/fundo</item>
+        <item name="android:colorAccent">@color/cor</item>
+    </style>
+</resources>
