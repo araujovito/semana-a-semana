@@ -4,8 +4,8 @@
 /* Frase sobre a escala das porções (dois fatores: ver calcularEscala em nutricao.js). */
 function fraseEscala(m) {
   const d = m.discreto, dif = (v, meta) => Math.abs(v / meta - 1) > ESCALA.tolerancia;
-  let t = "O cardápio multiplica carnes, ovos e peixes por " + fmt(m.fatorProt, 2) + (d ? "" : ", para chegar à sua proteína,") + " e arroz, pães, feijões, azeite e castanhas por " + fmt(m.fatorEnergia, 2) +
-    (d ? "" : ", para completar a sua energia") + ". Verduras, frutas e laticínios ficam na porção de base. Ovo, pão francês e frutas vêm em unidades inteiras ou meias.";
+  let t = "O cardápio multiplica carnes, ovos e peixes por " + fmt(m.fatorProt, 2) + (d ? "" : ", para chegar à sua proteína,") + " e arroz, pães e feijões por " + fmt(m.fatorEnergia, 2) +
+    (d ? "" : ", para completar a sua energia") + ". Azeite e castanhas têm limite por refeição (até 10 g de azeite e cerca de 15 g de gordura no prato), e nenhuma refeição passa de cerca de 500 kcal: o que sobra vai para os lanches. Verduras, frutas e laticínios ficam na porção de base. Ovo, pão francês e frutas vêm em unidades inteiras ou meias.";
   if (!d && m.fatorDias.some(f => f > m.fatorEnergia)) t += " Nos dias mais leves, arroz, pães e feijões sobem um pouco para o dia não ficar abaixo de " + fmt(m.pisoDia) + " kcal.";
   if (m.escalaNoLimite) {
     const partes = [];
