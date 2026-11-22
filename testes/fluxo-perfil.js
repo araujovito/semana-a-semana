@@ -37,6 +37,7 @@ const { abrir, ok, d, CHAVE } = require("./apoio");
   await p.waitForSelector("text=Proteína hoje");
   ok(toques <= 9, "primeiro uso até a Hoje em " + toques + " toques (meta: 9 ou menos)");
   ok(await p.locator("[data-aviso=vesicula]").count() === 1, "primeiro uso com vesícula Sim: a Hoje já mostra o cartão da vesícula");
+  ok(await p.locator("[data-cartao=pu-novas]").count() === 0, "primeiro uso: a faixa de perguntas novas não aparece para quem acabou de responder");
   const e0 = await t.ler();
   ok(e0.perfil.vesicula === true && e0.perfil.aguardaCirurgia === true && e0.perfil.figado === null && e0.ui.planoNutri === true && e0.ui.puPerguntas === true,
     "primeiro uso: Sim grava true, Não sei grava sem resposta, plano da nutricionista ligado e perguntas marcadas como respondidas");
@@ -72,5 +73,27 @@ const { abrir, ok, d, CHAVE } = require("./apoio");
   ok(e.dias[d(0)].agua === 600 && e.dias[d(0)].protExtra === 10 && e.dias[d(0)].caminhada === 20 && e.dias[d(0)].comido[0].q === 1 && e.dias[d(0)].comido[1] === null, "versão 1: registro do dia preservado");
   ok(Array.isArray(e.perfil.naoCome) && e.perfil.pilula === null, "versão 1: perguntas novas do perfil começam sem resposta");
 
+  // Auditoria 3, I7: quem já tinha perfil e nunca respondeu vesícula, fígado e plano da nutricionista vê uma faixa em Hoje.
+  ok(await p.locator("[data-cartao=pu-novas]").count() === 1 && /três perguntas/.test(await p.locator("[data-cartao=pu-novas]").innerText()), "perfil antigo: faixa das perguntas novas em Hoje");
+  await t.alvosDeToque("hoje com a faixa das perguntas novas");
+  await p.click("[data-ac=puResponder]"); await p.waitForSelector("form[data-form=perfil]");
+  ok(await p.locator("[data-pu=pendente]").count() === 1 && await p.locator(resp("vesicula", "sim")).isVisible(), "responder agora: abre o Perfil com as perguntas no topo");
+  ok(typeof (await t.ler()).ui.puAviso === "string", "responder agora: a faixa não volta mais");
+  await p.click(resp("vesicula", "nao")); await p.click(resp("figado", "sim")); await p.click(resp("planoNutri", "nao"));
+  await p.click("form[data-form=perfil] button:has-text('Salvar')");
+  const e2 = await t.ler();
+  ok(e2.perfil.vesicula === false && e2.perfil.figado === true && e2.ui.planoNutri === false && e2.ui.puPerguntas === true && e2.perfil.metaKcal === 1500 && e2.perfil.nome === "Antiga",
+    "perfil antigo: respostas gravadas, plano da nutricionista desligado, o resto do perfil intacto");
+  ok(await p.locator("[data-pu=pendente]").count() === 0, "respondidas: o Perfil não chama mais de perguntas novas");
+  await p.click("#abas a[data-aba=hoje]"); await p.waitForSelector("text=Proteína hoje");
+  ok(await p.locator("[data-cartao=pu-novas]").count() === 0, "respondidas: sem faixa em Hoje");
+  // "Agora não" também tira a faixa, e as perguntas continuam no Perfil.
+  await t.semear(v1); await p.waitForSelector("[data-cartao=pu-novas]");
+  await p.click("[data-ac=puDepois]");
+  ok(await p.locator("[data-cartao=pu-novas]").count() === 0, "agora não: a faixa some");
+  await p.reload(); await p.waitForSelector("text=Proteína hoje");
+  ok(await p.locator("[data-cartao=pu-novas]").count() === 0, "agora não: a faixa não volta ao abrir de novo");
+  await p.click("#btn-perfil"); await p.waitForSelector("form[data-form=perfil]");
+  ok(await p.locator("[data-pu=pendente]").count() === 1, "agora não: o Perfil continua mostrando as perguntas como novas");
   await t.fechar();
 })();

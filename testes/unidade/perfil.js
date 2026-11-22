@@ -63,6 +63,7 @@ test("primeiro uso: sem as três respostas não grava; com elas grava e o resto 
     [true, null, true, "F", 1.2, null, null, null, null, false, 0, 110]);
   assert.strictEqual(a.v("E.ui.planoNutri"), false, "Não desliga o plano da nutricionista");
   assert.strictEqual(a.v("E.ui.puPerguntas"), true);
+  assert.strictEqual(a.v("puFaltaResponder()"), false);
 });
 test("primeiro uso: menor de 18 anos continua recusado, mesmo com as respostas", () => {
   const a = carregar();
@@ -75,4 +76,20 @@ test("plano da nutricionista: Sim liga, Não desliga, Não sei deixa como está"
   a.v(form({ planoNutri: "nao" })); assert.strictEqual(a.v("E.ui.planoNutri"), false);
   a.v(form({ planoNutri: "naosei" })); assert.strictEqual(a.v("E.ui.planoNutri"), false);
   a.v(form({ planoNutri: "sim" })); assert.strictEqual(a.v("pnEmUso()"), true);
+});
+test("auditoria 3, I7: perfil antigo sem as respostas recebe a faixa uma vez; responder ou dispensar tira", () => {
+  const antigo = { v: 2, perfil: { nome: "", sexo: "F", nascimento: 1980, altura: 160, peso: 100, atividade: 1.2 }, ui: {} };
+  let a = carregar(antigo);
+  assert.strictEqual(a.v("puFaltaResponder()"), true);
+  assert.match(a.v("puFaixaHoje()"), /data-cartao="pu-novas"/);
+  a.v("AC.puDepois()");
+  assert.strictEqual(a.v("puFaixaHoje()"), "", "agora não: a faixa some");
+  assert.strictEqual(a.v("puFaltaResponder()"), true, "as perguntas continuam pendentes no Perfil");
+  // respondeu vesícula e fígado numa versão anterior, mas não o plano da nutricionista: ainda pergunta
+  a = carregar(Object.assign({}, antigo, { perfil: Object.assign({}, antigo.perfil, { vesicula: false, figado: true }) }));
+  assert.strictEqual(a.v("puFaltaResponder()"), true);
+  // salvar o Perfil com as três respostas encerra a pendência, mesmo com "Não sei"
+  a.v(form({ vesicula: "naosei", figado: "naosei", planoNutri: "naosei" }));
+  assert.strictEqual(a.v("puFaltaResponder()"), false);
+  assert.strictEqual(a.v("puFaixaHoje()"), "");
 });

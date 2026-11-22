@@ -133,6 +133,21 @@ function puPerguntas(p) {
     puPergunta("planoNutri", "Segue um plano de uma nutricionista?", nutri) +
     '<p class="sub" style="margin:6px 0 0">Com Sim, a tela Hoje mostra as refeições do plano dela. Dá para mudar depois na aba Comer.</p>';
 }
+/* Faltou responder alguma das três e ela ainda não passou por elas (perfil de versão anterior): auditoria 3, I7. */
+function puFaltaResponder() {
+  const p = E.perfil, ui = E.ui || {};
+  return !!p && !ui.puPerguntas && (p.vesicula == null || p.figado == null || ui.planoNutri === undefined);
+}
+/* Faixa no topo de Hoje para quem já tinha perfil: aparece até ela tocar em "Responder agora" ou "Agora não" (E.ui.puAviso).
+   Fica fora de hoje.js (a tela está sendo reorganizada): é acrescentada por cima de telaHoje, como aparelho.js faz no Perfil. */
+function puFaixaHoje() {
+  if (!puFaltaResponder() || (E.ui && E.ui.puAviso)) return "";
+  return '<div class="cartao destaque" data-cartao="pu-novas"><p style="margin:0">O app ganhou três perguntas: pedra na vesícula, gordura no fígado e plano da nutricionista. Com elas, ele mostra os avisos que valem para você.</p>' +
+    '<div class="botoes"><button data-ac="puResponder">Responder agora</button><button class="sec" data-ac="puDepois">Agora não</button></div></div>';
+}
+const puTelaHoje = telaHoje;
+telaHoje = function () { return puFaixaHoje() + puTelaHoje(); };
+
 /* Primeiro uso: ano, altura, peso e as três perguntas. O resto do perfil começa com valores neutros (sexo feminino, atividade
    sedentária, sem metas do médico, sem restrições, diabetes, pílula e gravidez sem resposta) e fica para "Completar depois". */
 function telaPrimeiroUso() {
@@ -156,6 +171,7 @@ function telaPerfil() {
   const naoCome = p.naoCome || [], saude = ["gestante", "diabetes", "pilula"], respondidas = saude.filter(k => p[k] === true || p[k] === false).length;
   let out = avisosDoPerfil();
   out += '<form class="cartao" data-form="perfil"><div id="pu-perguntas"><h2>Vesícula, fígado e nutricionista</h2>' +
+    (puFaltaResponder() ? '<p class="sub" style="margin:0" data-pu="pendente">Perguntas novas. Com elas, o app mostra os avisos que valem para você. Depois de responder, toque em Salvar.</p>' : "") +
     puPerguntas(p) + "</div>" +
     '<h2 style="margin-top:18px">Dados</h2><label>Nome (opcional)<input name="nome" value="' + v("nome") + '" maxlength="40"></label>' +
     '<div class="duas"><label>Ano de nascimento<input name="nascimento" inputmode="numeric" value="' + v("nascimento") + '" required></label>' +
@@ -235,6 +251,9 @@ function filtrarNaoGosta(v) {
 
 Object.assign(AC, {
   entradaContinuar() { E.ui.entradaVista = true; salvar(); render(true); },
+  /* Faixa das perguntas novas (puFaixaHoje): qualquer dos dois botões a tira de Hoje para sempre; as perguntas continuam no Perfil. */
+  puResponder() { E.ui.puAviso = hoje(); salvar(); irPara("perfil"); },
+  puDepois() { E.ui.puAviso = hoje(); salvar(); aviso("As perguntas ficam no Perfil, no topo."); render(); },
   abrirNaoGosta() { abrirFolha("Alimentos de que você não gosta", folhaNaoGosta()); },
   /* Não redesenha a tela: só o resumo muda (em MUD.naoGosta), para não apagar o que estiver digitado no formulário. */
   fecharNaoGosta() { fecharFolha(); },
