@@ -115,8 +115,12 @@ function semear() {
   // escuro: usa as cores do tema
   t = await abrir({ estado: semear(), aba: "painel", escuro: true, largura: 360 }); p = t.p;
   await p.waitForSelector(".painel-hoje");
-  const cor = await p.evaluate(() => [getComputedStyle(document.querySelector(".painel-hoje")).backgroundColor, getComputedStyle(document.querySelector("svg[data-graf=prot] rect.coluna")).fill]);
-  ok(cor[0] === "rgb(26, 34, 32)" && cor[1] === "rgb(45, 212, 191)", "tema escuro nas cores de estilo.css (" + cor.join(", ") + ")");
+  // Compara com as variáveis do bloco de cores de estilo.css (escuro), sem fixar o valor: a paleta pode mudar só ali.
+  const cor = await p.evaluate(() => {
+    const tok = v => { const x = document.createElement("i"); x.style.color = "var(" + v + ")"; document.body.appendChild(x); const c = getComputedStyle(x).color; x.remove(); return c; };
+    return [getComputedStyle(document.querySelector(".painel-hoje")).backgroundColor, getComputedStyle(document.querySelector("svg[data-graf=prot] rect.coluna")).fill, tok("--cartao"), tok("--cor"), matchMedia("(prefers-color-scheme: dark)").matches];
+  });
+  ok(cor[4] && cor[0] === cor[2] && cor[1] === cor[3], "tema escuro nas cores de estilo.css (" + cor.slice(0, 2).join(", ") + ")");
   await t.semRolagem("painel escuro 360 px");
   await t.foto("painel-3-escuro");
   await t.fechar();

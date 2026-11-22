@@ -8,6 +8,6 @@
 .grupo-marcas h3 { margin: 14px 0 0; font-size: 14px; color: var(--suave); }
 
 /* Plano: item trocado por causa do que você não come. */
-.marca-troca { display: inline-block; font-size: 12px; font-weight: 500; color: var(--cor); border: 1px solid var(--cor); border-radius: 999px; padding: 0 8px; margin-left: 4px; white-space: nowrap; }
-.refeicao .troca { font-size: 13px; color: var(--suave); }
+.marca-troca { display: inline-block; font-size: 14px; font-weight: 500; color: var(--cor); border: 1px solid var(--cor); border-radius: 999px; padding: 0 8px; margin-left: 4px; white-space: nowrap; }
+.refeicao .troca { font-size: 15px; color: var(--suave); }
 .refeicao li.fora { color: var(--suave); }

@@ -10,6 +10,7 @@ const ARQUIVOS = [
   "alimentos.js", "cardapio.js", "caminhos.js", "conteudo.js", "nucleo.js", "nutricao.js", "consumo.js", "planonutri.js", "tratamento.js", "caneta.js", "peso.js",
   "sintomas.js", "saude.js", "hoje.js", "plano.js", "compras.js", "treino.js", "diario.js", "guia.js", "perfil.js", "aparelho.js",
   "painel.js", "pwa.js", "semana.js", "caminhostela.js", "inicio.js",
+  "fontes/zilla-slab-latin-400-normal.woff2", "fontes/zilla-slab-latin-500-normal.woff2", "fontes/zilla-slab-latin-600-normal.woff2", "fontes/zilla-slab-latin-700-normal.woff2", // vêm do CSS, não do index.html
 ];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => {

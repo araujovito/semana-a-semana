@@ -61,8 +61,9 @@ function seisSemanas(discreto) {
   ok(!(await p.locator(".semana-atual details.semana-peso p").isVisible()), "discreto: o peso fica escondido");
   await p.click(".semana-atual details.semana-peso summary");
   ok(/116,4 kg/.test(await p.locator(".semana-atual details.semana-peso").innerText()), "discreto: um toque em Ver peso mostra o número");
-  const fundo = await p.evaluate(() => getComputedStyle(document.body).backgroundColor);
-  ok(fundo === "rgb(16, 21, 20)", "modo escuro usa as cores do app (" + fundo + ")");
+  const fundo = await p.evaluate(() => { const x = document.createElement("i"); x.style.color = "var(--fundo)"; document.body.appendChild(x); const c = getComputedStyle(x).color; x.remove();
+    return [getComputedStyle(document.body).backgroundColor, c, matchMedia("(prefers-color-scheme: dark)").matches, getComputedStyle(document.body).backgroundColor !== "rgb(246, 245, 251)"]; });
+  ok(fundo[2] && fundo[0] === fundo[1] && fundo[3], "modo escuro usa as cores do app (" + fundo[0] + ")");
   await t.semRolagem("semana escuro"); await t.alvosDeToque("semana escuro"); await t.foto("semana-3-escuro-discreto");
   await t.fechar();
 
