@@ -43,7 +43,7 @@ function cartaoComerPouco(motivo) {
 }
 
 function telaHoje() {
-  const h = hoje(), d = dataSel(), eHoje = d === h, m = metas(), r = dia(d), card = planoDaData(d), c = consumoDoDia(d), regs = registrosDoDia(r);
+  const h = hoje(), d = dataSel(), eHoje = d === h, m = metas(), r = dia(d), card = pnPlanoDaData(d), c = consumoDoDia(d), regs = registrosDoDia(r, d), ref = pnReferenciaDoDia(m);
   const quando = eHoje ? "hoje" : "no dia", atras = entre(d, h), discreto = semCalorias(), marca = ' data-dia="' + d + '"';
   let out = "";
 
@@ -61,8 +61,8 @@ function telaHoje() {
   }
 
   out += '<div class="cartao"><div class="' + (discreto ? "" : "duas") + '">' +
-    '<div><div class="sub">Proteína ' + quando + '</div><div class="grande" data-v="prot">' + fmt(c.total.prot) + ' <small>g</small></div><div class="sub">meta ' + m.prot + ' g</div><div class="barra ' + (c.total.prot >= m.prot ? "ok" : "") + '"><i style="width:' + pctBarra(c.total.prot, m.prot) + '%"></i></div></div>' +
-    (discreto ? "" : '<div><div class="sub">Energia ' + quando + '</div><div class="grande" data-v="kcal">' + fmt(c.total.kcal) + ' <small>kcal</small></div><div class="sub">meta ' + fmt(m.kcal) + ' kcal</div><div class="barra"><i style="width:' + pctBarra(c.total.kcal, m.kcal) + '%"></i></div></div>') + "</div>" +
+    '<div><div class="sub">Proteína ' + quando + '</div><div class="grande" data-v="prot">' + fmt(c.total.prot) + ' <small>g</small></div><div class="sub">' + ref.rotProt + '</div><div class="barra ' + (c.total.prot >= ref.prot ? "ok" : "") + '"><i style="width:' + pctBarra(c.total.prot, ref.prot) + '%"></i></div></div>' +
+    (discreto ? "" : '<div><div class="sub">Energia ' + quando + '</div><div class="grande" data-v="kcal">' + fmt(c.total.kcal) + ' <small>kcal</small></div><div class="sub">' + ref.rotKcal + '</div><div class="barra"><i style="width:' + pctBarra(c.total.kcal, ref.kcal) + '%"></i></div></div>') + "</div>" +
     '<p class="sub" style="margin:8px 0 0">Soma do que você marcou nas refeições abaixo' + (c.protExtra > 0 ? ", mais " + fmt(c.protExtra) + " g de proteína fora do plano" : "") + ".</p>" +
     '<div class="botoes"><button class="mini sec" data-ac="prot" data-g="10"' + marca + ">+ 10 g de proteína fora do plano</button>" + (c.protExtra > 0 ? '<button class="mini sec" data-ac="prot" data-g="-10"' + marca + ">− 10 g</button>" : "") + "</div>" +
     '<div class="agua-dia"><div class="linha"><span class="sub">Água ' + quando + '</span><span><strong data-v="agua">' + fmt(r.agua / 1000, 1) + ' L</strong> <span class="sub">de ' + fmt(m.agua / 1000, 1) + ' L</span></span></div>' +
@@ -76,7 +76,7 @@ function telaHoje() {
   }
   out += "</div>";
 
-  out += '<div class="cartao"><div class="linha"><h2 style="margin:0">Refeições de ' + (r.enjoo ? (eHoje ? "hoje" : "um dia") + " de enjoo" : esc(String(card.nome).toLowerCase())) + '</h2><button class="mini sec" data-ac="enjoo"' + marca + ">" + (r.enjoo ? "Voltar ao normal" : "Dia de enjoo") + "</button></div>";
+  out += '<div class="cartao"><div class="linha"><h2 style="margin:0">' + (card.nutri ? "Plano da sua nutricionista" : "Refeições de " + (r.enjoo ? (eHoje ? "hoje" : "um dia") + " de enjoo" : esc(String(card.nome).toLowerCase()))) + '</h2><button class="mini sec" data-ac="enjoo"' + marca + ">" + (r.enjoo ? "Voltar ao normal" : "Dia de enjoo") + "</button></div>";
   card.refeicoes.forEach((ref, i) => { out += blocoRefeicao(ref, i, regs[i], d); });
   out += '<div class="botoes"><button class="mini sec" data-ac="ir" data-para="plano">Ver porções e nutrientes</button></div></div>';
 
@@ -99,7 +99,7 @@ function telaHoje() {
 function blocoRefeicao(ref, i, reg, d) {
   const q = reg ? Number(reg.q) || 0 : null, inteira = somarItens(porcaoDoRegistro(q > 0 ? reg : null, ref.itens));
   let out = '<div class="refeicao comida" data-i="' + i + '"' + (q != null ? ' data-q="' + q + '"' : "") + '><div class="txt">' +
-    '<div class="tipo">' + esc(ref.tipo) + (ref.trocada ? ' <span class="marca">· com trocas</span>' : "") + '</div><div class="tit">' + esc(ref.titulo) + '</div><div class="sub">' + linhaProtKcal(inteira) + "</div>" +
+    '<div class="tipo">' + esc(ref.tipo) + (ref.trocada ? ' <span class="marca">· com trocas</span>' : "") + '</div><div class="tit">' + esc(ref.titulo) + '</div>' + pnEscolhaOpcao(ref, i, d) + '<div class="sub">' + linhaProtKcal(inteira) + "</div>" +
     '<div class="opcoes" role="group" aria-label="Quanto comeu de ' + esc(ref.tipo) + '">' +
     FRACOES.map(f => '<label class="opcao' + (q === f[0] ? " ativa" : "") + '"><input type="checkbox" data-mud="refeicao" data-dia="' + d + '" data-i="' + i + '" data-q="' + f[0] + '"' + (q === f[0] ? " checked" : "") + ">" + f[1] + "</label>").join("") + "</div>";
   if (q === 0.5 || q === 0.25) out += '<div class="sub contou">Contou: ' + linhaProtKcal(consumoDaRefeicao(reg, ref.itens)) + "</div>";
@@ -146,12 +146,14 @@ Object.assign(AC, {
    A foto é reaproveitada quando já havia uma (corrigir "tudo" para "metade" dias depois não muda o prato de referência). */
 MUD.refeicao = function (c) {
   const h = diaDoToque(c.dataset); if (!h) return;
-  const r = arrumarDia(dia(h)), i = Number(c.dataset.i), q = Number(c.dataset.q), campo = r.enjoo ? "comidoEnjoo" : "comido";
+  const r = arrumarDia(dia(h)), i = Number(c.dataset.i), q = Number(c.dataset.q), campo = pnCampoDoDia(h, r);
   const lista = r[campo].slice(), antes = lista[i];
   let reg = null;
   if (c.checked) {
-    const ref = planoDaData(h).refeicoes[i]; if (!ref) { render(); return; }
-    reg = { q, itens: antes && Array.isArray(antes.itens) ? antes.itens : fotoDosItens(ref.itens) };
+    const ref = pnPlanoDaData(h).refeicoes[i]; if (!ref) { render(); return; }
+    // No plano da nutricionista a foto acompanha a opção: só é reaproveitada se a opção for a mesma.
+    reg = { q, itens: antes && Array.isArray(antes.itens) && antes.op === ref.op ? antes.itens : fotoDosItens(ref.itens) };
+    if (ref.op != null) reg.op = ref.op;
     if (antes && antes.outros) reg.outros = antes.outros;
   }
   lista[i] = reg;

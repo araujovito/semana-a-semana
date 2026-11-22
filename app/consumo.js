@@ -6,6 +6,8 @@
    - comidoEnjoo[i]  registro da refeição i do plano do DIA DE ENJOO. Campo novo: os dois planos têm registros separados
                      para que ligar e desligar o "Dia de enjoo" não apague nada. A soma do dia usa só o do plano em vigor
                      (enjoo ligado: comidoEnjoo; desligado: comido).
+   - comidoNutri[i]  registro da refeição i do PLANO DA NUTRICIONISTA (app/planonutri.js), com op = opção escolhida.
+                     opNutri[i] guarda a opção escolhida antes de marcar. Qual plano normal vale no dia: pnDiaUsaNutri().
      Dado antigo não tem comidoEnjoo. Nele, um dia com enjoo ligado guardava em `comido` as marcas do plano de enjoo:
      registrosDoDia() lê assim, e arrumarDia() passa essas marcas para comidoEnjoo na primeira gravação.
    - Cada registro é null (não registrou) ou { q, itens }:
@@ -22,12 +24,16 @@ const KCAL_POUCO = 800;   // abaixo disso, em 3 dias com registro, a tela Hoje s
 /* [[chave, gramas]] -> [{ k, g }], sem o que não existe mais na base de alimentos. */
 function paraItens(pares) { return (pares || []).filter(p => p && A[p[0]] && Number(p[1]) > 0).map(p => ({ k: p[0], g: Number(p[1]) })); }
 function fotoDosItens(itens) { return itens.map(it => [it.k, it.g]); }
-/* Registros do plano em vigor no dia (r = dia(data)). Não altera nada. */
-function registrosDoDia(r) { return (r.enjoo ? (r.comidoEnjoo || r.comido) : r.comido) || []; }
+/* Registros do plano em vigor no dia (r = dia(data)). Não altera nada. Sem a data, vale o interruptor do plano da nutricionista. */
+function registrosDoDia(r, data) {
+  if (r.enjoo) return r.comidoEnjoo || r.comido || [];
+  return (pnDiaUsaNutri(data, r) ? r.comidoNutri : r.comido) || [];
+}
 /* Deixa o registro do dia com os dois campos, cada um com as marcas do seu plano. Chamar antes de gravar. */
 function arrumarDia(r) {
   if (!Array.isArray(r.comido)) r.comido = [];
   if (!Array.isArray(r.comidoEnjoo)) { if (r.enjoo) { r.comidoEnjoo = r.comido; r.comido = []; } else r.comidoEnjoo = []; }
+  if (!Array.isArray(r.comidoNutri)) r.comidoNutri = [];
   return r;
 }
 /* Porção inteira a que o registro se refere: a foto, se houver; senão os itens do plano recebidos. */
@@ -52,7 +58,7 @@ function consumoDaRefeicao(c, itensPlano) {
 function consumoDoDia(data) {
   const r = dia(data), comida = zeros();
   let plano = null, refeicoes = 0, comidas = 0, pouco = 0, nada = 0;
-  registrosDoDia(r).forEach((c, i) => {
+  registrosDoDia(r, data).forEach((c, i) => {
     if (!c) return;
     const q = Number(c.q) || 0;
     let itensPlano = null;

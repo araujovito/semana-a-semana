@@ -22,10 +22,12 @@ let agoraDoTeste = AGORA;
 const d = n => { const x = new Date(agoraDoTeste); x.setDate(x.getDate() - n); return x.getFullYear() + "-" + String(x.getMonth() + 1).padStart(2, "0") + "-" + String(x.getDate()).padStart(2, "0"); };
 const URL_APP = "file://" + path.join(__dirname, "..", "app", "index.html");
 // Perfil pronto para os testes que nao sao sobre o perfil. Formato v2 (ver app/nucleo.js).
+// ui.planoNutri: false = estes testes usam o cardapio do app (a reserva). O plano da nutricionista, ligado por padrao,
+// tem os testes dele em testes/fluxo-planonutri.js.
 function estadoBase(extra) {
   return Object.assign({ v: 2, perfil: { nome: "Teste", sexo: "F", nascimento: 1990, altura: 163, peso: 95.4, atividade: 1.2, metaKcal: null, metaProt: null, metaAgua: null,
     diabetes: null, insulinaSulf: null, pilula: null, naoCome: [], naoGosta: [] },
-    doses: [], pesos: [], sintomas: [], treinos: [], dias: {}, trocas: {}, caneta: null, suplementos: [], exames: [], lembretes: {}, ui: {} }, extra || {});
+    doses: [], pesos: [], sintomas: [], treinos: [], dias: {}, trocas: {}, caneta: null, suplementos: [], exames: [], lembretes: {}, ui: { planoNutri: false } }, extra || {});
 }
 // Abre o app. opcoes: { estado: objeto gravado antes de abrir, largura, altura, escuro: true, aba: "plano" }
 // Devolve { p (pagina), erros, foto(nome), ler() (estado salvo), semear(estado), fechar() }. fechar() confere que nao houve erro no console.

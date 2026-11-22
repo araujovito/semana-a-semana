@@ -10,7 +10,8 @@ function relogio(inicio) {
   return R;
 }
 const PERFIL = { nome: "T", sexo: "F", nascimento: 1990, altura: 163, peso: 95.4, atividade: 1.2, metaKcal: null, metaProt: null, metaAgua: null, diabetes: null, insulinaSulf: null, pilula: null, naoCome: [], naoGosta: [] };
-const estado = extra => Object.assign({ v: 2, perfil: Object.assign({}, PERFIL), doses: [], pesos: [], sintomas: [], treinos: [], dias: {}, trocas: {}, caneta: null, suplementos: [], exames: [], lembretes: {}, ui: {} }, extra || {});
+// ui.planoNutri: false = estes testes são do cardápio do app; o plano da nutricionista tem os dele (testes/unidade/planonutri.js).
+const estado = extra => Object.assign({ v: 2, perfil: Object.assign({}, PERFIL), doses: [], pesos: [], sintomas: [], treinos: [], dias: {}, trocas: {}, caneta: null, suplementos: [], exames: [], lembretes: {}, ui: { planoNutri: false } }, extra || {});
 const SEG = "2026-11-16", TER = "2026-11-17";   // segunda e terca
 function abrir(extra, hora) { const R = relogio(hora || SEG + "T12:00:00"), app = carregar(estado(extra), { Date: R }); return { app, R, v: app.v, j: c => JSON.parse(app.v("JSON.stringify(" + c + ")")) }; }
 const marcar = (a, dia, i, q, marcado) => a.v("MUD.refeicao({ checked: " + (marcado !== false) + ", dataset: { dia: '" + dia + "', i: '" + i + "', q: '" + q + "' } })");
