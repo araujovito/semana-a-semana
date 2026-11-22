@@ -6,21 +6,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Semana · protótipo</title>
 <style>
-/* Protótipo da identidade "Hortelã" (revisão 2): linguagem de app de saúde do dia a dia. Topo colorido com o essencial,
+/* Protótipo da identidade "Laranja" (revisão 3, estilo da revisão 2): linguagem de app de saúde do dia a dia. Topo colorido com o essencial,
    grade de atalhos, cartões em duas colunas, selos e "marcar o dia". Tudo local: fonte do sistema, ícones próprios em SVG.
    CSS até 2022 (WebView 113): variáveis, grid, flex, gap, aspect-ratio. Sem :has(), sem nesting, sem color-mix(). */
+/* Paleta final "Laranja" (escolhida pelo dono em 22/11). Nomes: --pri é a cor de ação; --ambar é a dica do dia e os selos de atenção;
+   --alerta é SÓ para sinais de alerta e sempre vem com borda grossa, triângulo e rótulo, porque a primária laranja fica perto do vermelho. */
 :root {
   --fundo: #f5f6f8; --cartao: #ffffff; --texto: #1d2129; --suave: #646a73; --linha: #eceef1; --cinza: #f2f3f5;
-  --pri: #087f5b; --sobre-pri: #ffffff; --pri-clara: #e6fcf5; --pri-tinta: #0b3d2e;
-  --topo-a: #38d9a9; --topo-b: #96f2d7; --topo-c: #fff3bf; --sobre-topo: #0b3d2e; --vidro: rgba(255, 255, 255, .55);
-  --dado: #0ca678; --dado-suave: #96f2d7; --dado2: #e8590c; --faixa: #e6fcf5; --vazio: #eceef1;
-  --laranja: #b54708; --laranja-clara: #fff4e6;
+  --pri: #c2410c; --sobre-pri: #ffffff; --pri-clara: #fff0e8; --pri-tinta: #4a1504;
+  --topo-a: #ff8a65; --topo-b: #ffb38a; --topo-c: #ffe3c4; --sobre-topo: #4a1504; --vidro: rgba(255, 255, 255, .5);
+  --dado: #e8590c; --dado-suave: #ffd0b8; --dado2: #1c7ed6; --faixa: #fff0e8; --faixa2: #e7f5ff; --vazio: #eceef1;
+  --ambar: #7a4a00; --ambar-clara: #fff9db;
   --alerta: #c92a2a; --alerta-ic: #e03131; --alerta-clara: #fff0f0;
-  --c-comida: linear-gradient(135deg, #ffa94d, #f76707); --c-agua: linear-gradient(135deg, #74c0fc, #1c7ed6);
-  --c-peso: linear-gradient(135deg, #b197fc, #7048e8); --c-aplic: linear-gradient(135deg, #63e6be, #0ca678);
+  --c-comida: linear-gradient(135deg, #ffd43b, #f59f00); --c-agua: linear-gradient(135deg, #74c0fc, #1c7ed6);
+  --c-peso: linear-gradient(135deg, #b197fc, #7048e8); --c-aplic: linear-gradient(135deg, #ff8a65, #e8590c);
   --c-sint: linear-gradient(135deg, #faa2c1, #d6336c); --c-mover: linear-gradient(135deg, #66d9e8, #0c8599);
-  --c-painel: linear-gradient(135deg, #ffe066, #f59f00); --c-guia: linear-gradient(135deg, #91a7ff, #4263eb);
-  --ap: #f76707; --mover-cor: #15aabf;
+  --c-painel: linear-gradient(135deg, #63e6be, #0ca678); --c-guia: linear-gradient(135deg, #91a7ff, #4263eb);
+  --ap: #4a1504; --mover-cor: #12b886;
   --sombra: 0 1px 2px rgba(16, 24, 40, .04), 0 2px 8px rgba(16, 24, 40, .05);
   --fonte: system-ui, -apple-system, Roboto, "Noto Sans", "Segoe UI", sans-serif;
   color-scheme: light dark;
@@ -28,11 +30,12 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --fundo: #111214; --cartao: #1c1d21; --texto: #e9eaec; --suave: #9ea3ab; --linha: #2a2c31; --cinza: #25272c;
-    --pri: #38d9a9; --sobre-pri: #04241b; --pri-clara: #12342b; --pri-tinta: #b2f2e1;
-    --topo-a: #0e5a47; --topo-b: #134e4a; --topo-c: #2b2a1a; --sobre-topo: #e9fbf3; --vidro: rgba(255, 255, 255, .08);
-    --dado: #63e6be; --dado-suave: #1f5c4b; --dado2: #ffa94d; --faixa: #173a31; --vazio: #2a2c31;
-    --laranja: #ffb366; --laranja-clara: #2b2017;
+    --pri: #ff9a76; --sobre-pri: #2b0d02; --pri-clara: #3a2117; --pri-tinta: #ffd0b8;
+    --topo-a: #7a2e12; --topo-b: #5c2a14; --topo-c: #2b1d12; --sobre-topo: #fff1ea; --vidro: rgba(255, 255, 255, .09);
+    --dado: #ff9a76; --dado-suave: #6b3420; --dado2: #74c0fc; --faixa: #3a2117; --faixa2: #132a40; --vazio: #2a2c31;
+    --ambar: #ffe066; --ambar-clara: #2b2410;
     --alerta: #ff8787; --alerta-ic: #ff8787; --alerta-clara: #2c1a1c;
+    --ap: #ffe066;
     --sombra: none;
   }
 }
@@ -75,7 +78,7 @@ svg.ic.p { width: 18px; height: 18px; }
 /* Selos e etiquetas. */
 .selo { display: inline-flex; align-items: center; gap: 3px; font-size: 11.5px; font-weight: 700; line-height: 1; padding: 4px 7px; border-radius: 6px;
   background: var(--pri-clara); color: var(--pri); white-space: nowrap; }
-.selo.laranja { background: var(--laranja-clara); color: var(--laranja); }
+.selo.ambar { background: var(--ambar-clara); color: var(--ambar); }
 .selo.cinza { background: var(--cinza); color: var(--suave); }
 .selo.topo-s { background: var(--vidro); color: var(--sobre-topo); }
 .selos { display: flex; flex-wrap: wrap; gap: 5px; }
@@ -89,8 +92,8 @@ svg.ic.p { width: 18px; height: 18px; }
 
 /* Faixa de destaque. */
 .banner { display: flex; gap: 10px; align-items: center; border-radius: 16px; padding: 12px 14px; margin-bottom: 10px; }
-.banner.dica { background: var(--laranja-clara); }
-.banner.dica .ic { color: var(--laranja); }
+.banner.dica { background: var(--ambar-clara); }
+.banner.dica .ic { color: var(--ambar); }
 .banner .t { flex: 1; min-width: 0; font-size: 14px; }
 .banner .t b { display: block; font-size: 14px; }
 /* Alerta: forma própria (borda grossa à esquerda), ícone de triângulo e o rótulo "SINAL DE ALERTA". Nunca só a cor. */
@@ -154,13 +157,13 @@ svg.graf .forte { fill: var(--texto); font-weight: 700; }
 .faixa7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
 .faixa7 .d { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; color: var(--suave); }
 .faixa7 .n { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: var(--cinza); color: var(--texto); font-weight: 800; font-size: 15px; font-variant-numeric: tabular-nums; position: relative; }
-.faixa7 .ap .n { background: var(--laranja-clara); color: var(--laranja); box-shadow: inset 0 0 0 2px var(--laranja); }
+.faixa7 .ap .n { background: var(--ambar-clara); color: var(--ambar); box-shadow: inset 0 0 0 2px var(--ambar); }
 .faixa7 .hoje .n { background: var(--pri); color: var(--sobre-pri); }
 .faixa7 .fut .n { background: transparent; color: var(--suave); box-shadow: inset 0 0 0 1.5px var(--linha); font-weight: 600; }
 .faixa7 .ok { width: 18px; height: 18px; color: var(--dado); }
 .faixa7 .vaz { width: 18px; height: 18px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--linha); }
 .peso-graf .dose { stroke: #f76707; stroke-width: 1.5; stroke-dasharray: 3 3; }
-.peso-graf text.dl { fill: var(--laranja); font-weight: 700; }
+.peso-graf text.dl { fill: var(--ambar); font-weight: 700; }
 .peso-graf .linhad { fill: none; stroke: #7048e8; stroke-width: 2.2; stroke-linejoin: round; }
 .peso-graf .ponto { fill: #7048e8; stroke: var(--cartao); stroke-width: 2; }
 @media (prefers-color-scheme: dark) { .peso-graf .linhad { stroke: #b197fc; } .peso-graf .ponto { fill: #b197fc; } }
@@ -248,7 +251,7 @@ svg.graf .forte { fill: var(--texto); font-weight: 700; }
 
   <div class="legenda" style="padding:0 4px;margin:0 0 8px"><span><span class="refs"><i class="c"></i></span> comeu tudo</span><span><span class="refs"><i class="m"></i></span> metade ou pouco</span><span><span class="refs"><i></i></span> nada ou sem marcar</span></div>
   <section class="cartao dia" aria-labelledby="d17">
-    <div class="cab"><h2 id="d17">Terça, 17</h2><div class="selos"><span class="selo laranja">aplicação</span><span class="selo">5 mg</span></div></div>
+    <div class="cab"><h2 id="d17">Terça, 17</h2><div class="selos"><span class="selo ambar">aplicação</span><span class="selo">5 mg</span></div></div>
     <ul class="lista">
       <li><span class="ico-c" style="background:var(--c-aplic)"><svg aria-hidden="true"><use href="#i-caneta"/></svg></span><span class="txt">Aplicação na coxa direita</span><span class="mini">8h</span></li>
       <li><span class="ico-c" style="background:var(--c-peso)"><svg aria-hidden="true"><use href="#i-peso"/></svg></span><span class="txt">Peso <b class="num">97,4 kg</b></span></li>
@@ -257,7 +260,7 @@ svg.graf .forte { fill: var(--texto); font-weight: 700; }
   </section>
 
   <section class="cartao dia" aria-labelledby="d18">
-    <div class="cab"><h2 id="d18">Quarta, 18</h2><div class="selos"><span class="selo laranja">enjoo forte</span><span class="selo cinza">cardápio de enjoo</span></div></div>
+    <div class="cab"><h2 id="d18">Quarta, 18</h2><div class="selos"><span class="selo ambar">enjoo forte</span><span class="selo cinza">cardápio de enjoo</span></div></div>
     <ul class="lista">
       <li><span class="ico-c" style="background:var(--c-sint)"><svg aria-hidden="true"><use href="#i-sintoma"/></svg></span><span class="txt">Enjoo forte de manhã, melhorou à tarde</span></li>
       <li><span class="ico-c" style="background:var(--c-comida)"><svg aria-hidden="true"><use href="#i-comer"/></svg></span><span class="txt"><span class="refs" aria-label="2 tudo, 2 metade, 1 nada"><i class="c"></i><i class="m"></i><i class="m"></i><i class="c"></i><i></i></span></span><span class="mini num">64 g prot.</span></li>
@@ -265,7 +268,7 @@ svg.graf .forte { fill: var(--texto); font-weight: 700; }
   </section>
 
   <section class="cartao dia" aria-labelledby="d19">
-    <div class="cab"><h2 id="d19">Quinta, 19</h2><div class="selos"><span class="selo laranja">enjoo leve</span></div></div>
+    <div class="cab"><h2 id="d19">Quinta, 19</h2><div class="selos"><span class="selo ambar">enjoo leve</span></div></div>
     <ul class="lista">
       <li><span class="ico-c" style="background:var(--c-sint)"><svg aria-hidden="true"><use href="#i-sintoma"/></svg></span><span class="txt">Intestino preso</span></li>
       <li><span class="ico-c" style="background:var(--c-comida)"><svg aria-hidden="true"><use href="#i-comer"/></svg></span><span class="txt"><span class="refs" aria-label="4 tudo, 1 metade"><i class="c"></i><i class="c"></i><i class="c"></i><i class="m"></i><i class="c"></i></span></span><span class="mini num">82 g prot.</span></li>
@@ -274,7 +277,7 @@ svg.graf .forte { fill: var(--texto); font-weight: 700; }
   </section>
 
   <section class="cartao dia hojed" aria-labelledby="d20">
-    <div class="cab"><h2 id="d20">Hoje, sexta 20</h2><div class="selos"><span class="selo">hoje</span><span class="selo laranja">enjoo leve</span></div></div>
+    <div class="cab"><h2 id="d20">Hoje, sexta 20</h2><div class="selos"><span class="selo">hoje</span><span class="selo ambar">enjoo leve</span></div></div>
     <ul class="lista">
       <li><span class="ico-c" style="background:var(--c-peso)"><svg aria-hidden="true"><use href="#i-peso"/></svg></span><span class="txt">Peso <b class="num">96,9 kg</b></span></li>
       <li><span class="ico-c" style="background:var(--c-comida)"><svg aria-hidden="true"><use href="#i-comer"/></svg></span><span class="txt"><span class="refs" aria-label="2 tudo, 3 por marcar"><i class="c"></i><i class="c"></i><i></i><i></i><i></i></span></span><span class="mini">2 de 5 até agora</span></li>

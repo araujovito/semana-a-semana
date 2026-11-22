@@ -1,18 +1,18 @@
-# Identidade visual "Hortelã" (protótipo, revisão 2)
+# Identidade visual "Laranja" (protótipo, revisão 3)
 
-**Conclusão:** a revisão segue o pedido do dono depois do primeiro protótipo. Saíram a serifa e o caderno cor de ameixa ("fonte de IA"). Entrou a linguagem dos apps chineses atuais de saúde e dia a dia: um topo colorido que já mostra o essencial, uma grade de atalhos com ícones coloridos, números grandes em negrito, cartões em duas colunas, selos e "marcar o dia" com um toque. A semana do tratamento continua no centro: semana 6, anel de 7 dias e próxima aplicação aparecem antes de qualquer outra coisa. Nada foi aplicado em `app/`. São quatro páginas estáticas em `prototipo/` para o dono aprovar.
+**Conclusão:** a revisão segue o pedido do dono depois do primeiro protótipo. Saíram a serifa e o caderno cor de ameixa ("fonte de IA"). Entrou a linguagem dos apps chineses atuais de saúde e dia a dia: um topo colorido que já mostra o essencial, uma grade de atalhos com ícones coloridos, números grandes em negrito, cartões em duas colunas, selos e "marcar o dia" com um toque. A semana do tratamento continua no centro: semana 6, anel de 7 dias e próxima aplicação aparecem antes de qualquer outra coisa. Na revisão 3, o dono aprovou esse estilo e escolheu a paleta laranja quente no lugar do verde-hortelã, que achou esquisito. As quatro telas usam essa paleta. Nada foi aplicado em `app/`. São páginas estáticas em `prototipo/`.
 
 ## Conceito
 
 - **Inspiração na linguagem, sem cópia.** A referência é a gramática dos apps de saúde e de serviços (Boohee, Keep, Meituan, Alipay, Xiaohongshu): muita informação organizada em blocos pequenos, cor viva e números grandes. Não usei marca, logotipo, ilustração nem tela de nenhum deles. Ícones, pratos e gráficos foram desenhados à mão para este app.
-- **O essencial no topo.** O gradiente de hortelã já traz a semana do tratamento, a dose, a proteína de hoje em número grande, o anel do ciclo (dia 4 de 7, com a aplicação marcada em laranja), a próxima aplicação e a água. Ela abre o app e já sabe onde está.
+- **O essencial no topo.** O gradiente laranja já traz a semana do tratamento, a dose, a proteína de hoje em número grande, o anel do ciclo (dia 4 de 7, com a aplicação marcada por um ponto), a próxima aplicação e a água. Ela abre o app e já sabe onde está.
 - **Atalhos antes de menus.** Uma grade 4×2 leva a tudo o que ela registra ou consulta: Comida, Água, Peso, Aplicação, Sintomas, Caminhada, Painel e Guia. Cada atalho tem uma cor fixa, que se repete na tela Semana.
 - **Marcar o dia (打卡) sem cobrança.** Refeições, copos de água e aplicação ganham um selo de feito quando ela marca. Não existe sequência de dias, contagem de "dias seguidos", mensagem de que ela "perdeu" algo, nem sermão. O texto diz: "O que você não marcar fica em branco, sem cobrança. Dá para marcar depois."
-- **Alerta inconfundível.** O aviso de vesícula e pâncreas se diferencia pela forma (borda grossa à esquerda), pelo ícone de triângulo e pelo rótulo "SINAL DE ALERTA", e o vermelho fica reservado para ele. A cor principal é verde, e as dicas usam laranja num cartão sem borda, com ícone de lâmpada.
+- **Alerta inconfundível.** O aviso de vesícula e pâncreas se diferencia pela forma (borda grossa à esquerda), pelo ícone de triângulo e pelo rótulo "SINAL DE ALERTA", e o vermelho fica reservado para ele. Como a cor principal é laranja, as dicas usam amarelo, num cartão sem borda e com ícone de lâmpada.
 
-## Paleta (tokens)
+## Paleta final "Laranja" (tokens)
 
-Pares de texto conferidos pela fórmula de contraste WCAG 2.1. O mínimo AA é 4,5:1 para texto normal e 3:1 para texto grande e marcas de gráfico.
+Escolhida pelo dono em 22/11, depois de comparar as variações coral, azul e roxo (estão no histórico do git, commit 48d3a20). Os tokens ficam em `prototipo/fonte/base.css`. Pares de texto conferidos pela fórmula de contraste WCAG 2.1: o mínimo AA é 4,5:1 para texto normal e 3:1 para texto grande e marcas de gráfico.
 
 | Token | Claro | Escuro | Uso |
 |---|---|---|---|
@@ -20,18 +20,33 @@ Pares de texto conferidos pela fórmula de contraste WCAG 2.1. O mínimo AA é 4
 | `--cartao` | `#ffffff` | `#1c1d21` | cartões |
 | `--texto` | `#1d2129` | `#e9eaec` | texto principal |
 | `--suave` | `#646a73` | `#9ea3ab` | texto secundário |
-| `--cinza` | `#f2f3f5` | `#25272c` | fundo de botão neutro e de blocos internos |
-| `--pri` | `#087f5b` | `#38d9a9` | verde hortelã: botões, links, aba ativa |
-| `--sobre-pri` | `#ffffff` | `#04241b` | texto sobre `--pri` |
-| `--pri-clara` | `#e6fcf5` | `#12342b` | selo verde, botão leve |
-| `--topo-a / b / c` | `#38d9a9 / #96f2d7 / #fff3bf` | `#0e5a47 / #134e4a / #2b2a1a` | gradiente do topo |
-| `--sobre-topo` | `#0b3d2e` | `#e9fbf3` | texto no topo |
-| `--dado` | `#0ca678` | `#63e6be` | barras e anéis de proteína (só gráfico) |
-| `--dado2` | `#e8590c` | `#ffa94d` | linha de calorias (só gráfico) |
-| `--laranja` / `--laranja-clara` | `#b54708` / `#fff4e6` | `#ffb366` / `#2b2017` | dica do dia, selos de atenção |
+| `--cinza` | `#f2f3f5` | `#25272c` | botão neutro, blocos internos |
+| `--pri` | `#c2410c` | `#ff9a76` | laranja: botões, links, aba ativa, selos |
+| `--sobre-pri` | `#ffffff` | `#2b0d02` | texto sobre `--pri` |
+| `--pri-clara` | `#fff0e8` | `#3a2117` | fundo de selo, botão leve |
+| `--pri-tinta` | `#4a1504` | `#ffd0b8` | texto sobre `--dado-suave` |
+| `--topo-a / b / c` | `#ff8a65 / #ffb38a / #ffe3c4` | `#7a2e12 / #5c2a14 / #2b1d12` | gradiente do topo |
+| `--sobre-topo` | `#4a1504` | `#fff1ea` | texto no topo |
+| `--dado` | `#e8590c` | `#ff9a76` | barras e anéis de proteína (só gráfico) |
+| `--dado-suave` | `#ffd0b8` | `#6b3420` | "abaixo da faixa", dia que passou |
+| `--dado2` | `#1c7ed6` | `#74c0fc` | linha de calorias (só gráfico), diferente da proteína |
+| `--faixa` / `--faixa2` | `#fff0e8` / `#e7f5ff` | `#3a2117` / `#132a40` | faixa da meta de proteína / de calorias |
+| `--ambar` / `--ambar-clara` | `#7a4a00` / `#fff9db` | `#ffe066` / `#2b2410` | dica do dia, selos de atenção (amarelo, para não se confundir com o laranja) |
 | `--alerta` / `--alerta-clara` | `#c92a2a` / `#fff0f0` | `#ff8787` / `#2c1a1c` | **só** sinais de alerta |
+| `--ap` | `#4a1504` | `#ffe066` | ponto da aplicação no anel de 7 dias |
 
-Cores dos atalhos (gradiente sob o ícone branco; o ícone sempre tem o nome escrito embaixo): comida laranja, água azul, peso roxo, aplicação verde, sintomas rosa, caminhada ciano, painel amarelo, guia índigo.
+**Atalhos** (gradiente sob o ícone branco; o nome sempre aparece escrito embaixo):
+
+| Atalho | Cor |
+|---|---|
+| Comida | amarelo |
+| Água | azul |
+| Peso | roxo |
+| Aplicação | coral |
+| Sintomas | rosa |
+| Caminhada | ciano |
+| Painel | verde |
+| Guia | índigo |
 
 Contraste medido:
 
@@ -40,18 +55,19 @@ Contraste medido:
 | texto × fundo | 14,9 | 15,6 |
 | suave × cartão | 5,5 | 6,6 |
 | suave × fundo | 5,0 | 7,4 |
-| sobre-pri × pri (botão) | 5,0 | 9,2 |
-| pri × cartão (link) | 5,0 | 9,4 |
-| pri × pri-clara (selo verde) | 4,7 | 7,5 |
-| sobre-topo × topo (pior ponto do gradiente) | 6,8 | 7,6 |
-| laranja × laranja-clara (selo, dica) | 5,0 | 9,0 |
+| sobre-pri × pri (botão) | 5,2 | 8,7 |
+| pri × cartão (link) | 5,2 | 8,1 |
+| pri × pri-clara (selo) | 4,7 | 7,2 |
+| sobre-topo × topo (pior ponto do gradiente) | 6,5 | 8,5 |
+| ambar × ambar-clara (dica, selo de atenção) | 7,1 | 11,8 |
 | alerta × alerta-clara | 4,9 | 7,1 |
 | alerta × cartão | 5,5 | 7,3 |
-| dado × cartão (marca de gráfico) | 3,1 | 10,9 |
-| dado2 × cartão (marca de gráfico) | 3,6 | 8,9 |
+| pri-tinta × dado-suave (calendário "abaixo") | 10,7 | 7,0 |
+| dado × cartão (marca de gráfico) | 3,6 | 8,1 |
+| dado2 × cartão (marca de gráfico) | 4,2 | 8,6 |
 | branco × capas dos caminhos (azul, verde, laranja) | ≥ 5,0 | iguais |
 
-O escuro foi escolhido à parte: o topo vira verde-garrafa com texto claro, e os botões passam a hortelã clara com texto escuro.
+**Laranja perto do vermelho:** a cor principal fica perto do vermelho do alerta. Por isso o alerta da vesícula e do pâncreas se distingue sempre por três coisas além da cor: a borda grossa à esquerda, o triângulo com exclamação e o rótulo "SINAL DE ALERTA". Nenhum outro elemento do app usa essa forma. As dicas foram para o amarelo, num cartão sem borda e com ícone de lâmpada.
 
 ## Tipografia
 
@@ -76,7 +92,7 @@ Todos próprios, em SVG preenchido, numa grade de 24 px, guardados em `prototipo
 | Mover | pessoa caminhando |
 | Guia | livro aberto |
 
-Também desenhados: água (gota), peso (balança com mostrador), aplicação (caneta), sintomas (coração), painel (barras), perfil, alerta (triângulo com exclamação), feito (círculo com visto), dica (lâmpada), conversa, setas. Aba ativa em verde `--pri`, as outras em cinza.
+Também desenhados: água (gota), peso (balança com mostrador), aplicação (caneta), sintomas (coração), painel (barras), perfil, alerta (triângulo com exclamação), feito (círculo com visto), dica (lâmpada), conversa, setas. Aba ativa em laranja `--pri`, as outras em cinza.
 
 ## Tom dos textos
 
@@ -146,25 +162,3 @@ O capturador acusa rolagem horizontal, botão ou link com menos de 44 px e qualq
 - As páginas são estáticas: os toques não fazem nada e os gráficos não mostram o valor ao tocar.
 - Não abri as páginas num celular de verdade, só no navegador sem janela, em 390 px.
 - Ainda não testei em 320 px. Com a grade de 4 atalhos e as duas colunas, telas estreitas vão precisar de ajuste quando isso for para o app.
-
-## Variações de cor da tela Hoje (para o dono escolher)
-
-O dono aprovou o estilo, mas achou o verde-hortelã esquisito. Fiz três variações só de cor, com layout, fonte, ícones e textos iguais. Cada uma é um arquivo de tokens em `prototipo/fonte/tema-<nome>.css`, que sobrepõe `base.css`. O `montar.js` gera `prototipo/hoje-<nome>.html` a partir dele. O alerta da vesícula e do pâncreas não muda em nenhuma: continua vermelho, com borda grossa à esquerda, triângulo e o rótulo "SINAL DE ALERTA".
-
-| | (a) coral (`hoje-coral.html`) | (b) azul (`hoje-azul.html`) | (c) roxo (`hoje-roxo.html`) |
-|---|---|---|---|
-| Ideia | quente e acolhedora | limpa, de app de serviço | suave, calma |
-| Primária claro / escuro | `#c2410c` / `#ff9a76` | `#1971c2` / `#74c0fc` | `#6741d9` / `#b197fc` |
-| Topo claro | `#ff8a65 → #ffb38a → #ffe3c4`, texto `#4a1504` | `#4dabf7 → #a5d8ff → #e7f5ff`, texto `#0b2a4a` | `#b197fc → #d0bfff → #f3f0ff`, texto `#2b1a5c` |
-| Topo escuro | `#7a2e12 → #5c2a14 → #2b1d12`, texto `#fff1ea` | `#0b3d6b → #10345a → #141b2b`, texto `#eaf4ff` | `#3b2a77 → #2d2260 → #1a1726`, texto `#f3f0ff` |
-| Atalhos que mudam | comida passa a amarelo, aplicação a coral, painel a verde | água passa a ciano, aplicação a azul, caminhada a verde | peso passa a azul, água a ciano, aplicação a roxo, caminhada a verde |
-| Dica do dia | amarelo (`#7a4a00` sobre `#fff9db`), para não se confundir com a primária | laranja, como antes | laranja, como antes |
-| Ponto da aplicação no anel | marrom escuro (claro) / amarelo (escuro) | laranja | laranja |
-
-Contraste AA conferido em cada variação, nos dois temas:
-- **Botão** (texto sobre a primária): coral 5,2 / 8,7; azul 5,0 / 8,3; roxo 6,3 / 7,1.
-- **Selo** (primária sobre o fundo claro dela): coral 4,7 / 7,2; azul 4,5 / 7,5; roxo 5,6 / 6,2.
-- **Texto do topo** no pior ponto do gradiente: coral 6,5 / 8,5; azul 5,9 / 10,0; roxo 6,2 / 10,5.
-- **Barras de gráfico**: todas acima de 3:1.
-
-**Risco da (a):** a primária coral fica perto do vermelho do alerta. Nessa variação, o alerta se distingue só pela forma, pelo ícone e pelo rótulo, que estão lá, mas a separação pela cor é menor que no azul e no roxo.

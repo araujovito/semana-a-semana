@@ -16,13 +16,13 @@
 .faixa7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
 .faixa7 .d { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; color: var(--suave); }
 .faixa7 .n { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: var(--cinza); color: var(--texto); font-weight: 800; font-size: 15px; font-variant-numeric: tabular-nums; position: relative; }
-.faixa7 .ap .n { background: var(--laranja-clara); color: var(--laranja); box-shadow: inset 0 0 0 2px var(--laranja); }
+.faixa7 .ap .n { background: var(--ambar-clara); color: var(--ambar); box-shadow: inset 0 0 0 2px var(--ambar); }
 .faixa7 .hoje .n { background: var(--pri); color: var(--sobre-pri); }
 .faixa7 .fut .n { background: transparent; color: var(--suave); box-shadow: inset 0 0 0 1.5px var(--linha); font-weight: 600; }
 .faixa7 .ok { width: 18px; height: 18px; color: var(--dado); }
 .faixa7 .vaz { width: 18px; height: 18px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--linha); }
 .peso-graf .dose { stroke: #f76707; stroke-width: 1.5; stroke-dasharray: 3 3; }
-.peso-graf text.dl { fill: var(--laranja); font-weight: 700; }
+.peso-graf text.dl { fill: var(--ambar); font-weight: 700; }
 .peso-graf .linhad { fill: none; stroke: #7048e8; stroke-width: 2.2; stroke-linejoin: round; }
 .peso-graf .ponto { fill: #7048e8; stroke: var(--cartao); stroke-width: 2; }
 @media (prefers-color-scheme: dark) { .peso-graf .linhad { stroke: #b197fc; } .peso-graf .ponto { fill: #b197fc; } }
@@ -90,7 +90,7 @@
 
   <div class="legenda" style="padding:0 4px;margin:0 0 8px"><span><span class="refs"><i class="c"></i></span> comeu tudo</span><span><span class="refs"><i class="m"></i></span> metade ou pouco</span><span><span class="refs"><i></i></span> nada ou sem marcar</span></div>
   <section class="cartao dia" aria-labelledby="d17">
-    <div class="cab"><h2 id="d17">Terça, 17</h2><div class="selos"><span class="selo laranja">aplicação</span><span class="selo">5 mg</span></div></div>
+    <div class="cab"><h2 id="d17">Terça, 17</h2><div class="selos"><span class="selo ambar">aplicação</span><span class="selo">5 mg</span></div></div>
     <ul class="lista">
       <li><span class="ico-c" style="background:var(--c-aplic)"><svg aria-hidden="true"><use href="#i-caneta"/></svg></span><span class="txt">Aplicação na coxa direita</span><span class="mini">8h</span></li>
       <li><span class="ico-c" style="background:var(--c-peso)"><svg aria-hidden="true"><use href="#i-peso"/></svg></span><span class="txt">Peso <b class="num">97,4 kg</b></span></li>
@@ -99,7 +99,7 @@
   </section>
 
   <section class="cartao dia" aria-labelledby="d18">
-    <div class="cab"><h2 id="d18">Quarta, 18</h2><div class="selos"><span class="selo laranja">enjoo forte</span><span class="selo cinza">cardápio de enjoo</span></div></div>
+    <div class="cab"><h2 id="d18">Quarta, 18</h2><div class="selos"><span class="selo ambar">enjoo forte</span><span class="selo cinza">cardápio de enjoo</span></div></div>
     <ul class="lista">
       <li><span class="ico-c" style="background:var(--c-sint)"><svg aria-hidden="true"><use href="#i-sintoma"/></svg></span><span class="txt">Enjoo forte de manhã, melhorou à tarde</span></li>
       <li><span class="ico-c" style="background:var(--c-comida)"><svg aria-hidden="true"><use href="#i-comer"/></svg></span><span class="txt"><span class="refs" aria-label="2 tudo, 2 metade, 1 nada"><i class="c"></i><i class="m"></i><i class="m"></i><i class="c"></i><i></i></span></span><span class="mini num">64 g prot.</span></li>
@@ -107,7 +107,7 @@
   </section>
 
   <section class="cartao dia" aria-labelledby="d19">
-    <div class="cab"><h2 id="d19">Quinta, 19</h2><div class="selos"><span class="selo laranja">enjoo leve</span></div></div>
+    <div class="cab"><h2 id="d19">Quinta, 19</h2><div class="selos"><span class="selo ambar">enjoo leve</span></div></div>
     <ul class="lista">
       <li><span class="ico-c" style="background:var(--c-sint)"><svg aria-hidden="true"><use href="#i-sintoma"/></svg></span><span class="txt">Intestino preso</span></li>
       <li><span class="ico-c" style="background:var(--c-comida)"><svg aria-hidden="true"><use href="#i-comer"/></svg></span><span class="txt"><span class="refs" aria-label="4 tudo, 1 metade"><i class="c"></i><i class="c"></i><i class="c"></i><i class="m"></i><i class="c"></i></span></span><span class="mini num">82 g prot.</span></li>
@@ -116,7 +116,7 @@
   </section>
 
   <section class="cartao dia hojed" aria-labelledby="d20">
-    <div class="cab"><h2 id="d20">Hoje, sexta 20</h2><div class="selos"><span class="selo">hoje</span><span class="selo laranja">enjoo leve</span></div></div>
+    <div class="cab"><h2 id="d20">Hoje, sexta 20</h2><div class="selos"><span class="selo">hoje</span><span class="selo ambar">enjoo leve</span></div></div>
     <ul class="lista">
       <li><span class="ico-c" style="background:var(--c-peso)"><svg aria-hidden="true"><use href="#i-peso"/></svg></span><span class="txt">Peso <b class="num">96,9 kg</b></span></li>
       <li><span class="ico-c" style="background:var(--c-comida)"><svg aria-hidden="true"><use href="#i-comer"/></svg></span><span class="txt"><span class="refs" aria-label="2 tudo, 3 por marcar"><i class="c"></i><i class="c"></i><i></i><i></i><i></i></span></span><span class="mini">2 de 5 até agora</span></li>
