@@ -65,4 +65,4 @@ async function abrir(opcoes) {
     fechar: async () => { ok(erros.length === 0, "sem erros no console " + erros.join(" / ")); await b.close(); },
   };
 }
-module.exports = { abrir, ok, d, estadoBase, CHAVE, URL_APP };
+module.exports = { abrir, ok, d, estadoBase, CHAVE, URL_APP, achar };

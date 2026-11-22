@@ -1,0 +1,17 @@
+{
+  "name": "Semana a Semana",
+  "short_name": "Semana",
+  "description": "Cardápio, treino, guia e diário para o tratamento com tirzepatida. Os dados ficam só neste aparelho.",
+  "lang": "pt-BR",
+  "start_url": "./index.html#hoje",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f6f5",
+  "theme_color": "#0f766e",
+  "icons": [
+    { "src": "icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icone-mascaravel-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
