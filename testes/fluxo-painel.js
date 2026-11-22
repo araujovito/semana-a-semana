@@ -14,7 +14,7 @@ function semear() {
 (async () => {
   let t = await abrir({ estado: semear(), aba: "painel" }), p = t.p;
   await p.waitForSelector(".painel-hoje");
-  ok(await p.locator("#abas a[data-aba=painel]").count() === 0, "a barra de abas não ganhou botão (navegação fica para o redesenho)");
+  ok(await p.locator("#abas a.ativa[data-aba=semana]").count() === 1 && await p.locator("#subabas a.ativa[data-sub=painel]").count() === 1, "painel fica dentro da aba Semana, com a sub-aba acesa");
   const conta = await p.evaluate(() => { const c = consumoDoDia(hoje()), m = metas(); return { prot: Math.round(c.total.prot), kcal: Math.round(c.total.kcal), falta: painelFaltaProt(c.total.prot, m.prot) }; });
   ok(parseInt((await p.locator("[data-v=prot]").textContent()).replace(/\./g, ""), 10) === conta.prot, "anel de proteína mostra o consumido hoje");
   ok(parseInt((await p.locator("[data-v=kcal]").textContent()).replace(/\./g, ""), 10) === conta.kcal, "anel de calorias mostra o consumido hoje");

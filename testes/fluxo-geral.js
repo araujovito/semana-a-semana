@@ -8,15 +8,31 @@ const { abrir, ok, d, estadoBase, CHAVE } = require("./apoio");
 
   // Troca de aba nao empilha historico; o botao voltar do aparelho vai para Hoje e, de Hoje, sai (achado 22).
   const antes = await p.evaluate(() => history.length);
-  await p.click("#abas a[data-aba=plano]"); await p.waitForSelector("text=Metas diárias");
-  await p.click("#abas a[data-aba=diario]"); await p.waitForSelector("form[data-form=dose]");
+  await p.click("#abas a[data-aba=comer]"); await p.waitForSelector("text=Metas diárias");
+  await p.click("#abas a[data-aba=semana]"); await p.click("#subabas a[data-sub=diario]"); await p.waitForSelector("form[data-form=dose]");
   ok(await p.evaluate(() => history.length) === antes, "trocar de aba não empilha histórico");
   ok(await p.evaluate(() => window.aoVoltar()) === "ficar" && await p.locator("text=Proteína hoje").count() === 1, "voltar em outra aba leva para Hoje");
   ok(await p.evaluate(() => window.aoVoltar()) === "sair", "voltar na aba Hoje sai do app");
 
+  // Barra de abas nova: Hoje, Semana, Comer, Mover, Guia. Semana leva à visão semanal, ao Diário e ao Painel por toque; Comer, ao Plano.
+  ok((await p.locator("#abas a").allInnerTexts()).map(x => x.trim()).join(",") === "Hoje,Semana,Comer,Mover,Guia", "abas: Hoje, Semana, Comer, Mover, Guia");
+  ok(await p.locator("#abas a svg use").count() === 5 && !/[\u2600-\u27bf]|\ud83c|\ud83d/.test(await p.locator("#abas").innerText()), "abas com ícones SVG, sem emoji");
+  await p.click("#abas a[data-aba=semana]"); await p.waitForSelector("#subabas a.ativa[data-sub=semana]");
+  ok(await p.evaluate(() => location.hash) === "#semana", "aba Semana abre a visão semanal");
+  await p.click("#subabas a[data-sub=painel]"); await p.waitForSelector(".painel-hoje");
+  ok(await p.locator("#abas a.ativa[data-aba=semana]").count() === 1, "no painel, a aba Semana continua acesa");
+  await p.click("#subabas a[data-sub=diario]"); await p.waitForSelector("form[data-form=dose]");
+  ok(await p.locator("#subabas a.ativa[data-sub=diario]").count() === 1, "Diário (aplicações, peso, sintomas, relatório) por toque na sub-aba");
+  await p.click("#abas a[data-aba=mover]"); await p.waitForSelector("#abas a.ativa[data-aba=mover]");
+  ok(await p.evaluate(() => location.hash) === "#treino" && await p.locator("#subabas").count() === 0, "aba Mover abre o treino, sem sub-abas");
+  await p.click("#abas a[data-aba=comer]"); await p.waitForSelector("#abas a.ativa[data-aba=comer]");
+  ok(await p.evaluate(() => location.hash) === "#plano", "aba Comer abre o plano");
+  await p.click("#abas a[data-aba=hoje]"); await p.waitForSelector("#abas a.ativa[data-aba=hoje]"); ok(await p.locator("#subabas").count() === 0, "Hoje sem sub-abas");
+  ok(await p.evaluate(() => history.length) === antes, "sub-abas também não empilham histórico");
+
   // Dialogo da pagina no lugar de confirm(): cancelar nao apaga, confirmar apaga; voltar fecha o dialogo (achado 17).
   await t.semear(estadoBase({ doses: [{ id: "a1", data: d(7), mg: 2.5, local: "Coxa esquerda", obs: "" }], ui: { diario: "doses" } }));
-  await p.click("#abas a[data-aba=diario]"); await p.click("[data-ac=apagar]");
+  await p.click("#abas a[data-aba=semana]"); await p.click("#subabas a[data-sub=diario]"); await p.click("[data-ac=apagar]");
   ok(/Apagar este registro/.test(await t.textoDialogo()), "apagar pergunta num diálogo da página"); await t.foto("9-dialogo");
   await t.nao(); ok((await t.ler()).doses.length === 1, "cancelar não apaga");
   await p.click("[data-ac=apagar]"); ok(await p.evaluate(() => window.aoVoltar()) === "ficar" && (await t.textoDialogo()) === null, "voltar fecha o diálogo sem apagar");
@@ -71,6 +87,8 @@ const { abrir, ok, d, estadoBase, CHAVE } = require("./apoio");
 
   // Modo escuro e 320 px abrem sem erro.
   t = await abrir({ estado: estadoBase(), escuro: true, largura: 320 }); p = t.p;
-  for (const aba of ["hoje", "plano", "treino", "diario", "guia"]) { await p.click("#abas a[data-aba=" + aba + "]"); await p.waitForTimeout(50); await t.semRolagem(aba + " em 320 px, escuro"); }
+  for (const aba of ["hoje", "semana", "comer", "mover", "guia"]) { await p.click("#abas a[data-aba=" + aba + "]"); await p.waitForTimeout(50); await t.semRolagem(aba + " em 320 px, escuro"); }
+  for (const sub of ["diario", "painel"]) { await p.click("#abas a[data-aba=semana]"); await p.click("#subabas a[data-sub=" + sub + "]"); await p.waitForTimeout(50); await t.semRolagem(sub + " em 320 px, escuro"); }
+  await t.alvosDeToque("barra de abas e sub-abas em 320 px");
   await t.fechar();
 })();

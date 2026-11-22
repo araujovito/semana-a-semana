@@ -46,7 +46,7 @@ const comPerfil = (extra, resto) => estadoBase(Object.assign({ perfil: Object.as
     await p.click("[data-aviso=vesicula] [data-ac=ir]");
     ok(await p.waitForSelector("#tela summary:has-text('Sinais de alerta')", { timeout: 3000 }).then(() => true, () => false) &&
       /dura mais de 1 ou 2 horas.*passou sozinha/.test(await tela(p)), "botão do cartão abre o Guia com os sinais de alerta" + nome);
-    await p.click("#abas [data-aba=plano]");
+    await p.click("#abas [data-aba=comer]");
     await p.waitForSelector("text=Metas diárias");
     ok(await p.locator("[data-aviso=vesicula]").count() === 1, "vesícula marcada: cartão no Plano" + nome);
     await p.click("#btn-perfil"); await p.waitForSelector("form[data-form=perfil]");

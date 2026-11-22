@@ -73,14 +73,14 @@ const texto = async (p, sel) => (await p.locator(sel).innerText()).replace(/\s+/
   await p.click("#abas a[data-aba=hoje]"); await p.waitForSelector("[data-dose]");
   ok(/Próxima aplicação: em 3 dias \(Seg, 23\/11\)/.test(await texto(p, "[data-dose]")), "dia habitual: aplicou atrasada na sexta e a próxima continua na segunda");
   // ela diz que mudou para quarta
-  await p.click("#abas a[data-aba=diario]"); await p.waitForSelector("[data-mud=diaDose]");
+  await p.click("#abas a[data-aba=semana]"); await p.click("#subabas a[data-sub=diario]"); await p.waitForSelector("[data-mud=diaDose]");
   await p.selectOption("[data-mud=diaDose]", "2");
   ok((await t.ler()).diaDose === 2 && await p.inputValue("[data-mud=diaDose]") === "2" && await p.locator("#aviso").innerText() === "Dia habitual: quarta-feira.", "dia habitual: mudança gravada em E.diaDose");
   await p.click("#abas a[data-aba=hoje]"); await p.waitForSelector("[data-dose]");
   ok(/Próxima aplicação: em 5 dias \(Qua, 25\/11\)/.test(await texto(p, "[data-dose]")), "dia habitual: depois da mudança, a próxima é na quarta");
   await p.reload(); await p.waitForSelector("[data-dose]");
   ok(/Qua, 25\/11/.test(await texto(p, "[data-dose]")), "dia habitual: continua depois de fechar e abrir");
-  await p.click("#abas a[data-aba=diario]"); await p.click("[data-ac=diario][data-v=relatorio]");
+  await p.click("#abas a[data-aba=semana]"); await p.click("#subabas a[data-sub=diario]"); await p.click("[data-ac=diario][data-v=relatorio]");
   ok(/Semana 3, 3 aplicações no total\. Dose atual: 10,0 mg \(1ª semana nesta dose, 1 aplicação\)\. Dia habitual: quarta-feira\./.test(await p.inputValue("#rel")), "relatório: semanas na dose, plural e dia habitual");
   await t.fechar();
 
@@ -92,7 +92,7 @@ const texto = async (p, sel) => (await p.locator(sel).innerText()).replace(/\s+/
       await p.waitForSelector("[data-dose]");
       await t.semRolagem("hoje (" + nome + ") em 320 px" + s); await t.alvosDeToque("hoje (" + nome + ") em 320 px" + s); await t.foto("tratamento-3-hoje-320-" + nome + s);
       if (nome === "atrasada") {
-        await p.click("#abas a[data-aba=diario]"); await p.waitForSelector("[data-cartao=dia-habitual]");
+        await p.click("#abas a[data-aba=semana]"); await p.click("#subabas a[data-sub=diario]"); await p.waitForSelector("[data-cartao=dia-habitual]");
         await t.semRolagem("aplicações em 320 px" + s); await t.alvosDeToque("aplicações em 320 px" + s); await t.foto("tratamento-4-aplicacoes-320" + s);
       }
       await t.fechar();

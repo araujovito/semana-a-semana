@@ -29,7 +29,7 @@ function seisSemanas(discreto) {
   ok(/1 dia com o cardápio de enjoo/.test(atual), "semana atual: dias de enjoo marcados na tela Hoje");
   ok(/proteína média de 67 g por dia/.test(atual) && /em 3 dias com registro/.test(atual) && /kcal/.test(atual), "semana atual: proteína média, dias com registro e energia");
   ok(/o enjoo foi maior nos 2 dias depois da aplicação/.test(atual), "semana atual: padrão de enjoo depois da aplicação");
-  ok(await p.locator("#abas a.ativa").count() === 0 && await p.locator("#abas a[data-aba=semana]").count() === 0, "sem botão novo na barra de abas");
+  ok(await p.locator("#abas a.ativa[data-aba=semana]").count() === 1 && await p.locator("#subabas a.ativa[data-sub=semana]").count() === 1, "aba Semana acesa, com a sub-aba Semana");
 
   const ant = p.locator("#semana-anteriores details");
   ok(await ant.count() === 5, "5 semanas anteriores resumidas");

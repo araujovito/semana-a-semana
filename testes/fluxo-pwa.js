@@ -35,7 +35,7 @@ const TIPOS = { ".html": "text/html", ".js": "text/javascript", ".css": "text/cs
     ok(true, "sem internet, o app abre do que foi guardado e os dados continuam");
     await p.click("#abas a[data-aba=guia]"); await p.waitForSelector("text=Sinais de alerta");
     ok(true, "sem internet, as outras abas funcionam");
-    await p.click("#abas a[data-aba=diario]"); await p.click("[data-ac=diario][data-v=relatorio]"); await p.waitForSelector("text=Cópia de segurança");
+    await p.click("#abas a[data-aba=semana]"); await p.click("#subabas a[data-sub=diario]"); await p.click("[data-ac=diario][data-v=relatorio]"); await p.waitForSelector("text=Cópia de segurança");
     ok(/limpar os dados do navegador/.test(await p.locator("#tela").innerText()), "na versão web, a cópia de segurança avisa que limpar o navegador apaga os registros");
     await ctx.setOffline(false);
   } catch (e) { ok(false, "erro no teste: " + (e && e.stack || e)); }

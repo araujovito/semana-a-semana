@@ -37,12 +37,13 @@
 </header>
 <div id="erro-salvar" hidden role="alert">Não foi possível salvar neste celular. O que você acabou de registrar pode não ter ficado guardado. <button class="mini" data-ac="tentarSalvar">Tentar de novo</button></div>
 <main id="tela"></main>
-<nav id="abas">
-  <a href="#hoje" data-aba="hoje"><span class="ic">☀</span>Hoje</a>
-  <a href="#plano" data-aba="plano"><span class="ic">🍽</span>Plano</a>
-  <a href="#treino" data-aba="treino"><span class="ic">💪</span>Treino</a>
-  <a href="#diario" data-aba="diario"><span class="ic">📓</span>Diário</a>
-  <a href="#guia" data-aba="guia"><span class="ic">📖</span>Guia</a>
+<!-- Barra de abas: cada aba é um grupo de telas (ABAS_GRUPOS em inicio.js). Semana reúne semana, diário e painel; Comer reúne plano e caminhos. -->
+<nav id="abas" aria-label="Seções">
+  <a href="#hoje" data-aba="hoje"><svg aria-hidden="true"><use href="#i-hoje"/></svg>Hoje</a>
+  <a href="#semana" data-aba="semana"><svg aria-hidden="true"><use href="#i-semana"/></svg>Semana</a>
+  <a href="#plano" data-aba="comer"><svg aria-hidden="true"><use href="#i-comer"/></svg>Comer</a>
+  <a href="#treino" data-aba="mover"><svg aria-hidden="true"><use href="#i-mover"/></svg>Mover</a>
+  <a href="#guia" data-aba="guia"><svg aria-hidden="true"><use href="#i-guia"/></svg>Guia</a>
 </nav>
 <div id="folha" hidden><div class="folha-corpo" role="dialog" aria-modal="true"></div></div>
 <div id="dialogo" hidden><div class="dialogo-corpo" role="alertdialog" aria-modal="true" aria-describedby="dialogo-texto"></div></div>

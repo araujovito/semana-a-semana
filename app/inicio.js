@@ -4,6 +4,23 @@
 
 const tela = document.getElementById("tela");
 const TELAS = { hoje: telaHoje, plano: telaPlano, treino: telaTreino, diario: telaDiario, guia: telaGuia, perfil: telaPerfil };
+/* Abas da barra e as telas de cada uma. A primeira tela do grupo é a que abre ao tocar na aba.
+   Telas que se registram depois (semana.js, painel.js, a futura tela de caminhos) entram no grupo só se existirem em TELAS. */
+const ABAS_GRUPOS = {
+  hoje: [["hoje", "Hoje"]],
+  semana: [["semana", "Semana"], ["diario", "Diário"], ["painel", "Painel"]],
+  comer: [["plano", "Plano"], ["caminhos", "Caminhos"]],
+  mover: [["treino", "Treino"]],
+  guia: [["guia", "Guia"]],
+};
+function grupoDe(h) { return Object.keys(ABAS_GRUPOS).find(g => ABAS_GRUPOS[g].some(t => t[0] === h)) || ""; }
+/* Sub-abas acima da tela quando o grupo tem mais de uma tela registrada (ex.: Semana · Diário · Painel). */
+function subAbas(h) {
+  const g = grupoDe(h), telas = g ? ABAS_GRUPOS[g].filter(t => TELAS[t[0]]) : [];
+  if (telas.length < 2) return "";
+  return '<nav id="subabas" aria-label="Telas de ' + esc(g) + '">' + telas.map(t =>
+    '<a href="#' + t[0] + '" data-sub="' + t[0] + '"' + (t[0] === h ? ' class="ativa" aria-current="page"' : "") + ">" + t[1] + "</a>").join("") + "</nav>";
+}
 function atual() { let h = (location.hash || "#hoje").slice(1); if (!E.perfil) h = "perfil"; return TELAS[h] ? h : "hoje"; }
 
 /* Dados guardados que o app não conseguiu ler (versão mais nova ou arquivo danificado): nada é gravado por cima sem ela decidir. */
@@ -25,9 +42,10 @@ let diaDesenhado = null;
 function render(topo) {
   const h = atual();
   diaDesenhado = hoje();
-  tela.innerHTML = ILEGIVEL != null ? telaIlegivel() : TELAS[h]();
+  tela.innerHTML = ILEGIVEL != null ? telaIlegivel() : (E.perfil ? subAbas(h) : "") + TELAS[h]();
   tela.querySelectorAll("form").forEach(f => { f.noValidate = true; }); // a validação é a de enviarFormulario, que mostra mensagem
-  document.querySelectorAll("#abas a").forEach(a => a.classList.toggle("ativa", a.dataset.aba === h));
+  const g = grupoDe(h);
+  document.querySelectorAll("#abas a").forEach(a => { const on = a.dataset.aba === g; a.classList.toggle("ativa", on); if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   document.getElementById("abas").hidden = !E.perfil || ILEGIVEL != null;
   document.getElementById("btn-perfil").hidden = !E.perfil || ILEGIVEL != null;
   document.getElementById("erro-salvar").hidden = !FALHA_SALVAR;
@@ -109,7 +127,7 @@ function campoFaltando(f) {
 
 document.addEventListener("click", e => {
   if (e.target.id === "folha") { fecharFolha(); return; }
-  const aba = e.target.closest("#abas a, #btn-perfil");
+  const aba = e.target.closest("#abas a, #btn-perfil, #subabas a");
   if (aba) { e.preventDefault(); if (!dialogoAberto()) irPara(aba.getAttribute("href").slice(1)); return; }
   const b = e.target.closest("[data-ac]"); if (!b || b.disabled) return;
   e.preventDefault();
