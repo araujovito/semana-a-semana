@@ -155,10 +155,22 @@ const f2 = x => Math.round(x * 100) / 100;
    Devolve { prot, energia, dias: [fator de energia de cada dia, de segunda a domingo], kcalMedia, protMedia, noLimite }.
    noLimite: os limites não deixaram a média da semana chegar a 7% das duas metas. */
 const MEMO_ESCALA = {};
-function calcularEscala(kcal, prot, R, pisoDia) {
-  const piso = pisoDia == null ? PISO_DIA : pisoDia;
-  const chave = kcal + "|" + prot + "|" + piso + "|" + R.marcas.join(",") + "|" + R.naoGosta.join(",");
+/* Guarda as escalas já calculadas entre aberturas do app (a primeira conta leva de 0,3 s a alguns segundos num celular fraco:
+   auditoria 2). É dado derivado: se o armazenamento falhar ou vier de outra versão do cardápio, a conta é refeita. */
+const CHAVE_ESCALA = "semana-a-semana.escala", VERSAO_ESCALA = 2 + "|" + Object.keys(A).length + "|" + JSON.stringify(C).length;
+function lerEscalasGuardadas() { try { const x = JSON.parse(localStorage.getItem(CHAVE_ESCALA)); return x && x.v === VERSAO_ESCALA ? x.e : {}; } catch (e) { return {}; } }
+function guardarEscala(chave, r) {
+  try { const e = lerEscalasGuardadas(), ks = Object.keys(e); if (ks.length > 20) delete e[ks[0]]; e[chave] = r; localStorage.setItem(CHAVE_ESCALA, JSON.stringify({ v: VERSAO_ESCALA, e })); } catch (e) { /* sem cache: só fica mais lento */ }
+}
+/* protTeto: proteína média máxima aceita (g). Auditoria 2: com meta de energia alta e proteína baixa (IMC abaixo de 25), escolher
+   a proteína colada na meta travava a energia no fator mínimo e o cardápio ficava até 545 kcal abaixo da meta. Agora vale
+   qualquer proteína de 3% abaixo da meta até o teto (1,6 g/kg do peso de referência), e entre essas ganha a energia mais perto. */
+function calcularEscala(kcal, prot, R, pisoDia, protTeto) {
+  const piso = pisoDia == null ? PISO_DIA : pisoDia, teto = Math.max(prot * 1.03, protTeto || 0);
+  const chave = kcal + "|" + prot + "|" + Math.round(teto) + "|" + piso + "|" + R.marcas.join(",") + "|" + R.naoGosta.join(",");
   if (MEMO_ESCALA[chave]) return MEMO_ESCALA[chave];
+  const guardada = lerEscalasGuardadas()[chave];
+  if (guardada && Array.isArray(guardada.dias) && guardada.dias.length === 7) return (MEMO_ESCALA[chave] = guardada);
   const dias = [];
   for (let i = 0; i < 7; i++) { const itens = []; resolverDia(i, R).refeicoes.forEach(r => r.itens.forEach(it => { itens.push(it); })); dias.push(itens); }
   const soma = (itens, esc) => { let k = 0, p = 0; itens.forEach(it => { const g = gramasFinais(it, esc), al = A[it.k]; k += al.kcal * g / 100; p += al.prot * g / 100; }); return { k, p }; };
@@ -173,18 +185,19 @@ function calcularEscala(kcal, prot, R, pisoDia) {
     });
     todas.push({ prot: fp, energia: fe, dias: fDias, kcalMedia: sk, protMedia: sp, eP: Math.abs(sp / prot - 1), eK: Math.abs(sk / kcal - 1) });
   }
-  const minP = Math.min.apply(null, todas.map(c => c.eP)), corte = Math.max(minP, 0.03) + 1e-9;
+  let faixa = todas.filter(c => c.protMedia >= prot * 0.97 - 1e-9 && c.protMedia <= teto + 1e-9);
+  if (!faixa.length) { const minP = Math.min.apply(null, todas.map(c => c.eP)), corte = Math.max(minP, 0.03) + 1e-9; faixa = todas.filter(c => c.eP <= corte); }
   let m = null;
-  todas.filter(c => c.eP <= corte).forEach(c => { if (!m || c.eK < m.eK - 1e-9 || (Math.abs(c.eK - m.eK) <= 1e-9 && c.eP < m.eP - 1e-9)) m = c; });
-  const r = { prot: m.prot, energia: m.energia, dias: m.dias, kcalMedia: m.kcalMedia, protMedia: m.protMedia, noLimite: m.eP > ESCALA.tolerancia || m.eK > ESCALA.tolerancia };
-  MEMO_ESCALA[chave] = r;
+  faixa.forEach(c => { if (!m || c.eK < m.eK - 1e-9 || (Math.abs(c.eK - m.eK) <= 1e-9 && c.eP < m.eP - 1e-9)) m = c; });
+  const r = { prot: m.prot, energia: m.energia, dias: m.dias, kcalMedia: m.kcalMedia, protMedia: m.protMedia, noLimite: m.eK > ESCALA.tolerancia || m.protMedia < prot * (1 - ESCALA.tolerancia) || m.protMedia > teto * (1 + ESCALA.tolerancia) };
+  MEMO_ESCALA[chave] = r; guardarEscala(chave, r);
   return r;
 }
 
 /* ---------- o que as telas usam ---------- */
 /* Plano com gramas finais: escala do perfil e restrições R (R serve para comparar, por exemplo como seria sem restrições). */
 function planoCom(i, R) {
-  const m = metas(), e = calcularEscala(m.kcal, m.prot, R, m.pisoDia);
+  const m = metas(), e = calcularEscala(m.kcal, m.prot, R, m.pisoDia, m.protMax);
   return escalar(resolverDia(i, R), i === 7 ? { prot: Math.min(1, e.prot), energia: Math.min(1, e.energia) } : { prot: e.prot, energia: e.dias[i] });
 }
 function planoDoDia(i) { return planoCom(i, restricoesDoPerfil()); }
@@ -235,7 +248,7 @@ function metas() {
   const carb = Math.max(0, Math.round((kcal - prot * 4 - gord * 9) / 4));
   /* Piso por dia do cardápio. Meta de energia informada pelo médico abaixo de 1.200 kcal vale como piso: a decisão clínica é dele. */
   const pisoDia = p.metaKcal && p.metaKcal < PISO_DIA ? p.metaKcal : PISO_DIA;
-  const esc = calcularEscala(kcal, prot, restricoesDoPerfil(), pisoDia);
+  const esc = calcularEscala(kcal, prot, restricoesDoPerfil(), pisoDia, Math.round(1.6 * pesoRef));
   return {
     peso, idade, imc, tmb, gasto, piso, kcalCalc, kcal, pesoRef, protCalc, prot,
     semDeficit, abaixoDoPeso, gestante, discreto: p.discreto === true, pisoDia,

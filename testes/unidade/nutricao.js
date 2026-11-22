@@ -72,7 +72,9 @@ test("escala: média da semana a até 7% das metas de energia e proteína, ou no
   PERFIS.forEach((p, i) => {
     const a = app(p), m = j(a, "metas()"), med = j(a, "mediaSemana()");
     const eK = Math.abs(med.kcal / m.kcal - 1), eP = Math.abs(med.prot / m.prot - 1), txt = JSON.stringify(p) + ": " + Math.round(med.kcal) + " de " + m.kcal + " kcal, " + Math.round(med.prot) + " de " + m.prot + " g";
-    assert.strictEqual(m.escalaNoLimite, eK > 0.07 || eP > 0.07, txt);
+    // Proteína pode passar da meta até o teto de 1,6 g/kg (auditoria 2); abaixo da meta, até 7%.
+    const teto = Math.max(m.prot * 1.03, m.protMax);
+    assert.strictEqual(m.escalaNoLimite, eK > 0.07 || med.prot < m.prot * 0.93 || med.prot > teto * 1.07, txt + " (teto " + m.protMax + " g)");
     if (i < 6) assert.strictEqual(m.escalaNoLimite, false, txt);
     assert.ok(Math.abs(m.planoKcal - med.kcal) < 0.5 && Math.abs(m.planoProt - med.prot) < 0.05, "metas() informa a média real do plano");
     assert.ok(m.fatorProt >= 0.5 && m.fatorProt <= 1.75 && m.fatorEnergia >= 0.5 && m.fatorEnergia <= 2, "fatores dentro dos limites");
@@ -80,6 +82,13 @@ test("escala: média da semana a até 7% das metas de energia e proteína, ou no
   const lim = j(app(PERFIS[6]), "metas()");
   assert.strictEqual(lim.escalaNoLimite, true);
   assert.ok(Math.abs(lim.planoProt / lim.prot - 1) <= 0.07, "quando não cabe, a proteína tem prioridade");
+});
+test("auditoria 2: com IMC abaixo de 25 o cardápio chega perto da meta de energia, sem travar no fator mínimo", () => {
+  for (const p of [{ altura: 170, peso: 52 }, { altura: 160, peso: 49.9 }, { altura: 155, peso: 55 }]) {
+    const m = j(app(p), "metas()"), pct = m.planoKcal / m.kcal;
+    assert.ok(pct >= 0.93 && pct <= 1.07 && !m.escalaNoLimite, JSON.stringify(p) + ": " + Math.round(m.planoKcal) + " de " + m.kcal + " kcal");
+    assert.ok(m.planoProt >= m.prot * 0.97 && m.planoProt <= m.protMax * 1.07, "proteína entre a meta e 1,6 g/kg: " + Math.round(m.planoProt));
+  }
 });
 test("escala: nenhum dia planejado abaixo de 1.200 kcal, fora o dia de enjoo", () => {
   PERFIS.concat([{ peso: 50, altura: 160 }, { peso: 62, altura: 150, nascimento: ANO - 58 }, { peso: 80, altura: 160, naoCome: ["lactose"] }, { peso: 80, altura: 160, naoCome: ["vegetariana"] }]).forEach(p => {
