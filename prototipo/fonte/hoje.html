@@ -7,7 +7,7 @@
 <!--CSS-->
 <style>
 .resumo { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; margin-top: 12px; }
-.resumo .rot { font-size: 13px; font-weight: 600; opacity: .9; }
+.resumo .rot { font-size: 15px; font-weight: 600; opacity: .9; }
 .resumo .big { margin-top: 4px; }
 .resumo .trilho { background: var(--vidro); margin-top: 8px; max-width: 200px; }
 .resumo .trilho i { background: var(--sobre-topo); }
@@ -18,18 +18,18 @@
 .anel .ap { fill: var(--ap); stroke: var(--topo-b); stroke-width: 3; }
 .anel text { fill: var(--sobre-topo); font-family: var(--fonte); text-anchor: middle; }
 .duas-topo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
-.duas-topo .vidro b { display: block; font-size: 15px; }
-.duas-topo .vidro span { font-size: 12px; font-weight: 600; opacity: .85; }
+.duas-topo .vidro b { display: block; font-size: 17px; }
+.duas-topo .vidro span { font-size: 14px; font-weight: 600; opacity: .85; }
 .marcar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .marcar a { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 14px; background: var(--cinza); color: var(--texto); text-decoration: none; min-height: 92px; }
 .marcar a .ico-c { width: 28px; height: 28px; border-radius: 9px; }
 .marcar a .med { font-size: 18px; }
 .marcar a .ok { position: absolute; top: 8px; right: 8px; width: 22px; height: 22px; color: var(--dado); }
 .marcar a.feito { background: var(--pri-clara); }
-.porque { font-size: 13.5px; margin-top: 8px; color: var(--texto); }
+.porque { font-size: 15px; margin-top: 8px; color: var(--texto); }
 .porque b { color: var(--pri); }
 .chips2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-.chips2 span { display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 12px; background: var(--cinza); font-size: 13px; font-weight: 600; text-align: center; line-height: 1.1; padding: 2px 4px; }
+.chips2 span { display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 12px; background: var(--cinza); font-size: 15px; font-weight: 600; text-align: center; line-height: 1.1; padding: 2px 4px; }
 .chips2 span.on { background: var(--pri); color: var(--sobre-pri); }
 .mini-barras { display: flex; align-items: flex-end; gap: 4px; height: 38px; margin-top: 8px; }
 .mini-barras i { flex: 1; border-radius: 3px 3px 0 0; background: var(--dado); }
@@ -58,7 +58,7 @@
       </g>
       <circle class="ap" cx="62.8" cy="14.1" r="8"/>
       <text x="60" y="66" style="font-size:30px;font-weight:800">4/7</text>
-      <text x="60" y="84" style="font-size:13px;font-weight:600">dia</text>
+      <text x="60" y="84" style="font-size:15px;font-weight:600">dia</text>
     </svg>
   </div>
   <div class="duas-topo">
@@ -80,13 +80,13 @@
 
   <div class="banner dica">
     <svg class="ic" aria-hidden="true"><use href="#i-dica"/></svg>
-    <div class="t"><b>Dica do dia</b>Comece o prato pela proteína: ajuda a manter os músculos enquanto o peso cai.</div>
+    <div class="t"><b>Dica do dia</b>Comece pela proteína: com pouca fome, ela não fica para trás. Proteína suficiente e treino de força ajudam a manter os músculos.</div>
   </div>
 
   <section class="alerta" role="note" aria-label="Sinal de alerta">
     <svg class="ic" aria-hidden="true"><use href="#i-alerta"/></svg>
     <div><div class="rot">SINAL DE ALERTA · VESÍCULA E PÂNCREAS</div>
-      <p>Dor forte no alto da barriga que não passa ou vai para as costas, febre, pele ou olhos amarelados: procure atendimento hoje.</p>
+      <p>Dor forte no alto da barriga ou que vai para as costas, com vômito, febre ou pele amarela: vá ao pronto-socorro hoje. Com falta de ar ou desmaio, ligue 192.</p>
       <a href="#">Ver todos os sinais ›</a></div>
   </section>
 
@@ -95,7 +95,7 @@
     <div class="marcar">
       <a href="#"><span class="ico-c" style="background:var(--c-comida)"><svg aria-hidden="true"><use href="#i-comer"/></svg></span><span class="med">2<small>/5</small></span><span class="mini">refeições</span></a>
       <a href="#"><span class="ico-c" style="background:var(--c-agua)"><svg aria-hidden="true"><use href="#i-agua"/></svg></span><span class="med">4<small>/10</small></span><span class="mini">copos de água</span></a>
-      <a href="#" class="feito"><svg class="ok" aria-label="feito"><use href="#i-feito"/></svg><span class="ico-c" style="background:var(--c-aplic)"><svg aria-hidden="true"><use href="#i-caneta"/></svg></span><span class="med" style="font-size:15px;margin-top:3px">Feita</span><span class="mini">aplicação de terça</span></a>
+      <a href="#" class="feito"><svg class="ok" aria-label="feito"><use href="#i-feito"/></svg><span class="ico-c" style="background:var(--c-aplic)"><svg aria-hidden="true"><use href="#i-caneta"/></svg></span><span class="med" style="font-size:17px;margin-top:3px">Feita</span><span class="mini">aplicação de terça</span></a>
     </div>
     <p class="mini" style="margin-top:8px">O que você não marcar fica em branco, sem cobrança. Dá para marcar depois.</p>
   </section>
@@ -103,8 +103,8 @@
   <section class="cartao" aria-labelledby="t-ref">
     <div class="cab" style="margin-bottom:6px"><span class="sub" style="font-weight:600">Próxima refeição · almoço, 12h30</span><a href="#">Trocar ›</a></div>
     <h2 id="t-ref" style="font-size:17px">Frango desfiado, arroz, feijão e salada</h2>
-    <div class="selos" style="margin-top:8px"><span class="selo">pouca gordura</span><span class="selo">28 g de proteína</span><span class="selo ambar">prato pequeno</span></div>
-    <p class="porque"><b>Por quê:</b> pouca gordura de uma vez pesa menos na vesícula; a proteína primeiro segura a fome.</p>
+    <div class="selos" style="margin-top:8px"><span class="selo">gordura na medida</span><span class="selo">28 g de proteína</span><span class="selo ambar">prato pequeno</span></div>
+    <p class="porque"><b>Por quê:</b> um pouco de gordura em cada refeição ajuda a vesícula a esvaziar, e muita de uma vez pode trazer cólica. Começar pela proteína garante que ela não fique para trás quando a fome acaba.</p>
     <div class="toques" role="group" aria-label="Quanto comeu"><span>comi tudo</span><span>metade</span><span>um pouco</span><span>nada</span></div>
   </section>
 
@@ -137,7 +137,7 @@
   <section class="cartao" aria-labelledby="t-ainda">
     <div class="cab" style="margin-bottom:6px"><h2 id="t-ainda">Ainda hoje</h2><a href="#">Cardápio ›</a></div>
     <ul class="lista">
-      <li><span class="hora">16h</span><span class="txt">Iogurte natural com mamão</span><span class="selo">pouca gordura</span></li>
+      <li><span class="hora">16h</span><span class="txt">Iogurte natural com mamão</span><span class="selo">gordura na medida</span></li>
       <li><span class="hora">19h30</span><span class="txt">Sopa de legumes com ovo</span><span class="selo">leve</span></li>
       <li><span class="hora">20h</span><span class="txt">Caminhada de 10 min</span><span class="selo cinza">opcional</span></li>
     </ul>

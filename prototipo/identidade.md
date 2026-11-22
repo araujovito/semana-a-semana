@@ -71,14 +71,17 @@ Contraste medido:
 
 ## Tipografia
 
-- Só sem serifa do sistema: `system-ui, -apple-system, Roboto, "Noto Sans", sans-serif`. No Android aparece a Roboto. Nenhuma fonte vai dentro do app. Nas capturas deste computador aparece a DejaVu Sans, um pouco mais larga.
-- Hierarquia densa:
-  - números grandes 30–34 px, peso 800;
-  - números de cartão 22 px, peso 800;
-  - títulos de cartão 16 px, peso 700;
-  - texto 15 px;
-  - rótulos e selos 11,5–13 px.
-- Números com algarismos de largura fixa.
+- **Fonte:** Zilla Slab, uma serifa quadrada, escolhida pelo dono em 22/11 depois de passar pela fonte do sistema e pela Montserrat. Vão dentro do app quatro pesos (400, 500, 600 e 700), em `app/fontes/`, com a licença SIL OFL 1.1 em `app/fontes/OFL.txt`. Nada vem de fora. Quando ela falta, entra a Georgia ou outra serifa do sistema. O protótipo lê os mesmos arquivos, então as capturas mostram a mesma letra do app.
+- **Pesos:** números 700, títulos 600, texto 400 e 500.
+- **Algarismos:** a Zilla Slab traz algarismos antigos por padrão, com altura variável (o 9 desce, o 0 fica baixo). Por isso o corpo usa `font-variant-numeric: lining-nums`, e os números têm todos a mesma altura.
+- **Tamanhos:** a letra é baixa, então nada que ela lê fica abaixo de 14 px:
+  - texto 17 px;
+  - secundário 15 px;
+  - rótulos e selos 14 px;
+  - títulos de cartão 19 px;
+  - números grandes 30 a 34 px.
+  As exceções são os rótulos de eixo dos gráficos (10 a 12 px), porque o número também aparece em texto ao lado ou ao tocar.
+- **Conferência:** feita em 440 px (o celular dela, um Redmi Note 13 Pro), 390 px e 320 px, e com letra grande. Os tamanhos do app são em px, e por isso aumentar o `font-size` do html não muda nada. No Android, quem aumenta a letra é o zoom de texto da WebView. Simulei isso com uma janela de 338 px em escala 1,3, em que o texto ocupa a mesma fração da largura que em 440 px com letra a 130%.
 
 ## Ícones
 
@@ -96,7 +99,15 @@ Também desenhados: água (gota), peso (balança com mostrador), aplicação (ca
 
 ## Tom dos textos
 
-Continua o do briefing: frases curtas, fatos, riscos e opções, sem "o correto é". Selos curtos nomeiam o que importa ("pouca gordura", "28 g de proteína", "prato pequeno", "5 mg", "hoje"). Cada sugestão de refeição traz um "Por quê" de uma linha. Marcar o dia nunca cobra.
+Continua o do briefing: frases curtas, fatos, riscos e opções, sem "o correto é". Selos curtos nomeiam o que importa ("gordura na medida", "28 g de proteína", "prato pequeno", "5 mg", "hoje"). Cada sugestão de refeição traz um "Por quê" curto. Marcar o dia nunca cobra.
+
+**Correções da revisão clínica de 22/11** (`empresa/relatorios/revisao-clinica-onda2.md`), já feitas no protótipo:
+- "pouca gordura" virou "gordura na medida": refeição quase sem gordura deixa a vesícula parada (regra R3 do cardápio);
+- o alerta agora diz "vá ao pronto-socorro hoje; com falta de ar ou desmaio, ligue 192";
+- "pouco álcool" virou "nada de álcool";
+- caminhos não dizem mais que o cardápio segue o caminho: o plano da nutricionista é o cardápio;
+- a fonte do ritmo de peso passou a ser a bula do Zepbound, seção 5.4;
+- o resumo da consulta diz "nenhuma dor forte registrada" no lugar de "sem sinal de alerta".
 
 **Atenção:** os textos de saúde do protótipo são exemplos de tom. Antes de entrarem no app, cada afirmação nova precisa da fonte anotada (regra 9). Isso vale para a dica do dia, os "por quê", o "vale em todos" e os prós e contras dos caminhos. A frase sobre perda rápida e vesícula vem da bula, já citada no briefing.
 

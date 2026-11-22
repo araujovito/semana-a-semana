@@ -6,6 +6,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Caminhos · protótipo</title>
 <style>
+/* Mesma fonte do app (Zilla Slab, OFL), lida dos arquivos locais de app/fontes/. */
+@font-face { font-family: "Zilla Slab"; font-style: normal; font-display: swap; font-weight: 400; src: url(../app/fontes/zilla-slab-latin-400-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Zilla Slab"; font-style: normal; font-display: swap; font-weight: 500; src: url(../app/fontes/zilla-slab-latin-500-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Zilla Slab"; font-style: normal; font-display: swap; font-weight: 600; src: url(../app/fontes/zilla-slab-latin-600-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Zilla Slab"; font-style: normal; font-display: swap; font-weight: 700; src: url(../app/fontes/zilla-slab-latin-700-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 /* Protótipo da identidade "Laranja" (revisão 3, estilo da revisão 2): linguagem de app de saúde do dia a dia. Topo colorido com o essencial,
    grade de atalhos, cartões em duas colunas, selos e "marcar o dia". Tudo local: fonte do sistema, ícones próprios em SVG.
    CSS até 2022 (WebView 113): variáveis, grid, flex, gap, aspect-ratio. Sem :has(), sem nesting, sem color-mix(). */
@@ -24,7 +29,7 @@
   --c-painel: linear-gradient(135deg, #63e6be, #0ca678); --c-guia: linear-gradient(135deg, #91a7ff, #4263eb);
   --ap: #4a1504; --mover-cor: #12b886;
   --sombra: 0 1px 2px rgba(16, 24, 40, .04), 0 2px 8px rgba(16, 24, 40, .05);
-  --fonte: system-ui, -apple-system, Roboto, "Noto Sans", "Segoe UI", sans-serif;
+  --fonte: "Zilla Slab", Georgia, serif;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
@@ -41,19 +46,19 @@
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
-body { margin: 0; background: var(--fundo); color: var(--texto); font: 15px/1.45 var(--fonte); }
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 17px/1.45 var(--fonte); font-variant-numeric: lining-nums; }
 main { max-width: 520px; margin: 0 auto; padding: 0 12px 96px; position: relative; }
 h1, h2, h3 { font-weight: 700; margin: 0; }
 h2 { font-size: 16px; line-height: 1.3; }
-h3 { font-size: 14px; }
+h3 { font-size: 16px; }
 p { margin: 0; }
-.sub { color: var(--suave); font-size: 13px; }
-.mini { color: var(--suave); font-size: 12px; }
-.num { font-variant-numeric: tabular-nums; }
-.big { font-size: 34px; font-weight: 800; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-.big small { font-size: 14px; font-weight: 600; letter-spacing: 0; }
-.med { font-size: 22px; font-weight: 800; line-height: 1.1; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
-.med small { font-size: 12px; font-weight: 600; color: var(--suave); letter-spacing: 0; }
+.sub { color: var(--suave); font-size: 15px; }
+.mini { color: var(--suave); font-size: 14px; }
+.num { font-variant-numeric: lining-nums tabular-nums; }
+.big { font-size: 34px; font-weight: 700; line-height: 1; letter-spacing: -.02em; font-variant-numeric: lining-nums tabular-nums; }
+.big small { font-size: 16px; font-weight: 600; letter-spacing: 0; }
+.med { font-size: 22px; font-weight: 700; line-height: 1.1; letter-spacing: -.01em; font-variant-numeric: lining-nums tabular-nums; }
+.med small { font-size: 14px; font-weight: 600; color: var(--suave); letter-spacing: 0; }
 svg.ic { width: 24px; height: 24px; flex: none; }
 svg.ic.p { width: 18px; height: 18px; }
 
@@ -70,13 +75,13 @@ svg.ic.p { width: 18px; height: 18px; }
 
 .cartao { background: var(--cartao); border-radius: 16px; padding: 14px; margin-bottom: 10px; box-shadow: var(--sombra); }
 .cab { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
-.cab a, .link { color: var(--pri); font-size: 13px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; }
+.cab a, .link { color: var(--pri); font-size: 15px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; }
 .duas { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
 .duas .cartao { margin: 0; }
 .linha { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 
 /* Selos e etiquetas. */
-.selo { display: inline-flex; align-items: center; gap: 3px; font-size: 11.5px; font-weight: 700; line-height: 1; padding: 4px 7px; border-radius: 6px;
+.selo { display: inline-flex; align-items: center; gap: 3px; font-size: 14px; font-weight: 700; line-height: 1; padding: 4px 7px; border-radius: 6px;
   background: var(--pri-clara); color: var(--pri); white-space: nowrap; }
 .selo.ambar { background: var(--ambar-clara); color: var(--ambar); }
 .selo.cinza { background: var(--cinza); color: var(--suave); }
@@ -86,7 +91,7 @@ svg.ic.p { width: 18px; height: 18px; }
 /* Grade de atalhos com ícones coloridos preenchidos. */
 .atalhos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px 0; }
 .atalhos a { display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 72px; padding: 4px 0; color: var(--texto);
-  text-decoration: none; font-size: 12.5px; font-weight: 500; text-align: center; line-height: 1.2; }
+  text-decoration: none; font-size: 14px; font-weight: 500; text-align: center; line-height: 1.2; }
 .atalhos .q { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 14px; color: #fff; }
 .atalhos .q svg { width: 24px; height: 24px; }
 
@@ -94,14 +99,14 @@ svg.ic.p { width: 18px; height: 18px; }
 .banner { display: flex; gap: 10px; align-items: center; border-radius: 16px; padding: 12px 14px; margin-bottom: 10px; }
 .banner.dica { background: var(--ambar-clara); }
 .banner.dica .ic { color: var(--ambar); }
-.banner .t { flex: 1; min-width: 0; font-size: 14px; }
-.banner .t b { display: block; font-size: 14px; }
+.banner .t { flex: 1; min-width: 0; font-size: 16px; }
+.banner .t b { display: block; font-size: 16px; }
 /* Alerta: forma própria (borda grossa à esquerda), ícone de triângulo e o rótulo "SINAL DE ALERTA". Nunca só a cor. */
 .alerta { background: var(--alerta-clara); border-left: 5px solid var(--alerta-ic); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; display: flex; gap: 10px; }
 .alerta .ic { color: var(--alerta-ic); }
-.alerta .rot { font-size: 11.5px; font-weight: 800; letter-spacing: .06em; color: var(--alerta); }
-.alerta p { font-size: 14px; margin-top: 2px; }
-.alerta a { color: var(--alerta); font-weight: 700; font-size: 13px; display: inline-flex; min-height: 44px; align-items: center; }
+.alerta .rot { font-size: 14px; font-weight: 700; letter-spacing: .06em; color: var(--alerta); }
+.alerta p { font-size: 16px; margin-top: 2px; }
+.alerta a { color: var(--alerta); font-weight: 700; font-size: 15px; display: inline-flex; min-height: 44px; align-items: center; }
 
 /* Botões. */
 button, .botao { font: inherit; font-weight: 700; min-height: 44px; min-width: 44px; padding: 8px 16px; border-radius: 999px; border: 0;
@@ -111,7 +116,7 @@ button.cinza { background: var(--cinza); color: var(--texto); font-weight: 600; 
 
 /* Escolhas de um toque. */
 .toques { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; }
-.toques span { display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 12px; background: var(--cinza); font-size: 13.5px; font-weight: 600; text-align: center; line-height: 1.15; }
+.toques span { display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 12px; background: var(--cinza); font-size: 15px; font-weight: 600; text-align: center; line-height: 1.15; }
 .toques span.on { background: var(--pri); color: var(--sobre-pri); }
 
 /* Barras simples. */
@@ -122,7 +127,7 @@ button.cinza { background: var(--cinza); color: var(--texto); font-weight: 600; 
 .lista { list-style: none; margin: 0; padding: 0; }
 .lista li { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--linha); min-height: 44px; }
 .lista li:first-child { border-top: 0; padding-top: 0; }
-.lista .hora { width: 44px; flex: none; color: var(--suave); font-size: 13px; font-variant-numeric: tabular-nums; }
+.lista .hora { width: 44px; flex: none; color: var(--suave); font-size: 15px; font-variant-numeric: lining-nums tabular-nums; }
 .lista .txt { flex: 1; min-width: 0; }
 .ico-c { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 10px; color: #fff; flex: none; }
 .ico-c svg { width: 18px; height: 18px; }
@@ -131,7 +136,7 @@ button.cinza { background: var(--cinza); color: var(--texto); font-weight: 600; 
 .abas { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; display: flex; background: var(--cartao); border-top: 1px solid var(--linha);
   padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); }
 .abas a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 52px; color: var(--suave);
-  text-decoration: none; font-size: 11.5px; font-weight: 500; }
+  text-decoration: none; font-size: 14px; font-weight: 500; }
 .abas a svg { width: 25px; height: 25px; }
 .abas a.ativa { color: var(--pri); font-weight: 700; }
 
@@ -143,7 +148,7 @@ svg.graf .barra { fill: var(--dado); }
 svg.graf .base { stroke: var(--linha); stroke-width: 1; }
 svg.graf .media { stroke: var(--texto); stroke-width: 1.3; stroke-dasharray: 4 4; }
 svg.graf .forte { fill: var(--texto); font-weight: 700; }
-.legenda { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; font-size: 12px; color: var(--suave); }
+.legenda { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; font-size: 14px; color: var(--suave); }
 .legenda i { display: inline-block; width: 12px; height: 9px; border-radius: 3px; vertical-align: -1px; margin-right: 4px; }
 
 /* Paleta "Rosa e azul" (proposta de 22/11, a pedido do dono): degradê suave e difuso de rosa para lilás para azul, como malha de cores
@@ -188,26 +193,26 @@ body { background:
 </style>
 <style>
 .vale { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.vale div { display: flex; gap: 8px; align-items: flex-start; background: var(--cinza); border-radius: 12px; padding: 10px; font-size: 13px; line-height: 1.3; }
+.vale div { display: flex; gap: 8px; align-items: flex-start; background: var(--cinza); border-radius: 12px; padding: 10px; font-size: 15px; line-height: 1.3; }
 .vale .ico-c { width: 26px; height: 26px; border-radius: 8px; }
 .vale .ico-c svg { width: 15px; height: 15px; }
 .caminho { padding: 0; overflow: hidden; }
 .capa { display: flex; align-items: center; gap: 12px; padding: 14px; color: #fff; }
 .capa svg.prato { width: 56px; height: 56px; flex: none; }
 .capa h2 { font-size: 18px; color: #fff; }
-.capa .sel { display: inline-block; margin-bottom: 4px; font-size: 11.5px; font-weight: 800; background: #fff; color: #087f5b; border-radius: 6px; padding: 3px 7px; }
-.capa p { font-size: 13px; opacity: .95; }
+.capa .sel { display: inline-block; margin-bottom: 4px; font-size: 14px; font-weight: 800; background: #fff; color: #087f5b; border-radius: 6px; padding: 3px 7px; }
+.capa p { font-size: 15px; opacity: .95; }
 .c1 { background: linear-gradient(120deg, #1864ab, #1971c2); }
 .c2 { background: linear-gradient(120deg, #0f6e52, #087f5b); }
 .c3 { background: linear-gradient(120deg, #a93a0c, #c2410c); }
 .corpo { padding: 12px 14px 14px; }
-.prc { list-style: none; margin: 8px 0 0; padding: 0; font-size: 13.5px; }
+.prc { list-style: none; margin: 8px 0 0; padding: 0; font-size: 15px; }
 .prc li { display: flex; gap: 8px; padding: 3px 0; }
-.prc li::before { flex: none; width: 18px; height: 18px; border-radius: 50%; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+.prc li::before { flex: none; width: 18px; height: 18px; border-radius: 50%; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
 .prc li.a::before { content: "✓"; background: var(--pri-clara); color: var(--pri); }
 .prc li.t::before { content: "!"; background: var(--ambar-clara); color: var(--ambar); }
-.almoco { margin-top: 10px; background: var(--cinza); border-radius: 12px; padding: 9px 11px; font-size: 13px; }
-.almoco b { display: block; font-size: 12px; color: var(--suave); }
+.almoco { margin-top: 10px; background: var(--cinza); border-radius: 12px; padding: 9px 11px; font-size: 15px; }
+.almoco b { display: block; font-size: 14px; color: var(--suave); }
 .caminho.escolhido { box-shadow: 0 0 0 2px var(--pri); }
 .caminho .botoes { display: flex; gap: 8px; margin-top: 12px; }
 .caminho .botoes > * { flex: 1; }
@@ -241,18 +246,18 @@ body { background:
     <a class="botao-topo" href="#" aria-label="Perfil e metas"><svg class="ic p" aria-hidden="true"><use href="#i-perfil"/></svg></a>
   </div>
   <h1 style="font-size:24px;margin-top:4px">Caminhos para comer</h1>
-  <p style="font-size:13.5px;font-weight:500;margin-top:4px">Três jeitos de montar a semana. Você escolhe um e troca quando quiser; o cardápio segue o caminho escolhido.</p>
+  <p style="font-size:15px;font-weight:500;margin-top:4px">O plano da sua nutricionista continua valendo. Os caminhos explicam o porquê das escolhas e ajudam na conversa com ela.</p>
   <div class="vidro" style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:8px">
-    <span style="font-size:13px;font-weight:600">Seu caminho agora</span><b>Prato dividido</b>
+    <span style="font-size:15px;font-weight:600">Seu caminho agora</span><b>Prato dividido</b>
   </div>
 </header>
 <main>
   <section class="cartao sobe" aria-labelledby="t-vale">
     <div class="cab"><h2 id="t-vale">Vale em todos</h2><span class="selo">vesícula e fígado</span></div>
     <div class="vale">
-      <div><span class="ico-c" style="background:var(--c-comida)"><svg aria-hidden="true"><use href="#i-comer"/></svg></span>Refeições menores, pouca gordura de uma vez</div>
+      <div><span class="ico-c" style="background:var(--c-comida)"><svg aria-hidden="true"><use href="#i-comer"/></svg></span>Refeições menores, com um pouco de gordura em cada uma (nem muita, nem nenhuma)</div>
       <div><span class="ico-c" style="background:var(--c-peso)"><svg aria-hidden="true"><use href="#i-peso"/></svg></span>Proteína em todas as refeições</div>
-      <div><span class="ico-c" style="background:var(--c-agua)"><svg aria-hidden="true"><use href="#i-agua"/></svg></span>Pouco açúcar, refrigerante e álcool</div>
+      <div><span class="ico-c" style="background:var(--c-agua)"><svg aria-hidden="true"><use href="#i-agua"/></svg></span>Pouco açúcar, nada de refrigerante e nada de álcool</div>
       <div><span class="ico-c" style="background:var(--c-aplic)"><svg aria-hidden="true"><use href="#i-semana"/></svg></span>Perder peso sem pressa, no ritmo do médico</div>
     </div>
     <p class="mini" style="margin-top:8px">Cada item tem a fonte anotada no app.</p>
@@ -265,7 +270,7 @@ body { background:
     </div>
     <div class="corpo">
       <div class="selos"><span class="selo">comida de verdade</span><span class="selo ambar">cozinhar um pouco</span><span class="selo cinza">para a vida toda</span></div>
-      <p style="margin-top:8px;font-size:14px"><b>Para quem:</b> gosta de variedade e de cozinhar.</p>
+      <p style="margin-top:8px;font-size:16px"><b>Para quem:</b> gosta de variedade e de cozinhar.</p>
       <ul class="prc">
         <li class="a">Um dos mais estudados para gordura no fígado</li>
         <li class="a">Não corta nenhum grupo de alimento</li>
@@ -284,7 +289,7 @@ body { background:
     </div>
     <div class="corpo">
       <div class="selos"><span class="selo">sem contar nada</span><span class="selo">serve fora de casa</span><span class="selo cinza">prato pequeno</span></div>
-      <p style="margin-top:8px;font-size:14px"><b>Para quem:</b> não quer pesar nem contar e come muito fora.</p>
+      <p style="margin-top:8px;font-size:16px"><b>Para quem:</b> não quer pesar nem contar e come muito fora.</p>
       <ul class="prc">
         <li class="a">Fácil de lembrar e de usar no restaurante</li>
         <li class="a">Prato menor combina com o apetite do tratamento</li>
@@ -303,10 +308,10 @@ body { background:
     </div>
     <div class="corpo">
       <div class="selos"><span class="selo">bom para o fígado</span><span class="selo ambar">mais trabalho no começo</span></div>
-      <p style="margin-top:8px;font-size:14px"><b>Para quem:</b> sente que doce e pão são o ponto fraco, ou tem glicose alta.</p>
+      <p style="margin-top:8px;font-size:16px"><b>Para quem:</b> sente que doce e pão são o ponto fraco, ou tem glicose alta.</p>
       <ul class="prc">
-        <li class="a">Açúcar em excesso alimenta a gordura no fígado</li>
-        <li class="a">Menos picos de fome</li>
+        <li class="a">Açúcar e bebida açucarada em excesso aumentam a gordura do fígado</li>
+        <li class="a">Pão e massa integrais têm mais fibra</li>
         <li class="t">Não é cortar todo carboidrato: em dia de enjoo, pão e arroz ajudam</li>
       </ul>
       <div class="almoco"><b>Um almoço assim</b>Carne moída com legumes, feijão e meia concha de arroz integral</div>

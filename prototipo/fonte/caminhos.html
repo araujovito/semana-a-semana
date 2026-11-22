@@ -7,26 +7,26 @@
 <!--CSS-->
 <style>
 .vale { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.vale div { display: flex; gap: 8px; align-items: flex-start; background: var(--cinza); border-radius: 12px; padding: 10px; font-size: 13px; line-height: 1.3; }
+.vale div { display: flex; gap: 8px; align-items: flex-start; background: var(--cinza); border-radius: 12px; padding: 10px; font-size: 15px; line-height: 1.3; }
 .vale .ico-c { width: 26px; height: 26px; border-radius: 8px; }
 .vale .ico-c svg { width: 15px; height: 15px; }
 .caminho { padding: 0; overflow: hidden; }
 .capa { display: flex; align-items: center; gap: 12px; padding: 14px; color: #fff; }
 .capa svg.prato { width: 56px; height: 56px; flex: none; }
 .capa h2 { font-size: 18px; color: #fff; }
-.capa .sel { display: inline-block; margin-bottom: 4px; font-size: 11.5px; font-weight: 800; background: #fff; color: #087f5b; border-radius: 6px; padding: 3px 7px; }
-.capa p { font-size: 13px; opacity: .95; }
+.capa .sel { display: inline-block; margin-bottom: 4px; font-size: 14px; font-weight: 800; background: #fff; color: #087f5b; border-radius: 6px; padding: 3px 7px; }
+.capa p { font-size: 15px; opacity: .95; }
 .c1 { background: linear-gradient(120deg, #1864ab, #1971c2); }
 .c2 { background: linear-gradient(120deg, #0f6e52, #087f5b); }
 .c3 { background: linear-gradient(120deg, #a93a0c, #c2410c); }
 .corpo { padding: 12px 14px 14px; }
-.prc { list-style: none; margin: 8px 0 0; padding: 0; font-size: 13.5px; }
+.prc { list-style: none; margin: 8px 0 0; padding: 0; font-size: 15px; }
 .prc li { display: flex; gap: 8px; padding: 3px 0; }
-.prc li::before { flex: none; width: 18px; height: 18px; border-radius: 50%; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+.prc li::before { flex: none; width: 18px; height: 18px; border-radius: 50%; font-size: 14px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
 .prc li.a::before { content: "✓"; background: var(--pri-clara); color: var(--pri); }
 .prc li.t::before { content: "!"; background: var(--ambar-clara); color: var(--ambar); }
-.almoco { margin-top: 10px; background: var(--cinza); border-radius: 12px; padding: 9px 11px; font-size: 13px; }
-.almoco b { display: block; font-size: 12px; color: var(--suave); }
+.almoco { margin-top: 10px; background: var(--cinza); border-radius: 12px; padding: 9px 11px; font-size: 15px; }
+.almoco b { display: block; font-size: 14px; color: var(--suave); }
 .caminho.escolhido { box-shadow: 0 0 0 2px var(--pri); }
 .caminho .botoes { display: flex; gap: 8px; margin-top: 12px; }
 .caminho .botoes > * { flex: 1; }
@@ -40,18 +40,18 @@
     <a class="botao-topo" href="#" aria-label="Perfil e metas"><svg class="ic p" aria-hidden="true"><use href="#i-perfil"/></svg></a>
   </div>
   <h1 style="font-size:24px;margin-top:4px">Caminhos para comer</h1>
-  <p style="font-size:13.5px;font-weight:500;margin-top:4px">Três jeitos de montar a semana. Você escolhe um e troca quando quiser; o cardápio segue o caminho escolhido.</p>
+  <p style="font-size:15px;font-weight:500;margin-top:4px">O plano da sua nutricionista continua valendo. Os caminhos explicam o porquê das escolhas e ajudam na conversa com ela.</p>
   <div class="vidro" style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:8px">
-    <span style="font-size:13px;font-weight:600">Seu caminho agora</span><b>Prato dividido</b>
+    <span style="font-size:15px;font-weight:600">Seu caminho agora</span><b>Prato dividido</b>
   </div>
 </header>
 <main>
   <section class="cartao sobe" aria-labelledby="t-vale">
     <div class="cab"><h2 id="t-vale">Vale em todos</h2><span class="selo">vesícula e fígado</span></div>
     <div class="vale">
-      <div><span class="ico-c" style="background:var(--c-comida)"><svg aria-hidden="true"><use href="#i-comer"/></svg></span>Refeições menores, pouca gordura de uma vez</div>
+      <div><span class="ico-c" style="background:var(--c-comida)"><svg aria-hidden="true"><use href="#i-comer"/></svg></span>Refeições menores, com um pouco de gordura em cada uma (nem muita, nem nenhuma)</div>
       <div><span class="ico-c" style="background:var(--c-peso)"><svg aria-hidden="true"><use href="#i-peso"/></svg></span>Proteína em todas as refeições</div>
-      <div><span class="ico-c" style="background:var(--c-agua)"><svg aria-hidden="true"><use href="#i-agua"/></svg></span>Pouco açúcar, refrigerante e álcool</div>
+      <div><span class="ico-c" style="background:var(--c-agua)"><svg aria-hidden="true"><use href="#i-agua"/></svg></span>Pouco açúcar, nada de refrigerante e nada de álcool</div>
       <div><span class="ico-c" style="background:var(--c-aplic)"><svg aria-hidden="true"><use href="#i-semana"/></svg></span>Perder peso sem pressa, no ritmo do médico</div>
     </div>
     <p class="mini" style="margin-top:8px">Cada item tem a fonte anotada no app.</p>
@@ -64,7 +64,7 @@
     </div>
     <div class="corpo">
       <div class="selos"><span class="selo">comida de verdade</span><span class="selo ambar">cozinhar um pouco</span><span class="selo cinza">para a vida toda</span></div>
-      <p style="margin-top:8px;font-size:14px"><b>Para quem:</b> gosta de variedade e de cozinhar.</p>
+      <p style="margin-top:8px;font-size:16px"><b>Para quem:</b> gosta de variedade e de cozinhar.</p>
       <ul class="prc">
         <li class="a">Um dos mais estudados para gordura no fígado</li>
         <li class="a">Não corta nenhum grupo de alimento</li>
@@ -83,7 +83,7 @@
     </div>
     <div class="corpo">
       <div class="selos"><span class="selo">sem contar nada</span><span class="selo">serve fora de casa</span><span class="selo cinza">prato pequeno</span></div>
-      <p style="margin-top:8px;font-size:14px"><b>Para quem:</b> não quer pesar nem contar e come muito fora.</p>
+      <p style="margin-top:8px;font-size:16px"><b>Para quem:</b> não quer pesar nem contar e come muito fora.</p>
       <ul class="prc">
         <li class="a">Fácil de lembrar e de usar no restaurante</li>
         <li class="a">Prato menor combina com o apetite do tratamento</li>
@@ -102,10 +102,10 @@
     </div>
     <div class="corpo">
       <div class="selos"><span class="selo">bom para o fígado</span><span class="selo ambar">mais trabalho no começo</span></div>
-      <p style="margin-top:8px;font-size:14px"><b>Para quem:</b> sente que doce e pão são o ponto fraco, ou tem glicose alta.</p>
+      <p style="margin-top:8px;font-size:16px"><b>Para quem:</b> sente que doce e pão são o ponto fraco, ou tem glicose alta.</p>
       <ul class="prc">
-        <li class="a">Açúcar em excesso alimenta a gordura no fígado</li>
-        <li class="a">Menos picos de fome</li>
+        <li class="a">Açúcar e bebida açucarada em excesso aumentam a gordura do fígado</li>
+        <li class="a">Pão e massa integrais têm mais fibra</li>
         <li class="t">Não é cortar todo carboidrato: em dia de enjoo, pão e arroz ajudam</li>
       </ul>
       <div class="almoco"><b>Um almoço assim</b>Carne moída com legumes, feijão e meia concha de arroz integral</div>

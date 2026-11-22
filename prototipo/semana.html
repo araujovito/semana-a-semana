@@ -6,6 +6,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Semana · protótipo</title>
 <style>
+/* Mesma fonte do app (Zilla Slab, OFL), lida dos arquivos locais de app/fontes/. */
+@font-face { font-family: "Zilla Slab"; font-style: normal; font-display: swap; font-weight: 400; src: url(../app/fontes/zilla-slab-latin-400-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Zilla Slab"; font-style: normal; font-display: swap; font-weight: 500; src: url(../app/fontes/zilla-slab-latin-500-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Zilla Slab"; font-style: normal; font-display: swap; font-weight: 600; src: url(../app/fontes/zilla-slab-latin-600-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Zilla Slab"; font-style: normal; font-display: swap; font-weight: 700; src: url(../app/fontes/zilla-slab-latin-700-normal.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 /* Protótipo da identidade "Laranja" (revisão 3, estilo da revisão 2): linguagem de app de saúde do dia a dia. Topo colorido com o essencial,
    grade de atalhos, cartões em duas colunas, selos e "marcar o dia". Tudo local: fonte do sistema, ícones próprios em SVG.
    CSS até 2022 (WebView 113): variáveis, grid, flex, gap, aspect-ratio. Sem :has(), sem nesting, sem color-mix(). */
@@ -24,7 +29,7 @@
   --c-painel: linear-gradient(135deg, #63e6be, #0ca678); --c-guia: linear-gradient(135deg, #91a7ff, #4263eb);
   --ap: #4a1504; --mover-cor: #12b886;
   --sombra: 0 1px 2px rgba(16, 24, 40, .04), 0 2px 8px rgba(16, 24, 40, .05);
-  --fonte: system-ui, -apple-system, Roboto, "Noto Sans", "Segoe UI", sans-serif;
+  --fonte: "Zilla Slab", Georgia, serif;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
@@ -41,19 +46,19 @@
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
-body { margin: 0; background: var(--fundo); color: var(--texto); font: 15px/1.45 var(--fonte); }
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 17px/1.45 var(--fonte); font-variant-numeric: lining-nums; }
 main { max-width: 520px; margin: 0 auto; padding: 0 12px 96px; position: relative; }
 h1, h2, h3 { font-weight: 700; margin: 0; }
 h2 { font-size: 16px; line-height: 1.3; }
-h3 { font-size: 14px; }
+h3 { font-size: 16px; }
 p { margin: 0; }
-.sub { color: var(--suave); font-size: 13px; }
-.mini { color: var(--suave); font-size: 12px; }
-.num { font-variant-numeric: tabular-nums; }
-.big { font-size: 34px; font-weight: 800; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-.big small { font-size: 14px; font-weight: 600; letter-spacing: 0; }
-.med { font-size: 22px; font-weight: 800; line-height: 1.1; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
-.med small { font-size: 12px; font-weight: 600; color: var(--suave); letter-spacing: 0; }
+.sub { color: var(--suave); font-size: 15px; }
+.mini { color: var(--suave); font-size: 14px; }
+.num { font-variant-numeric: lining-nums tabular-nums; }
+.big { font-size: 34px; font-weight: 700; line-height: 1; letter-spacing: -.02em; font-variant-numeric: lining-nums tabular-nums; }
+.big small { font-size: 16px; font-weight: 600; letter-spacing: 0; }
+.med { font-size: 22px; font-weight: 700; line-height: 1.1; letter-spacing: -.01em; font-variant-numeric: lining-nums tabular-nums; }
+.med small { font-size: 14px; font-weight: 600; color: var(--suave); letter-spacing: 0; }
 svg.ic { width: 24px; height: 24px; flex: none; }
 svg.ic.p { width: 18px; height: 18px; }
 
@@ -70,13 +75,13 @@ svg.ic.p { width: 18px; height: 18px; }
 
 .cartao { background: var(--cartao); border-radius: 16px; padding: 14px; margin-bottom: 10px; box-shadow: var(--sombra); }
 .cab { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
-.cab a, .link { color: var(--pri); font-size: 13px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; }
+.cab a, .link { color: var(--pri); font-size: 15px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; }
 .duas { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
 .duas .cartao { margin: 0; }
 .linha { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 
 /* Selos e etiquetas. */
-.selo { display: inline-flex; align-items: center; gap: 3px; font-size: 11.5px; font-weight: 700; line-height: 1; padding: 4px 7px; border-radius: 6px;
+.selo { display: inline-flex; align-items: center; gap: 3px; font-size: 14px; font-weight: 700; line-height: 1; padding: 4px 7px; border-radius: 6px;
   background: var(--pri-clara); color: var(--pri); white-space: nowrap; }
 .selo.ambar { background: var(--ambar-clara); color: var(--ambar); }
 .selo.cinza { background: var(--cinza); color: var(--suave); }
@@ -86,7 +91,7 @@ svg.ic.p { width: 18px; height: 18px; }
 /* Grade de atalhos com ícones coloridos preenchidos. */
 .atalhos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px 0; }
 .atalhos a { display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 72px; padding: 4px 0; color: var(--texto);
-  text-decoration: none; font-size: 12.5px; font-weight: 500; text-align: center; line-height: 1.2; }
+  text-decoration: none; font-size: 14px; font-weight: 500; text-align: center; line-height: 1.2; }
 .atalhos .q { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 14px; color: #fff; }
 .atalhos .q svg { width: 24px; height: 24px; }
 
@@ -94,14 +99,14 @@ svg.ic.p { width: 18px; height: 18px; }
 .banner { display: flex; gap: 10px; align-items: center; border-radius: 16px; padding: 12px 14px; margin-bottom: 10px; }
 .banner.dica { background: var(--ambar-clara); }
 .banner.dica .ic { color: var(--ambar); }
-.banner .t { flex: 1; min-width: 0; font-size: 14px; }
-.banner .t b { display: block; font-size: 14px; }
+.banner .t { flex: 1; min-width: 0; font-size: 16px; }
+.banner .t b { display: block; font-size: 16px; }
 /* Alerta: forma própria (borda grossa à esquerda), ícone de triângulo e o rótulo "SINAL DE ALERTA". Nunca só a cor. */
 .alerta { background: var(--alerta-clara); border-left: 5px solid var(--alerta-ic); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; display: flex; gap: 10px; }
 .alerta .ic { color: var(--alerta-ic); }
-.alerta .rot { font-size: 11.5px; font-weight: 800; letter-spacing: .06em; color: var(--alerta); }
-.alerta p { font-size: 14px; margin-top: 2px; }
-.alerta a { color: var(--alerta); font-weight: 700; font-size: 13px; display: inline-flex; min-height: 44px; align-items: center; }
+.alerta .rot { font-size: 14px; font-weight: 700; letter-spacing: .06em; color: var(--alerta); }
+.alerta p { font-size: 16px; margin-top: 2px; }
+.alerta a { color: var(--alerta); font-weight: 700; font-size: 15px; display: inline-flex; min-height: 44px; align-items: center; }
 
 /* Botões. */
 button, .botao { font: inherit; font-weight: 700; min-height: 44px; min-width: 44px; padding: 8px 16px; border-radius: 999px; border: 0;
@@ -111,7 +116,7 @@ button.cinza { background: var(--cinza); color: var(--texto); font-weight: 600; 
 
 /* Escolhas de um toque. */
 .toques { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; }
-.toques span { display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 12px; background: var(--cinza); font-size: 13.5px; font-weight: 600; text-align: center; line-height: 1.15; }
+.toques span { display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 12px; background: var(--cinza); font-size: 15px; font-weight: 600; text-align: center; line-height: 1.15; }
 .toques span.on { background: var(--pri); color: var(--sobre-pri); }
 
 /* Barras simples. */
@@ -122,7 +127,7 @@ button.cinza { background: var(--cinza); color: var(--texto); font-weight: 600; 
 .lista { list-style: none; margin: 0; padding: 0; }
 .lista li { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--linha); min-height: 44px; }
 .lista li:first-child { border-top: 0; padding-top: 0; }
-.lista .hora { width: 44px; flex: none; color: var(--suave); font-size: 13px; font-variant-numeric: tabular-nums; }
+.lista .hora { width: 44px; flex: none; color: var(--suave); font-size: 15px; font-variant-numeric: lining-nums tabular-nums; }
 .lista .txt { flex: 1; min-width: 0; }
 .ico-c { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 10px; color: #fff; flex: none; }
 .ico-c svg { width: 18px; height: 18px; }
@@ -131,7 +136,7 @@ button.cinza { background: var(--cinza); color: var(--texto); font-weight: 600; 
 .abas { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; display: flex; background: var(--cartao); border-top: 1px solid var(--linha);
   padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); }
 .abas a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 52px; color: var(--suave);
-  text-decoration: none; font-size: 11.5px; font-weight: 500; }
+  text-decoration: none; font-size: 14px; font-weight: 500; }
 .abas a svg { width: 25px; height: 25px; }
 .abas a.ativa { color: var(--pri); font-weight: 700; }
 
@@ -143,7 +148,7 @@ svg.graf .barra { fill: var(--dado); }
 svg.graf .base { stroke: var(--linha); stroke-width: 1; }
 svg.graf .media { stroke: var(--texto); stroke-width: 1.3; stroke-dasharray: 4 4; }
 svg.graf .forte { fill: var(--texto); font-weight: 700; }
-.legenda { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; font-size: 12px; color: var(--suave); }
+.legenda { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; font-size: 14px; color: var(--suave); }
 .legenda i { display: inline-block; width: 12px; height: 9px; border-radius: 3px; vertical-align: -1px; margin-right: 4px; }
 
 /* Paleta "Rosa e azul" (proposta de 22/11, a pedido do dono): degradê suave e difuso de rosa para lilás para azul, como malha de cores
@@ -191,12 +196,12 @@ body { background:
 .navsem .meio { text-align: center; flex: 1; }
 .navsem .botao-topo[aria-disabled] { opacity: .4; }
 .tres-topo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
-.tres-topo .vidro span { display: block; font-size: 12px; font-weight: 600; opacity: .9; }
-.tres-topo .vidro b { display: block; font-size: 22px; font-weight: 800; line-height: 1.15; font-variant-numeric: tabular-nums; }
-.tres-topo .vidro small { font-size: 12px; font-weight: 600; }
+.tres-topo .vidro span { display: block; font-size: 14px; font-weight: 600; opacity: .9; }
+.tres-topo .vidro b { display: block; font-size: 22px; font-weight: 800; line-height: 1.15; font-variant-numeric: lining-nums tabular-nums; }
+.tres-topo .vidro small { font-size: 14px; font-weight: 600; }
 .faixa7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
-.faixa7 .d { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 12px; color: var(--suave); }
-.faixa7 .n { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: var(--cinza); color: var(--texto); font-weight: 800; font-size: 15px; font-variant-numeric: tabular-nums; position: relative; }
+.faixa7 .d { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 14px; color: var(--suave); }
+.faixa7 .n { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: var(--cinza); color: var(--texto); font-weight: 800; font-size: 17px; font-variant-numeric: lining-nums tabular-nums; position: relative; }
 .faixa7 .ap .n { background: var(--ambar-clara); color: var(--ambar); box-shadow: inset 0 0 0 2px var(--ambar); }
 .faixa7 .hoje .n { background: var(--pri); color: var(--sobre-pri); }
 .faixa7 .fut .n { background: transparent; color: var(--suave); box-shadow: inset 0 0 0 1.5px var(--linha); font-weight: 600; }
@@ -208,7 +213,7 @@ body { background:
 .peso-graf .ponto { fill: #7048e8; stroke: var(--cartao); stroke-width: 2; }
 @media (prefers-color-scheme: dark) { .peso-graf .linhad { stroke: #b197fc; } .peso-graf .ponto { fill: #b197fc; } }
 .dia .cab { margin-bottom: 4px; }
-.dia .cab h2 { font-size: 15px; }
+.dia .cab h2 { font-size: 17px; }
 .dia .lista li { padding: 7px 0; }
 .dia.hojed { box-shadow: inset 0 0 0 2px var(--pri); }
 .refs { display: inline-flex; gap: 4px; vertical-align: middle; }
@@ -216,8 +221,8 @@ body { background:
 .refs i.c { background: var(--dado); }
 .refs i.m { background: linear-gradient(90deg, transparent 50%, var(--dado) 50%); }
 .futuros { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
-.futuros div { border: 1.5px dashed var(--linha); border-radius: 14px; padding: 10px; font-size: 12.5px; color: var(--suave); min-height: 64px; }
-.futuros b { display: block; color: var(--texto); font-size: 14px; }
+.futuros div { border: 1.5px dashed var(--linha); border-radius: 14px; padding: 10px; font-size: 14px; color: var(--suave); min-height: 64px; }
+.futuros b { display: block; color: var(--texto); font-size: 16px; }
 </style>
 </head>
 <body>
@@ -245,7 +250,7 @@ body { background:
 <header class="topo">
   <div class="navsem">
     <a class="botao-topo" href="#" aria-label="Semana anterior"><svg class="ic p" aria-hidden="true"><use href="#i-volta"/></svg></a>
-    <div class="meio"><h1 style="font-size:22px">Semana 6</h1><div style="font-size:13px;font-weight:600;opacity:.9">17 a 23 de novembro</div></div>
+    <div class="meio"><h1 style="font-size:22px">Semana 6</h1><div style="font-size:15px;font-weight:600;opacity:.9">17 a 23 de novembro</div></div>
     <a class="botao-topo" href="#" aria-label="Semana seguinte" aria-disabled="true"><svg class="ic p" aria-hidden="true"><use href="#i-seta"/></svg></a>
   </div>
   <div class="selos" style="justify-content:center;margin-top:8px"><span class="selo topo-s">5 mg · 2ª semana</span><span class="selo topo-s">aplicação na terça</span></div>
@@ -285,7 +290,7 @@ body { background:
     <div class="linha" style="margin-top:10px"><span class="sub">Média das últimas 4 semanas</span><b class="num">−0,7 kg/semana</b></div>
     <div class="banner dica" style="margin:10px 0 0;padding:10px 12px">
       <svg class="ic p" aria-hidden="true"><use href="#i-dica"/></svg>
-      <div class="t" style="font-size:13px">Perder peso muito rápido aumenta a chance de pedra na vesícula. O ritmo certo para você é o médico quem combina. <span class="mini">Fonte: bula do Mounjaro (Anvisa).</span></div>
+      <div class="t" style="font-size:15px">Perder peso muito rápido aumenta a chance de pedra na vesícula. O ritmo certo para você é o médico quem combina. <span class="mini">Fonte: bula do Zepbound (tirzepatida, EUA), seção 5.4; Weinsier 1995.</span></div>
     </div>
   </section>
 
@@ -332,7 +337,7 @@ body { background:
 
   <section class="cartao" style="display:flex;gap:12px;align-items:center" aria-labelledby="t-res">
     <span class="ico-c" style="background:var(--c-guia);width:40px;height:40px;border-radius:12px"><svg aria-hidden="true" style="width:22px;height:22px"><use href="#i-conversa"/></svg></span>
-    <div style="flex:1;min-width:0"><h2 id="t-res">Para a consulta</h2><p class="mini">3 dias com enjoo · proteína 78 g/dia · sem sinal de alerta</p></div>
+    <div style="flex:1;min-width:0"><h2 id="t-res">Para a consulta</h2><p class="mini">3 dias com enjoo · proteína 78 g/dia · nenhuma dor forte registrada</p></div>
     <a class="botao" href="#">Montar</a>
   </section>
 </main>
