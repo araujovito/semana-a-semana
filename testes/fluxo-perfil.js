@@ -22,6 +22,15 @@ const { abrir, ok, d, CHAVE } = require("./apoio");
   await p.click("#btn-perfil"); await p.waitForSelector("text=Como as metas são calculadas"); await t.foto("8-perfil");
   await t.semRolagem("perfil"); await t.alvosDeToque("perfil");
   await p.reload(); ok(await p.locator("form[data-form=perfil] [name=altura]").inputValue() === "163", "dados persistem depois de recarregar");
+  // Auditoria 1, achado 12: depois do primeiro preenchimento, salvar o Perfil não regrava o peso inicial; ele tem bloco próprio.
+  ok(await p.locator("form[data-form=perfil] [name=peso]").count() === 0 && await p.locator("[data-cartao=peso-inicial] details:not([open])").count() === 1, "perfil salvo: sem campo de peso no formulário; peso do começo num bloco fechado");
+  await p.fill("form[data-form=perfil] [name=altura]", "165"); await p.click("form[data-form=perfil] button:has-text('Salvar')");
+  let pf = (await t.ler()).perfil;
+  ok(pf.altura === 165 && pf.peso === 95.4, "salvar o perfil muda a altura e mantém o peso do começo");
+  await p.click("[data-cartao=peso-inicial] summary"); await p.fill("[name=pesoInicial]", "96"); await p.click("[data-cartao=peso-inicial] button:has-text('Salvar peso do começo')");
+  ok(/Trocar o peso do começo do tratamento de 95,4 kg para 96,0 kg\?/.test(await t.textoDialogo() || ""), "corrigir o peso do começo pede confirmação");
+  await t.sim(); ok((await t.ler()).perfil.peso === 96, "confirmado: peso do começo trocado");
+  await t.foto("8b-perfil-peso-inicial");
 
   // Quem ja usava a versao 1 abre a versao nova sem perder nada.
   const v1 = { v: 1, perfil: { nome: "Antiga", sexo: "F", nascimento: 1985, altura: 170, peso: 88, atividade: 1.2, metaKcal: 1500, metaProt: null, metaAgua: null },

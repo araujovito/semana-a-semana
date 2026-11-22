@@ -122,7 +122,12 @@ function telaPerfil() {
   out += '<form class="cartao" data-form="perfil"><h2>Dados</h2><label>Nome (opcional)<input name="nome" value="' + v("nome") + '" maxlength="40"></label>' +
     '<div class="duas"><label>Sexo<select name="sexo"><option value="F"' + (p.sexo !== "M" ? " selected" : "") + '>Feminino</option><option value="M"' + (p.sexo === "M" ? " selected" : "") + ">Masculino</option></select></label>" +
     '<label>Ano de nascimento<input name="nascimento" inputmode="numeric" value="' + v("nascimento") + '" required></label></div>' +
-    '<div class="duas"><label>Altura (cm)<input name="altura" inputmode="decimal" value="' + v("altura") + '" required></label><label>Peso inicial (kg)<input name="peso" inputmode="decimal" value="' + v("peso") + '" required></label></div>' +
+    /* Peso no começo do tratamento: só no primeiro preenchimento. Depois ele tem campo próprio (cartaoPesoInicial), porque salvar o
+       Perfil regravava o peso inicial e é aqui que ela voltaria para "atualizar o peso", apagando a linha de base das marcas de
+       5, 7 e 10% (auditoria 1, achado 12). O peso atual vem da aba Peso. */
+    (E.perfil ? '<label>Altura (cm)<input name="altura" inputmode="decimal" value="' + v("altura") + '" required></label>'
+      : '<div class="duas"><label>Altura (cm)<input name="altura" inputmode="decimal" value="' + v("altura") + '" required></label><label>Peso no começo do tratamento (kg)<input name="peso" inputmode="decimal" value="' + v("peso") + '" required></label></div>' +
+        '<p class="sub" style="margin:4px 0 0">É o ponto de partida. As pesagens seguintes ficam na aba Peso.</p>') +
     '<label>Atividade física hoje<select name="atividade">' + at.map(a => '<option value="' + a[0] + '"' + ((p.atividade || 1.2) === a[0] ? " selected" : "") + ">" + a[1] + "</option>").join("") + "</select></label>" +
     '<div class="blocos">' +
     '<details><summary><span>Saúde <span class="sub">(opcional' + (respondidas ? " · " + respondidas + " de " + saude.length + " respondidas" : "") + ")</span></span></summary>" +
@@ -144,6 +149,7 @@ function telaPerfil() {
     '<div class="marcas"><label><input type="checkbox" name="discreto"' + (p.discreto === true ? " checked" : "") + ">Não mostrar calorias nem peso em destaque</label></div>" +
     '<p class="sub" style="margin:0">Proteína, água, vitaminas e minerais continuam aparecendo.</p>' +
     '<div class="botoes"><button>Salvar</button></div></form>';
+  if (E.perfil) out += cartaoPesoInicial();
   if (E.perfil) out += '<div class="cartao"><h2>Alimentos de que você não gosta</h2><p class="sub" style="margin:0">Serve para o app trocar esses alimentos no cardápio.</p>' +
     '<p id="resumo-nao-gosta" style="margin:8px 0 0">' + esc(resumoNaoGosta()) + '</p><div class="botoes"><button class="sec" data-ac="abrirNaoGosta">Escolher alimentos</button></div></div>';
   if (m) {
@@ -161,6 +167,15 @@ function telaPerfil() {
   }
   if (E.perfil) out += cartaoLembretes();
   return out;
+}
+
+/* Peso no começo do tratamento, fora do formulário do Perfil: só muda se ela abrir este bloco e confirmar. */
+function cartaoPesoInicial() {
+  return '<form class="cartao" data-form="pesoInicial" data-cartao="peso-inicial" novalidate><h2>Peso no começo do tratamento</h2>' +
+    '<p class="sub" style="margin:0">É o ponto de partida das marcas de 5, 7 e 10% e da variação de peso. Para registrar o peso de hoje, use a aba Peso.</p>' +
+    '<div class="botoes"><button type="button" class="sec" data-ac="ir" data-para="diario" data-sub="peso">Registrar peso de hoje</button></div>' +
+    '<details><summary>Corrigir o peso do começo do tratamento</summary><label>Peso no começo do tratamento (kg)<input name="pesoInicial" inputmode="decimal" value="' + esc(E.perfil.peso) + '"></label>' +
+    '<div class="botoes"><button>Salvar peso do começo</button></div></details></form>';
 }
 
 /* Folha com todos os alimentos da base, por grupo, com busca por nome. Cada caixa grava na hora em perfil.naoGosta. */
@@ -201,11 +216,12 @@ MUD.naoGosta = function (c) {
 };
 
 FORM.perfil = function (f) {
-    const nasc = num(f.nascimento), alt = num(f.altura), peso = num(f.peso), ano = new Date().getFullYear();
+    /* Depois do primeiro preenchimento o peso inicial não vem deste formulário (ver cartaoPesoInicial e FORM.pesoInicial). */
+    const nasc = num(f.nascimento), alt = num(f.altura), peso = E.perfil ? E.perfil.peso : num(f.peso), ano = new Date().getFullYear();
     if (!nasc || nasc !== Math.round(nasc) || nasc < ano - 100 || nasc > ano) return aviso("Confira o ano de nascimento (4 dígitos, por exemplo 1985).");
     if (nasc > ano - 18) return aviso("Este app é para quem tem 18 anos ou mais. Confira o ano de nascimento.");
     if (!alt || alt < 120 || alt > 220) return aviso("Altura em centímetros, por exemplo 165.");
-    if (!peso || peso < 35 || peso > 300) return aviso("Confira o peso em kg (entre 35 e 300).");
+    if (!E.perfil && (!peso || peso < 35 || peso > 300)) return aviso("Confira o peso em kg (entre 35 e 300).");
     const txt = k => String(f[k] == null ? "" : f[k]).trim(), kcal = num(f.metaKcal), prot = num(f.metaProt), agua = num(f.metaAgua);
     if ((txt("metaKcal") && kcal == null) || (kcal != null && (kcal < 800 || kcal > 4000))) return aviso("Meta de energia fora do intervalo esperado (800 a 4000 kcal).");
     if ((txt("metaProt") && prot == null) || (prot != null && (prot < 30 || prot > 250))) return aviso("Meta de proteína fora do intervalo esperado (30 a 250 g).");
@@ -229,4 +245,13 @@ FORM.perfil = function (f) {
     if (kcal && kcal < pisoMeta && kcal !== antes.metaKcal)
       return confirmar("A meta de energia informada é de " + fmt(kcal) + " kcal, abaixo de " + fmt(pisoMeta) + " kcal, que é o mínimo que o app usa por conta própria. O app segue essa meta se ela foi passada pelo médico ou pela nutricionista. Foi?", gravar, "Sim, foi passada");
     gravar();
+};
+FORM.pesoInicial = function (f) {
+  if (!E.perfil) return;
+  const kg = num(f.pesoInicial), antes = E.perfil.peso;
+  if (!kg || kg < 35 || kg > 300) return aviso("Confira o peso em kg (entre 35 e 300).");
+  if (kg === antes) return aviso("O peso do começo do tratamento continua " + fmt(antes, 1) + " kg.");
+  confirmar("Trocar o peso do começo do tratamento de " + fmt(antes, 1) + " kg para " + fmt(kg, 1) + " kg? As marcas de 5, 7 e 10% passam a contar a partir do novo valor. Para registrar o peso de hoje, use a aba Peso.", function () {
+    E.perfil.peso = kg; salvar(); aviso("Peso do começo do tratamento: " + fmt(kg, 1) + " kg."); render();
+  }, "Trocar");
 };
