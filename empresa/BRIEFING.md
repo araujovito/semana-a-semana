@@ -22,6 +22,9 @@ o cardápio do app passa a ser o plano da nutricionista; o cardápio gerado pelo
 O que o dono pediu (onda 2): um app só para ela, que leve em conta vesícula e fígado, que INDIQUE caminhos de alimentação
 (explique o porquê e dê opções para ela escolher), não só prescreva um cardápio, e que tenha um painel para ela acompanhar
 calorias e proteína. Também: identidade visual própria, a tela Hoje organizada pelo tratamento (números a um toque) e uma visão semanal.
+Celular dela: Xiaomi Redmi Note 13 Pro (tela 1220x2712, ~440 px de largura CSS; Android 13/MIUI 14 atualizável para HyperOS).
+Testar sempre em 440 px e com letra grande. MIUI/HyperOS: instalação de APK com avisos extras; Chrome pode precisar da
+permissão de atalhos na tela inicial para a PWA; o limpador do sistema não deve apagar dados do navegador/app.
 Atenção clínica: a bula lista doença da vesícula (colelitíase, colecistite) como efeito da tirzepatida, e perda de peso rápida
 aumenta o risco. Para ela isso é central: ritmo de perda, sinais de cólica biliar e pancreatite com destaque, sempre com fonte.
 

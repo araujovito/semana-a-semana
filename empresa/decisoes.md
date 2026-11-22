@@ -35,3 +35,5 @@ Uma linha por decisão: data, quem decidiu, o que e por quê.
 - 22/11 [dono] Onda 2: app só para ela ([dados pessoais removidos], pedra na vesícula, gordura no fígado, cirurgia depois de reduzir o fígado). Indicar caminhos de alimentação, painel de calorias e proteína, identidade visual, Hoje pelo tratamento, visão semanal. Dados dela não vão para o código.
 - 22/11 [direção] Exceção aceita: com pedra na vesícula, o aviso de perda rápida aparece mesmo no modo sem peso em destaque (sem o número). Motivo: segurança. Limite de 6 h e divisão 192/pronto-socorro/médico seguem marcados como 'precisa de aval médico'.
 - 22/11 [direção] Ela tem plano da nutricionista (04/11/2026): o app passa a seguir esse plano (escolher a opção prescrita em cada refeição, marcar, somar no painel). O cardápio próprio do app vira reserva. PDFs pessoais fora do git.
+- 22/11 [dono] Paleta aprovada: degradê rosa/lilás/azul, primária azul-violeta, estilo de app chinês (sem serifa, grade de atalhos, cartões, marcar o dia sem cobrança).
+- 22/11 [dono] Celular dela: Xiaomi Redmi Note 13 Pro. Alvo de teste: 440 px de largura e letra grande.

@@ -79,7 +79,7 @@ footer { color: var(--muted); font-size: 12px; }
   <div class="card span">
     <h2>Onda 2: o app feito para ela</h2>
     <p class="sub">Pedido de 22/11: levar em conta a vesícula e o fígado, indicar caminhos de alimentação com opções, painel de calorias e proteína, identidade visual própria, tela Hoje pelo tratamento e visão semanal. Os dados dela não vão para o código: ela preenche no Perfil.</p>
-    <svg id="onda2" viewBox="0 0 1000 120" role="img" aria-label="Seis frentes da onda 2"></svg>
+    <svg id="onda2" viewBox="0 0 1000 120" role="img" aria-label="Sete frentes da onda 2"></svg>
     <div class="legenda"><span><i style="background:var(--good)"></i>Feito</span><span><i style="background:var(--warning)"></i>Em andamento</span><span><i style="background:var(--todo)"></i>A fazer</span></div>
   </div>
 
@@ -140,6 +140,9 @@ footer { color: var(--muted); font-size: 12px; }
         <div><time>22/11</time><span>Protótipo da identidade visual pronto, esperando a sua aprovação.</span></div>
         <div><time>22/11</time><span>Você pediu outro estilo (apps chineses atuais). Designer refazendo.</span></div>
         <div><time>22/11</time><span>Perfil com vesícula e fígado no main: 125 testes de unidade passando.</span></div>
+        <div><time>22/11</time><span>Você trouxe o plano da nutricionista e a bioimpedância: o app passa a seguir o plano dela. PDFs fora do git.</span></div>
+        <div><time>22/11</time><span>Cardápio de reserva com regras de vesícula no main (131 testes).</span></div>
+        <div><time>22/11</time><span>Equipe ampliada para 10 agentes. Paleta rosa, lilás e azul aprovada.</span></div>
       </div>
     </div>
   </div>
@@ -212,11 +215,12 @@ const ETAPAS = [
   const s = document.getElementById("onda2");
   const F = [
     ["Pesquisa", "Vesícula e fígado", "feito", "Regras: gordura de 7 a 15 g por refeição (teto 20), refeição até ~500 kcal, sem açúcar adicionado, marcos de 5%, 7-10% e 10% para o fígado. 5 caminhos de alimentação com fontes."],
-    ["Cardápio", "Cardápio para ela", "andamento", "Hoje 7 refeições passam de 17 g de gordura e 3 dias passam de 35%: o azeite cresce com a escala. Corrigindo, e montando os caminhos como dados."],
+    ["Cardápio", "Reserva + regras", "feito", "No main: gordura máxima 15 g por refeição (era 20,7), maior refeição 499 kcal (era 629), 0 problemas no conferidor. Virou reserva: o principal é o plano da nutricionista."],
+    ["Nutri", "Plano da nutricionista", "andamento", "Cadastrando as opções do plano prescrito, contas por opção, escolha e registro na tela Hoje."],
     ["Perfil", "Avisos para ela", "feito", "No main: perguntas de vesícula, fígado e cirurgia; cartão de cólica biliar em Hoje, Plano e Perfil; marcas de 5, 7 e 10% para o fígado com o quanto falta."],
     ["Painel", "Calorias e proteína", "feito", "No main: anéis de hoje contra a meta, barras de 7 e 30 dias com a faixa de proteína, médias e dias na faixa. Botão na barra entra com o visual novo."],
     ["Semana", "Visão semanal", "feito", "No main: semana atual aberta, anteriores resumidas, padrões como enjoo depois da aplicação. Botão entra com o visual novo."],
-    ["Visual", "Identidade nova", "andamento", "Refazendo no estilo dos apps chineses atuais, a seu pedido: letra sem serifa, topo colorido, grade de atalhos."],
+    ["Visual", "Identidade nova", "andamento", "Aprovado: estilo app chinês com degradê rosa, lilás e azul. Aplicando no app: cores, ícones e barra de abas."],
   ];
   const w = 1000 / F.length;
   F.forEach((f, i) => {

@@ -71,3 +71,23 @@
 - 22/11 17:01 [designer] começou a revisão do protótipo pedida pelo dono: sai o caderno com serifa, entra linguagem de app chinês de saúde (topo colorido, grade de atalhos, números grandes, marcar o dia sem cobrança)
 - 22/11 17:01 [direção] Perfil da onda 2 juntado: perguntas de vesícula, fígado e cirurgia, cartão de cólica biliar, marcas de 5/7/10% para o fígado, aviso de ritmo para quem tem pedra. Testes verdes (125 de unidade).
 - 22/11 17:09 [designer] terminou a revisão do protótipo (ramo onda2-visual): visual novo 'Hortelã', sem serifa, topo colorido com o essencial, atalhos coloridos, marcar o dia sem cobrança; 8 capturas novas; app não foi mexido, testes verdes
+- 22/11 17:13 [engenheiro de app: plano da nutricionista] começou: cadastrar o plano da nutricionista como dados, contas, registro em Hoje e metas de referência (ramo onda2-nutri)
+- 22/11 17:14 [designer] começou 3 variações de cor da tela Hoje (coral, azul, roxo) a pedido do dono; o resto do estilo Hortelã fica igual
+- 22/11 17:16 [designer] terminou as 3 variações de cor da tela Hoje (coral, azul, roxo), com capturas claro e escuro; aguarda a escolha do dono
+- 22/11 17:16 [engenheiro de nutrição e dados] terminou onda2-cardapio (3 commits): regras de vesícula/fígado com fonte num lugar só e conferidor genérico; escala com azeite até 10 g, refeição até 500 kcal e gordura 25-35% para os perfis de exemplo; caminhos A-E como dados. Parou de redesenhar o cardápio por ordem da direção (vai virar o plano da nutricionista); o cardápio do app fica como reserva. Pendente: frase da escala em app/plano.js ficou desatualizada; restrição vegetariana fora das regras.
+- 22/11 17:16 [designer] dono escolheu a paleta laranja: aplicando nas 4 telas do protótipo e retirando as variações azul e roxo
+- 22/11 17:19 [direção] Cardápio de reserva com regras de vesícula juntado: gordura máxima 15 g por refeição (era 20,7), maior refeição 499 kcal (era 629), conferidor genérico de regras e caminhos de alimentação como dados. Testes verdes (131).
+- 22/11 17:19 [designer] terminou: paleta laranja aplicada às 4 telas do protótipo (Hoje, Painel, Semana, Caminhos), 8 capturas novas, identidade.md com os tokens finais; app não foi mexido, testes verdes
+- 22/11 17:19 [designer] começou a etapa 1 da aplicação no app: cores, fontes, ícones, topo e barra de abas nova (Hoje, Semana, Comer, Mover, Guia); a tela Hoje não será mexida agora
+- 22/11 17:24 [designer] proposta de cores rosa e azul (degradê suave) pronta no protótipo, com capturas; aguarda o dono antes de ir para o app. A etapa 1 no app ainda não tinha começado
+- 22/11 17:24 [direção] Dono pediu 10 agentes: aos 2 em andamento (designer e plano da nutricionista) somam-se 8 (revisão clínica, auditoria, segurança, aplicação e peso inicial, painel e semana, tela de caminhos, teste no Android, usabilidade).
+- 22/11 17:26 [engenheiro de app: painel e semana] início: área de toque 30d, tabelas acessíveis, letra grande, piso de metas(), E.ui, dia habitual por época (ramo onda2-painel2)
+- 22/11 17:26 [engenheiro de segurança] começando onda 2 em .copias/o3-seg: aviso de dados de saúde, lembrete de cópia, restaurar, CSP, atualização da PWA, relatório.
+- 22/11 17:26 [revisora clínica] início: revisão clínica dos textos novos da onda 2 (main desde a74bc53 + protótipo o2-visual)
+- 22/11 17:26 [engenheiro de app: caminhos] começo: tela Caminhos de alimentação no ramo onda2-caminhos
+- 22/11 17:26 [engenheiro de app: aplicações] começo: resíduos do A1 (dia habitual fixo, 4 semanas completas, 72h em datas, peso inicial no perfil) em .copias/o3-a1
+- 22/11 17:26 [pesquisadora de usabilidade] começou: avaliação heurística e percurso cognitivo do app atual (main, perfil de exemplo, 390 px) e do protótipo aprovado (rosa/lilás/azul); só leitura
+- 22/11 17:26 [auditoria] começou a auditoria 3 (onda 2): perfil vesícula/fígado, ritmo de peso, painel, visão semanal, escala de gordura, caminhos, PWA
+- 22/11 17:26 [testador Android] começou: teste do app inteiro no Android 14 virtual (cópia de main em /tmp, emulador), relatório em empresa/relatorios/teste-android-onda2.md
+- 22/11 17:27 [direção] Dono aprovou a paleta rosa/lilás/azul. Designer começa a aplicar no app (cores, ícones, barra de abas).
+- 22/11 17:27 [designer] dono aprovou rosa e azul; começou a etapa 1 no app: cores num bloco só, fonte do sistema, ícones próprios, topo com degradê e barra de abas Hoje, Semana, Comer, Mover, Guia
