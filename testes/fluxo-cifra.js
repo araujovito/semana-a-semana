@@ -34,6 +34,10 @@ async function criarPin(t, nome) {
   await p.waitForFunction(() => !document.querySelector(".cif-portao"), null, { timeout: 20000 });
   return cod;
 }
+// Violações da Content-Security-Policy (index.html): o portão do PIN não pode depender de nada que ela bloqueie.
+const ouvirViolacoes = () => { window.__violacoes = []; document.addEventListener("securitypolicyviolation", e => window.__violacoes.push(e.violatedDirective + " " + e.blockedURI)); };
+async function comCsp(t) { await t.p.addInitScript(ouvirViolacoes); await t.p.reload(); }
+const violacoes = p => p.evaluate(() => window.__violacoes || ["sem ouvinte"]);
 const armazenamento = p => p.evaluate(() => { const o = {}; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); o[k] = localStorage.getItem(k); } return o; });
 const estado = p => p.evaluate(() => JSON.stringify(E));
 async function entrar(p, pin) { await esperarTitulo(p, "Digite o seu PIN"); await digitar(p, "cifEntrar", pin); }
@@ -43,6 +47,7 @@ async function esperarApp(p) { await p.waitForFunction(() => !document.querySele
   // 1. Primeiro uso sem dados.
   {
     const t = await abrir({ comPin: true, largura: 440 }), p = t.p;
+    await comCsp(t);
     ok(await p.evaluate(() => !!(window.crypto && crypto.subtle && crypto.subtle.wrapKey)), "por file://, a cifra do navegador (crypto.subtle) existe");
     ok(!(await p.locator("#abas").isVisible()), "portão do PIN: barra de abas escondida");
     await criarPin(t, "cifra-a");
@@ -51,6 +56,7 @@ async function esperarApp(p) { await p.waitForFunction(() => !document.querySele
     ok(!(CHAVE in g) && GUARDA in g, "sem dados: guarda só a versão cifrada");
     ok(JSON.stringify(Object.keys(JSON.parse(g[GUARDA])).sort()) === JSON.stringify(["chaveEmbrulhadaPin", "chaveEmbrulhadaRec", "dadosCifrados", "iter", "iv", "sal", "salRec", "v"]), "o registro guardado tem só sal, iterações, chaves embrulhadas, iv e dados cifrados");
     ok(JSON.stringify(g).indexOf(PIN) < 0, "o PIN não aparece no armazenamento");
+    const v = await violacoes(p); ok(v.length === 0, "criar PIN sem nenhuma violação da CSP " + v.join(" / "));
     await t.fechar();
   }
   // 2. Primeiro uso com dados em texto: migração sem perda, bloqueio, desbloqueio, PIN errado, inatividade, segundo plano.
@@ -59,11 +65,12 @@ async function esperarApp(p) { await p.waitForFunction(() => !document.querySele
       sintomas: [{ id: "s1", data: d(2), enjoo: 2, nota: "nota secreta do teste" }] });
     base.perfil.nome = "Zuleica";
     const t = await abrir({ comPin: true, estado: base, largura: 440 }), p = t.p;
+    await comCsp(t);
     await esperarTitulo(p, "Crie um PIN");
-    ok(await p.locator("text=Proteína hoje").count() === 0, "com dados: o portão aparece antes de qualquer registro");
+    ok(await p.locator(".cif-portao").count() === 1 && !(await p.locator("#abas").isVisible()), "com dados: o portão aparece antes de qualquer registro");
     const antes = await estado(p);
     const cod = await criarPin(t, "cifra-b");
-    await p.waitForSelector("text=Proteína hoje");
+    await esperarApp(p);
     ok(await estado(p) === antes, "migração: estado depois de criar o PIN igual ao de antes");
     let g = await armazenamento(p);
     ok(!(CHAVE in g), "migração: o texto puro foi apagado depois de conferir");
@@ -84,10 +91,10 @@ async function esperarApp(p) { await p.waitForFunction(() => !document.querySele
     ok(await estado(p) === depoisDoPeso, "reabrir com o PIN: tudo como estava");
     // 5 minutos sem uso: o próximo toque bloqueia
     await t.relogio("2026-11-20T10:06:00");
-    await p.click("#abas a[data-aba=plano]");
+    await p.click("#abas a[data-aba=comer]");
     await esperarTitulo(p, "Digite o seu PIN");
     ok(await p.evaluate(() => E.perfil === null && cifChave === null), "inatividade: bloqueia e tira chave e dados da memória");
-    ok(await p.locator("text=Proteína hoje").count() === 0 && !(await p.locator("#abas").isVisible()), "bloqueado: nada dos registros na tela");
+    ok(await p.locator(".cif-portao").count() === 1 && await p.locator("#tela .cartao").count() === 1 && !(await p.locator("#abas").isVisible()), "bloqueado: nada dos registros na tela");
     await entrar(p, PIN); await esperarApp(p);
     // segundo plano
     await p.evaluate(() => { Object.defineProperty(document, "hidden", { configurable: true, get: () => true }); document.dispatchEvent(new Event("visibilitychange")); });
@@ -134,12 +141,26 @@ async function esperarApp(p) { await p.waitForFunction(() => !document.querySele
     ok(await estado(p) === depoisDoPeso, "recuperação: código abre e PIN novo criado, dados iguais");
     await p.reload(); await entrar(p, PIN); await esperarApp(p);
     ok(true, "depois da recuperação, o PIN novo abre");
-    // Restaurar uma exportação: cifra de novo
-    const exportado = await estado(p);
+    // Exportar depois de desbloquear: passa pelo aviso de dados de saúde e sai com o código SHA-256 dos dados decifrados.
+    await p.evaluate(() => { navigator.share = x => { window.__exportado = x.text; return Promise.resolve(); }; });
+    await irRelatorio(p);
+    await p.click("[data-ac=exportar]");
+    ok(/saúde/i.test(await t.textoDialogo() || ""), "exportar com PIN: aparece o aviso de dados de saúde");
+    await t.sim();
+    await p.waitForFunction(() => !!window.__exportado, null, { timeout: 20000 });
+    const copia = await p.evaluate(() => window.__exportado);
+    const cj = JSON.parse(copia), atual = JSON.parse(await estado(p));
+    const shaOk = await p.evaluate(async c => { const j = JSON.parse(c); return (await segSha256(JSON.stringify(j.dados))) === j.sha256; }, copia);
+    ok(/^[0-9a-f]{64}$/.test(cj.sha256) && shaOk, "exportação com código SHA-256 que confere com os dados");
+    ok(JSON.stringify(cj.dados) === JSON.stringify(atual) && cj.dados.perfil.nome === "Zuleica", "a exportação leva os dados decifrados, em texto");
+    await p.evaluate(() => cifEsperarGravacoes());
+    ok(!(CHAVE in await armazenamento(p)), "exportar não deixa texto puro guardado");
+    const exportado = JSON.stringify(cj.dados);
+    // Restaurar a exportação: cifra de novo
     await p.evaluate(() => { E.pesos.push({ id: "p9", data: hoje(), kg: 90 }); salvar(); return cifEsperarGravacoes(); });
     await irRelatorio(p);
-    await p.fill("#imp", exportado); await p.click("[data-ac=importar]"); await t.sim();
-    await p.waitForSelector("text=Proteína hoje"); await p.evaluate(() => cifEsperarGravacoes());
+    await p.fill("#imp", copia); await p.click("[data-ac=importar]"); await t.sim();
+    await p.waitForFunction(() => !E.pesos.some(x => x.id === "p9"), null, { timeout: 20000 }); await p.evaluate(() => cifEsperarGravacoes());
     g = await armazenamento(p);
     ok(!(CHAVE in g) && g[GUARDA].indexOf("Zuleica") < 0, "restaurar grava só cifrado");
     await p.reload(); await entrar(p, PIN); await esperarApp(p);
@@ -152,6 +173,7 @@ async function esperarApp(p) { await p.waitForFunction(() => !document.querySele
     ok(/Nada foi apagado/.test(await p.locator("#tela").innerText()), "dados danificados: avisa que nada foi apagado");
     ok((await armazenamento(p))[GUARDA] === ruim, "dados danificados: nada foi apagado nem regravado");
     await t.foto("cifra-f-danificado"); await t.alvosDeToque("danificado");
+    const vv = await violacoes(p); ok(vv.length === 0, "portão do PIN (desbloqueio, espera, recuperação, danificado) sem violação da CSP " + vv.join(" / "));
     await p.evaluate(k => localStorage.setItem(k, "{ lixo"), GUARDA);
     await p.reload(); await esperarTitulo(p, "Não consegui abrir os dados guardados");
     ok((await armazenamento(p))[GUARDA] === "{ lixo", "registro ilegível: avisa na abertura e não apaga");
@@ -159,5 +181,5 @@ async function esperarApp(p) { await p.waitForFunction(() => !document.querySele
   }
 })();
 async function irRelatorio(p) {
-  await p.click("#abas a[data-aba=diario]"); await p.click("[data-ac=diario][data-v=relatorio]"); await p.waitForSelector("#imp");
+  await p.click("#abas a[data-aba=semana]"); await p.click("#subabas a[data-sub=diario]"); await p.click("[data-ac=diario][data-v=relatorio]"); await p.waitForSelector("#imp");
 }

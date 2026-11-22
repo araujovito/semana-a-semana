@@ -37,6 +37,7 @@ const ouvirViolacoes = () => { window.__violacoes = []; document.addEventListene
   const b = await chromium.launch({ executablePath: a.exe }), ctx = await b.newContext({ viewport: { width: 390, height: 800 } }), p = await ctx.newPage();
   const erros = []; p.on("pageerror", e => erros.push(String(e))); p.on("console", m => { if (m.type() === "error") erros.push(m.text()); });
   await p.addInitScript(ouvirViolacoes);
+  await p.addInitScript(() => { window.cifTesteSemPin = true; }); // o PIN é conferido no fim, em outra janela, sem este atalho
   try {
     await p.goto(URL + "index.html");
     await p.evaluate(x => localStorage.setItem(x[0], JSON.stringify(x[1])), [CHAVE, estadoBase()]);
@@ -86,6 +87,31 @@ const ouvirViolacoes = () => { window.__violacoes = []; document.addEventListene
     await p.reload(); await telaPronta(p, 10000);
     ok(await p.evaluate(() => document.documentElement.dataset.versaoTeste) === "2", "sem internet, abre a versão nova guardada");
     await ctx.setOffline(false);
+
+    // PIN (app/cifra.js) por HTTP, com a política ligada: criar, bloquear ao recarregar e desbloquear sem nenhuma violação. PIN inventado.
+    const ctx2 = await b.newContext({ viewport: { width: 390, height: 800 } }), q = await ctx2.newPage();
+    q.on("pageerror", e => erros.push(String(e))); q.on("console", m => { if (m.type() === "error") erros.push(m.text()); });
+    await q.addInitScript(ouvirViolacoes);
+    await q.goto(URL + "index.html");
+    await q.evaluate(x => localStorage.setItem(x[0], JSON.stringify(x[1])), [CHAVE, estadoBase()]);
+    await q.reload();
+    const titulo = t => q.waitForFunction(x => { const h = document.querySelector("#tela h2"); return h && h.textContent.indexOf(x) >= 0; }, t, { timeout: 20000 });
+    const enviar = async (form, campo, v) => { await q.fill("form[data-form=" + form + "] [name=" + campo + "]", v); await q.click("form[data-form=" + form + "] button[type=submit]"); };
+    await titulo("Crie um PIN");
+    ok(await q.locator("#abas").isHidden(), "PWA com PIN: o portão aparece antes dos dados");
+    await enviar("cifCriar", "pin", "246810"); await titulo("Digite o PIN de novo"); await enviar("cifRepetir", "pin", "246810");
+    await titulo("Código de recuperação");
+    const cod = (await q.locator("#cif-codigo").textContent()).trim().split(/\s+/);
+    await q.click("[data-ac=cifAnotei]"); await titulo("Confira");
+    const n = Number((await q.locator("form[data-form=cifConfirmar] .sub").textContent()).match(/grupo (\d)/)[1]);
+    await enviar("cifConfirmar", "grupo", cod[n - 1]);
+    await telaPronta(q);
+    ok(await q.evaluate(k => localStorage.getItem(k) === null && !!localStorage.getItem("semana-a-semana.cifrado"), CHAVE), "PWA com PIN: dados cifrados, texto puro apagado");
+    await q.reload(); await titulo("Digite o seu PIN"); await enviar("cifEntrar", "pin", "246810"); await telaPronta(q);
+    ok(true, "PWA com PIN: recarregar pede o PIN e o PIN abre");
+    const vp = await q.evaluate(() => window.__violacoes);
+    ok(vp.length === 0, "PWA com PIN: portão sem violação da política" + (vp.length ? ": " + vp.join(" / ") : ""));
+    await ctx2.close();
   } catch (e) { ok(false, "erro no teste: " + (e && e.stack || e)); }
   ok(erros.length === 0, "PWA: sem erros no console " + erros.join(" / "));
   await b.close(); srv.close();
