@@ -30,8 +30,8 @@ test("o formulário do Perfil já preenchido não tem campo de peso; o peso inic
 });
 test("primeiro preenchimento grava o peso inicial e confere o intervalo", () => {
   const a = carregar();
-  a.v(form({ peso: "8" })); assert.strictEqual(a.v("E.perfil"), null);
-  a.v(form({ peso: "120,5" })); assert.strictEqual(a.v("E.perfil.peso"), 120.5);
+  a.v(form({ peso: "8", planoNutri: "sim" })); assert.strictEqual(a.v("E.perfil"), null);
+  a.v(form({ peso: "120,5", planoNutri: "sim" })); assert.strictEqual(a.v("E.perfil.peso"), 120.5);
 });
 test("corrigir o peso inicial: só no bloco próprio, com confirmação", () => {
   const a = carregar(estado());
@@ -46,4 +46,33 @@ test("corrigir o peso inicial: só no bloco próprio, com confirmação", () => 
   assert.strictEqual(a.v("E.perfil.peso"), 102); assert.match(a.avisos[a.avisos.length - 1], /entre 35 e 300/);
   const n = a.v("perguntas.length"); a.v("FORM.pesoInicial({ pesoInicial: '102' })");
   assert.strictEqual(a.v("perguntas.length"), n, "mesmo valor não pergunta");
+});
+
+// Usabilidade onda 2, mudança 1: primeiro uso numa tela só. Formulário como chega de FORM (só os campos da tela).
+const primeiro = extra => "FORM.perfil(" + JSON.stringify(Object.assign({ nascimento: "1982", altura: "158", peso: "110" }, extra || {})) + ")";
+test("primeiro uso: sem as três respostas não grava; com elas grava e o resto fica neutro", () => {
+  const a = carregar();
+  a.v(primeiro({ vesicula: "sim", figado: "nao", planoNutri: "sim" }));
+  assert.strictEqual(a.v("E.perfil"), null, "vesícula Sim sem a resposta da cirurgia não grava");
+  assert.match(a.avisos[a.avisos.length - 1], /Responda: Está aguardando cirurgia/);
+  a.v(primeiro({ vesicula: "nao", planoNutri: "sim" }));
+  assert.match(a.avisos[a.avisos.length - 1], /Responda: Tem gordura no fígado\?/);
+  a.v(primeiro({ vesicula: "sim", aguardaCirurgia: "naosei", figado: "sim", planoNutri: "nao" }));
+  const p = JSON.parse(a.v("JSON.stringify(E.perfil)"));
+  assert.deepStrictEqual([p.vesicula, p.aguardaCirurgia, p.figado, p.sexo, p.atividade, p.gestante, p.diabetes, p.pilula, p.metaKcal, p.discreto, p.naoCome.length, p.peso],
+    [true, null, true, "F", 1.2, null, null, null, null, false, 0, 110]);
+  assert.strictEqual(a.v("E.ui.planoNutri"), false, "Não desliga o plano da nutricionista");
+  assert.strictEqual(a.v("E.ui.puPerguntas"), true);
+});
+test("primeiro uso: menor de 18 anos continua recusado, mesmo com as respostas", () => {
+  const a = carregar();
+  a.v(primeiro({ nascimento: String(new Date().getFullYear() - 17), vesicula: "nao", figado: "nao", planoNutri: "naosei" }));
+  assert.strictEqual(a.v("E.perfil"), null);
+  assert.match(a.avisos[a.avisos.length - 1], /18 anos ou mais/);
+});
+test("plano da nutricionista: Sim liga, Não desliga, Não sei deixa como está", () => {
+  const a = carregar(estado());
+  a.v(form({ planoNutri: "nao" })); assert.strictEqual(a.v("E.ui.planoNutri"), false);
+  a.v(form({ planoNutri: "naosei" })); assert.strictEqual(a.v("E.ui.planoNutri"), false);
+  a.v(form({ planoNutri: "sim" })); assert.strictEqual(a.v("pnEmUso()"), true);
 });

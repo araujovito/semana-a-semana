@@ -5,16 +5,43 @@ const { abrir, ok, d, CHAVE } = require("./apoio");
   // Achado 2: primeiro a tela de entrada (para quem o app serve e quem deve falar com o médico antes), depois o perfil.
   ok(/Converse com o seu médico antes de seguir o plano do app se você/.test(await p.locator("#tela").innerText()) && await p.locator("form[data-form=perfil]").count() === 0, "primeira abertura mostra a tela de entrada");
   ok(!(await p.locator("#abas").isVisible()), "barra de abas escondida na tela de entrada"); await t.foto("0-entrada");
-  await p.click("[data-ac=entradaContinuar]");
-  ok(await p.locator("form[data-form=perfil]").count() === 1, "continuar leva ao perfil");
+  // Usabilidade onda 2, mudança 1: primeiro uso numa tela só. Cada toque conta: campo tocado, botão de resposta, botão final.
+  let toques = 0;
+  const toca = async sel => { toques++; await p.click(sel); }, digita = async (sel, x) => { toques++; await p.fill(sel, x); };
+  const resp = (nome, v) => "form[data-form=perfil] [data-pu=" + nome + "] label.opcao:has(input[value=" + v + "])";
+  await toca("[data-ac=entradaContinuar]");
+  ok(await p.locator("form[data-form=perfil]").count() === 1, "continuar leva ao formulário do primeiro uso");
+  ok(await p.locator("form[data-form=perfil] details").count() === 0 && await p.locator("form[data-form=perfil] [name=sexo], form[data-form=perfil] [name=atividade], form[data-form=perfil] [name=metaKcal]").count() === 0,
+    "primeiro uso: sem sanfonas; sexo, atividade e metas ficam para depois");
+  for (const n of ["vesicula", "figado", "planoNutri"]) ok(await p.locator(resp(n, "naosei")).isVisible() && await p.locator(resp(n, "sim")).isVisible(), "primeiro uso: pergunta " + n + " à vista, com Sim, Não e Não sei");
+  ok(!(await p.locator("#p-cirurgia").isVisible()), "primeiro uso: pergunta da cirurgia escondida até a vesícula ser Sim");
+  ok(await p.locator("#imp").count() === 1, "primeiro uso: continua oferecendo restaurar uma cópia");
+  await t.foto("0b-primeiro-uso"); await t.semRolagem("primeiro uso"); await t.alvosDeToque("primeiro uso");
   // Achado 2: menos de 18 anos é recusado.
   await p.fill("[name=nascimento]", String(new Date().getFullYear() - 16)); await p.fill("[name=altura]", "163"); await p.fill("[name=peso]", "60");
   await p.click("form[data-form=perfil] button");
   ok(/18 anos ou mais/.test(await p.locator("#aviso").innerText()) && (await t.ler()).perfil === null, "menos de 18 anos: perfil recusado");
   ok(!(await p.locator("#abas").isVisible()), "barra de abas escondida enquanto não há perfil");
-  await p.fill("[name=nome]", "Teste"); await p.fill("[name=nascimento]", "1990"); await p.fill("[name=altura]", "163"); await p.fill("[name=peso]", "95,4");
+  await p.fill("[name=nascimento]", "1990");
   await p.click("form[data-form=perfil] button");
+  ok(/Responda: Tem pedra na vesícula\?/.test(await p.locator("#aviso").innerText()) && (await t.ler()).perfil === null, "primeiro uso: sem responder a vesícula, não salva e diz o que falta");
+  // percurso contado do zero, como ela faria: entrada, três campos, quatro respostas, Começar
+  toques = 1;
+  await digita("[name=nascimento]", "1990"); await digita("[name=altura]", "163"); await digita("[name=peso]", "95,4");
+  await toca(resp("vesicula", "sim"));
+  ok(await p.locator("#p-cirurgia").isVisible() && await p.locator(resp("vesicula", "sim") + ".ativa").count() === 1, "vesícula Sim: a pergunta da cirurgia aparece logo abaixo e o botão fica marcado");
+  await p.click("form[data-form=perfil] button");
+  ok(/Responda: Está aguardando cirurgia/.test(await p.locator("#aviso").innerText()), "vesícula Sim: a pergunta da cirurgia também precisa de resposta");
+  await toca(resp("aguardaCirurgia", "sim")); await toca(resp("figado", "naosei")); await toca(resp("planoNutri", "sim"));
+  await toca("form[data-form=perfil] button");
   await p.waitForSelector("text=Proteína hoje");
+  ok(toques <= 9, "primeiro uso até a Hoje em " + toques + " toques (meta: 9 ou menos)");
+  ok(await p.locator("[data-aviso=vesicula]").count() === 1, "primeiro uso com vesícula Sim: a Hoje já mostra o cartão da vesícula");
+  const e0 = await t.ler();
+  ok(e0.perfil.vesicula === true && e0.perfil.aguardaCirurgia === true && e0.perfil.figado === null && e0.ui.planoNutri === true && e0.ui.puPerguntas === true,
+    "primeiro uso: Sim grava true, Não sei grava sem resposta, plano da nutricionista ligado e perguntas marcadas como respondidas");
+  ok(e0.perfil.sexo === "F" && e0.perfil.atividade === 1.2 && e0.perfil.metaKcal === null && e0.perfil.gestante === null && e0.perfil.diabetes === null && e0.perfil.pilula === null && e0.perfil.naoCome.length === 0,
+    "primeiro uso: o resto do perfil começa com valores neutros");
   // A barra volta 100 ms depois de o campo perder o foco (teclado em inicio.js): espera até 2 s em vez de olhar no mesmo instante.
   ok(await p.locator("#abas").waitFor({ state: "visible", timeout: 2000 }).then(() => true, () => false), "barra de abas aparece depois do perfil");
   ok(true, "perfil salvo leva para Hoje"); await t.foto("1-hoje-vazio");
@@ -44,5 +71,6 @@ const { abrir, ok, d, CHAVE } = require("./apoio");
   ok(e.v === 2 && e.perfil.metaKcal === 1500 && e.perfil.nome === "Antiga" && e.doses.length === 1 && e.pesos.length === 1 && e.treinos.length === 1, "versão 1: perfil, aplicação, peso e treino preservados na versão 2");
   ok(e.dias[d(0)].agua === 600 && e.dias[d(0)].protExtra === 10 && e.dias[d(0)].caminhada === 20 && e.dias[d(0)].comido[0].q === 1 && e.dias[d(0)].comido[1] === null, "versão 1: registro do dia preservado");
   ok(Array.isArray(e.perfil.naoCome) && e.perfil.pilula === null, "versão 1: perguntas novas do perfil começam sem resposta");
+
   await t.fechar();
 })();

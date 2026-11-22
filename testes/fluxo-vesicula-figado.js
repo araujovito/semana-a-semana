@@ -9,22 +9,22 @@ const comPerfil = (extra, resto) => estadoBase(Object.assign({ perfil: Object.as
   let t = await abrir({ estado: estadoBase(), aba: "perfil" }), p = t.p;
   await p.waitForSelector("form[data-form=perfil]");
   ok(!(await p.locator("#p-cirurgia").isVisible()), "pergunta da cirurgia escondida enquanto a vesícula não está marcada");
-  await p.click("form[data-form=perfil] summary >> text=Saúde");
-  ok(await p.locator("[name=vesicula]").isVisible() && await p.locator("[name=figado]").isVisible(), "bloco Saúde traz as perguntas de vesícula e fígado");
-  await p.selectOption("[name=vesicula]", "sim");
+  // Usabilidade onda 2, mudança 1: vesícula e fígado à vista no Perfil, fora de sanfona, em botões Sim / Não / Não sei.
+  const resp = (nome, v) => "form[data-form=perfil] [data-pu=" + nome + "] label.opcao:has(input[value=" + v + "])";
+  ok(await p.locator(resp("vesicula", "sim")).isVisible() && await p.locator(resp("figado", "sim")).isVisible(), "Perfil traz as perguntas de vesícula e fígado à vista");
+  await p.click(resp("vesicula", "sim"));
   ok(await p.locator("#p-cirurgia").isVisible(), "com pedra na vesícula marcada, aparece a pergunta da cirurgia");
-  await p.selectOption("[name=aguardaCirurgia]", "sim"); await p.selectOption("[name=figado]", "sim");
+  await p.click(resp("aguardaCirurgia", "sim")); await p.click(resp("figado", "sim"));
   await p.click("form[data-form=perfil] button:has-text('Salvar')");
   let e = await t.ler();
   ok(e.perfil.vesicula === true && e.perfil.figado === true && e.perfil.aguardaCirurgia === true, "respostas sim gravadas no perfil");
-  ok(/2 de 5 respondidas/.test(await tela(p)), "contador do bloco Saúde conta as perguntas novas");
-  await p.click("form[data-form=perfil] summary >> text=Saúde");
-  await p.selectOption("[name=vesicula]", "");
-  ok(!(await p.locator("#p-cirurgia").isVisible()), "prefiro não responder: a pergunta da cirurgia some");
-  await p.selectOption("[name=figado]", "nao");
+  ok(await p.locator(resp("vesicula", "sim") + ".ativa").count() === 1 && await p.locator(resp("figado", "sim") + ".ativa").count() === 1, "depois de salvar, o Perfil mostra as respostas marcadas");
+  await p.click(resp("vesicula", "naosei"));
+  ok(!(await p.locator("#p-cirurgia").isVisible()), "não sei: a pergunta da cirurgia some");
+  await p.click(resp("figado", "nao"));
   await p.click("form[data-form=perfil] button:has-text('Salvar')");
   e = await t.ler();
-  ok(e.perfil.vesicula === null && e.perfil.aguardaCirurgia === null && e.perfil.figado === false, "prefiro não responder vira null e leva junto a cirurgia; não vira false");
+  ok(e.perfil.vesicula === null && e.perfil.aguardaCirurgia === null && e.perfil.figado === false, "não sei vira null e leva junto a cirurgia; não vira false");
   await t.fechar();
 
   /* ---------- cartão de vesícula: sem resposta não aparece; marcada aparece em Hoje, Plano e Perfil ---------- */

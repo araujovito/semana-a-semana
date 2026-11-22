@@ -110,47 +110,81 @@ function resumoNaoGosta() {
   return l.length ? l.map(k => A[k].nome).join(", ") + "." : "Nenhum alimento marcado.";
 }
 
+/* ---------- primeiro uso numa tela só e perguntas de um toque (usabilidade onda 2, mudança 1; auditoria 3, I7) ----------
+   As três perguntas que mudam o que o app mostra ficam à vista, em botões Sim / Não / Não sei, no primeiro uso e no Perfil:
+   pedra na vesícula (com a da cirurgia logo abaixo, se Sim), gordura no fígado e plano da nutricionista (liga ou desliga
+   E.ui.planoNutri, o mesmo interruptor da tela Plano, planonutri.js). "Não sei" grava null, como "sem resposta": só Sim liga
+   os avisos (é o lado seguro: o app não supõe a doença). Para não perguntar de novo, E.ui.puPerguntas guarda que ela respondeu. */
+const PU_OPCOES = [["sim", "Sim"], ["nao", "Não"], ["naosei", "Não sei"]];
+const PU_ESCONDE = "position:absolute;width:1px;height:1px;margin:0;opacity:0;pointer-events:none";
+/* Valor marcado de uma pergunta do perfil: true Sim, false Não; null vira "Não sei" só se ela já passou pelas perguntas. */
+function puMarcado(v) { return v === true ? "sim" : v === false ? "nao" : E.ui && E.ui.puPerguntas ? "naosei" : ""; }
+function puPergunta(nome, rotulo, marcado, id, oculta) {
+  return '<fieldset data-pu="' + nome + '"' + (id ? ' id="' + id + '"' : "") + (oculta ? " hidden" : "") + ' style="border:0;margin:14px 0 0;padding:0;min-width:0">' +
+    '<legend style="padding:0;font-size:17px;font-weight:600;color:var(--texto)">' + rotulo + '</legend><div class="opcoes" style="grid-template-columns:repeat(3,1fr)">' +
+    PU_OPCOES.map(o => '<label class="opcao' + (o[0] === marcado ? " ativa" : "") + '"><input type="radio" name="' + nome + '" value="' + o[0] + '" data-mud="puOpcao"' +
+      (o[0] === marcado ? " checked" : "") + ' style="' + PU_ESCONDE + '">' + o[1] + "</label>").join("") + "</div></fieldset>";
+}
+function puPerguntas(p) {
+  const ui = E.ui || {}, nutri = ui.planoNutri === true ? "sim" : ui.planoNutri === false ? "nao" : ui.puPerguntas ? "naosei" : "";
+  return puPergunta("vesicula", "Tem pedra na vesícula?", puMarcado(p.vesicula)) +
+    puPergunta("aguardaCirurgia", "Está aguardando cirurgia da vesícula?", p.vesicula === true ? puMarcado(p.aguardaCirurgia) : "", "p-cirurgia", p.vesicula !== true) +
+    puPergunta("figado", "Tem gordura no fígado (esteatose)?", puMarcado(p.figado)) +
+    puPergunta("planoNutri", "Segue um plano de uma nutricionista?", nutri) +
+    '<p class="sub" style="margin:6px 0 0">Com Sim, a tela Hoje mostra as refeições do plano dela. Dá para mudar depois na aba Comer.</p>';
+}
+/* Primeiro uso: ano, altura, peso e as três perguntas. O resto do perfil começa com valores neutros (sexo feminino, atividade
+   sedentária, sem metas do médico, sem restrições, diabetes, pílula e gravidez sem resposta) e fica para "Completar depois". */
+function telaPrimeiroUso() {
+  return '<div class="cartao destaque"><h2>Bem-vinda</h2><p style="margin:0">Responda o que está abaixo e o app começa. O resto fica para depois, no Perfil.</p>' +
+    '<p class="sub" style="margin:6px 0 0">Seus registros ficam neste celular e não são enviados pelo app. Se a cópia de segurança do Google estiver ligada no aparelho, o Android pode incluí-los na cópia da sua conta.</p></div>' +
+    '<form class="cartao" data-form="perfil" data-pu="primeiro"><div class="duas"><label>Ano de nascimento<input name="nascimento" inputmode="numeric" required></label>' +
+    '<label>Altura (cm)<input name="altura" inputmode="decimal" required></label></div>' +
+    '<label>Peso no começo do tratamento (kg)<input name="peso" inputmode="decimal" required></label>' +
+    '<p class="sub" style="margin:4px 0 0">É o ponto de partida. As pesagens seguintes ficam na aba Peso.</p>' +
+    puPerguntas({}) +
+    '<p class="sub" style="margin:10px 0 0">Sexo, atividade física, metas do médico, o que você não come, diabetes, pílula e gravidez: em Perfil, quando quiser.</p>' +
+    '<div class="botoes"><button>Começar</button></div></form>';
+}
+
 function telaPerfil() {
   if (!E.perfil && !E.ui.entradaVista) return telaEntrada();
-  const p = E.perfil || {}, m = metas();
+  if (!E.perfil) return telaPrimeiroUso();
+  const p = E.perfil, m = metas();
   const v = k => (p[k] == null ? "" : esc(p[k]));
   const at = [[1.2, "Sedentária (trabalho sentada, sem exercício)"], [1.375, "Leve (caminhadas, 1 a 3 treinos por semana)"], [1.55, "Moderada (3 a 5 treinos por semana)"]];
-  const naoCome = p.naoCome || [], saude = ["gestante", "diabetes", "pilula", "vesicula", "figado"], respondidas = saude.filter(k => p[k] === true || p[k] === false).length;
-  let out = "";
-  if (!E.perfil) out += '<div class="cartao destaque"><h2>Bem-vinda</h2><p style="margin:0">Preencha os dados abaixo para o app calcular as suas metas de proteína, energia, água, vitaminas e minerais. Seus registros ficam neste celular e não são enviados pelo app. Se a cópia de segurança do Google estiver ligada no aparelho, o Android pode incluí-los na cópia da sua conta.</p></div>';
-  else out += avisosDoPerfil();
-  out += '<form class="cartao" data-form="perfil"><h2>Dados</h2><label>Nome (opcional)<input name="nome" value="' + v("nome") + '" maxlength="40"></label>' +
-    '<div class="duas"><label>Sexo<select name="sexo"><option value="F"' + (p.sexo !== "M" ? " selected" : "") + '>Feminino</option><option value="M"' + (p.sexo === "M" ? " selected" : "") + ">Masculino</option></select></label>" +
-    '<label>Ano de nascimento<input name="nascimento" inputmode="numeric" value="' + v("nascimento") + '" required></label></div>' +
-    /* Peso no começo do tratamento: só no primeiro preenchimento. Depois ele tem campo próprio (cartaoPesoInicial), porque salvar o
+  const naoCome = p.naoCome || [], saude = ["gestante", "diabetes", "pilula"], respondidas = saude.filter(k => p[k] === true || p[k] === false).length;
+  let out = avisosDoPerfil();
+  out += '<form class="cartao" data-form="perfil"><div id="pu-perguntas"><h2>Vesícula, fígado e nutricionista</h2>' +
+    puPerguntas(p) + "</div>" +
+    '<h2 style="margin-top:18px">Dados</h2><label>Nome (opcional)<input name="nome" value="' + v("nome") + '" maxlength="40"></label>' +
+    '<div class="duas"><label>Ano de nascimento<input name="nascimento" inputmode="numeric" value="' + v("nascimento") + '" required></label>' +
+    /* Peso no começo do tratamento: só no primeiro uso. Depois ele tem campo próprio (cartaoPesoInicial), porque salvar o
        Perfil regravava o peso inicial e é aqui que ela voltaria para "atualizar o peso", apagando a linha de base das marcas de
        5, 7 e 10% (auditoria 1, achado 12). O peso atual vem da aba Peso. */
-    (E.perfil ? '<label>Altura (cm)<input name="altura" inputmode="decimal" value="' + v("altura") + '" required></label>'
-      : '<div class="duas"><label>Altura (cm)<input name="altura" inputmode="decimal" value="' + v("altura") + '" required></label><label>Peso no começo do tratamento (kg)<input name="peso" inputmode="decimal" value="' + v("peso") + '" required></label></div>' +
-        '<p class="sub" style="margin:4px 0 0">É o ponto de partida. As pesagens seguintes ficam na aba Peso.</p>') +
-    '<label>Atividade física hoje<select name="atividade">' + at.map(a => '<option value="' + a[0] + '"' + ((p.atividade || 1.2) === a[0] ? " selected" : "") + ">" + a[1] + "</option>").join("") + "</select></label>" +
+    '<label>Altura (cm)<input name="altura" inputmode="decimal" value="' + v("altura") + '" required></label></div>' +
+    '<h3>Completar depois</h3><p class="sub" style="margin:0">Enquanto não preencher, o app usa: sexo feminino, atividade sedentária, metas calculadas por ele e nenhuma restrição.</p>' +
     '<div class="blocos">' +
-    '<details><summary><span>Saúde <span class="sub">(opcional' + (respondidas ? " · " + respondidas + " de " + saude.length + " respondidas" : "") + ")</span></span></summary>" +
+    '<details><summary><span>Sexo e atividade física</span></summary>' +
+    '<label>Sexo<select name="sexo"><option value="F"' + (p.sexo !== "M" ? " selected" : "") + '>Feminino</option><option value="M"' + (p.sexo === "M" ? " selected" : "") + ">Masculino</option></select></label>" +
+    '<label>Atividade física hoje<select name="atividade">' + at.map(a => '<option value="' + a[0] + '"' + ((p.atividade || 1.2) === a[0] ? " selected" : "") + ">" + a[1] + "</option>").join("") + "</select></label></details>" +
+    '<details><summary><span>Gravidez, diabetes e pílula <span class="sub">(opcional' + (respondidas ? " · " + respondidas + " de " + saude.length + " respondidas" : "") + ")</span></span></summary>" +
     '<p class="sub" style="margin:4px 0 0">Serve para o app mostrar os avisos que valem para você.</p>' +
     "<label>Está grávida ou amamentando?" + simNao("gestante", p.gestante) + "</label>" +
     "<label>Tem diabetes?" + simNao("diabetes", p.diabetes, ' data-mud="perfilDiabetes"') + "</label>" +
     '<label id="p-insulina"' + (p.diabetes === true ? "" : " hidden") + ">Usa insulina ou sulfonilureia (glibenclamida, gliclazida, glimepirida)?" + simNao("insulinaSulf", p.insulinaSulf) + "</label>" +
-    "<label>Usa pílula anticoncepcional?" + simNao("pilula", p.pilula) + "</label>" +
-    "<label>Tem pedra na vesícula?" + simNao("vesicula", p.vesicula, ' data-mud="perfilVesicula"') + "</label>" +
-    '<label id="p-cirurgia"' + (p.vesicula === true ? "" : " hidden") + ">Está aguardando cirurgia da vesícula?" + simNao("aguardaCirurgia", p.aguardaCirurgia) + "</label>" +
-    "<label>Tem gordura no fígado (esteatose)?" + simNao("figado", p.figado) + "</label></details>" +
+    "<label>Usa pílula anticoncepcional?" + simNao("pilula", p.pilula) + "</label></details>" +
     '<details><summary><span>O que você não come <span class="sub">(opcional' + (naoCome.length ? " · " + naoCome.length + (naoCome.length === 1 ? " marcado" : " marcados") : "") + ")</span></span></summary>" +
     '<p class="sub" style="margin:4px 0 0">Serve para o app trocar os alimentos do cardápio. Marque o que você não come:</p><div class="marcas coluna">' +
-    RESTRICOES.map(r => '<label><input type="checkbox" name="nc_' + r.id + '"' + (naoCome.indexOf(r.id) >= 0 ? " checked" : "") + ">" + esc(r.rotulo) + "</label>").join("") + "</div>" +
-    (E.perfil ? "" : '<p class="sub" style="margin:4px 0 0">Depois de salvar, o Perfil deixa marcar também alimentos avulsos de que você não gosta.</p>') + "</details>" +
+    RESTRICOES.map(r => '<label><input type="checkbox" name="nc_' + r.id + '"' + (naoCome.indexOf(r.id) >= 0 ? " checked" : "") + ">" + esc(r.rotulo) + "</label>").join("") + "</div></details>" +
     '<details><summary><span>Metas passadas pelo médico ou nutricionista <span class="sub">(opcional)</span></span></summary><p class="sub" style="margin:4px 0 0">Se preencher, elas substituem o cálculo do app.</p>' +
     '<div class="tres"><label>Energia (kcal)<input name="metaKcal" inputmode="numeric" value="' + v("metaKcal") + '"></label><label>Proteína (g)<input name="metaProt" inputmode="numeric" value="' + v("metaProt") + '"></label><label>Água (ml)<input name="metaAgua" inputmode="numeric" value="' + v("metaAgua") + '"></label></div></details>' +
     "</div>" +
     '<div class="marcas"><label><input type="checkbox" name="discreto"' + (p.discreto === true ? " checked" : "") + ">Não mostrar calorias nem peso em destaque</label></div>" +
     '<p class="sub" style="margin:0">Proteína, água, vitaminas e minerais continuam aparecendo.</p>' +
     '<div class="botoes"><button>Salvar</button></div></form>';
-  if (E.perfil) out += cartaoPesoInicial();
-  if (E.perfil) out += '<div class="cartao"><h2>Alimentos de que você não gosta</h2><p class="sub" style="margin:0">Serve para o app trocar esses alimentos no cardápio.</p>' +
+  out += cartaoPesoInicial();
+  out += '<div class="cartao"><h2>Alimentos de que você não gosta</h2><p class="sub" style="margin:0">Serve para o app trocar esses alimentos no cardápio.</p>' +
     '<p id="resumo-nao-gosta" style="margin:8px 0 0">' + esc(resumoNaoGosta()) + '</p><div class="botoes"><button class="sec" data-ac="abrirNaoGosta">Escolher alimentos</button></div></div>';
   if (m) {
     const d = m.discreto;
@@ -165,7 +199,7 @@ function telaPerfil() {
       (d ? "" : "<li>Gordura: 30% da energia. Carboidrato: o restante.</li>") + "<li>Fibra, vitaminas e minerais: valores de referência (DRIs) para o sexo e a idade.</li></ul>" +
       '<p class="sub">As metas se atualizam sozinhas a cada peso registrado. São estimativas de população; o médico ou o nutricionista podem definir outras.' + (d ? " Os números de energia e de peso estão escondidos porque você marcou essa opção acima." : "") + "</p></div>";
   }
-  if (E.perfil) out += cartaoLembretes();
+  out += cartaoLembretes();
   return out;
 }
 
@@ -205,7 +239,12 @@ Object.assign(AC, {
   /* Não redesenha a tela: só o resumo muda (em MUD.naoGosta), para não apagar o que estiver digitado no formulário. */
   fecharNaoGosta() { fecharFolha(); },
 });
-MUD.perfilVesicula = function (c) { const el = document.getElementById("p-cirurgia"); if (el) el.hidden = c.value !== "sim"; };
+/* Botão Sim / Não / Não sei: pinta o escolhido e, na vesícula, mostra ou esconde a pergunta da cirurgia. Não grava: grava o Salvar. */
+MUD.puOpcao = function (c) {
+  const f = c.closest("fieldset");
+  if (f) f.querySelectorAll("label.opcao").forEach(l => { const i = l.querySelector("input"); l.classList.toggle("ativa", !!(i && i.checked)); });
+  if (c.name === "vesicula") { const el = document.getElementById("p-cirurgia"); if (el) el.hidden = c.value !== "sim"; }
+};
 MUD.perfilDiabetes = function (c) { const el = document.getElementById("p-insulina"); if (el) el.hidden = c.value !== "sim"; };
 MUD.naoGosta = function (c) {
   if (!E.perfil) return;
@@ -226,16 +265,26 @@ FORM.perfil = function (f) {
     if ((txt("metaKcal") && kcal == null) || (kcal != null && (kcal < 800 || kcal > 4000))) return aviso("Meta de energia fora do intervalo esperado (800 a 4000 kcal).");
     if ((txt("metaProt") && prot == null) || (prot != null && (prot < 30 || prot > 250))) return aviso("Meta de proteína fora do intervalo esperado (30 a 250 g).");
     if ((txt("metaAgua") && agua == null) || (agua != null && (agua < 500 || agua > 6000))) return aviso("Meta de água em ml (entre 500 e 6000), por exemplo 2000.");
-    const primeiro = !E.perfil, antes = E.perfil || {}, masc = f.sexo === "M", diabetes = deSimNao(f.diabetes), vesicula = deSimNao(f.vesicula);
+    const primeiro = !E.perfil, antes = E.perfil || {};
+    /* Primeiro uso: as três perguntas à vista são obrigatórias ("Não sei" vale como resposta); a da cirurgia, se a vesícula for Sim. */
+    const falta = [["vesicula", "Tem pedra na vesícula?"], ["aguardaCirurgia", "Está aguardando cirurgia da vesícula?"], ["figado", "Tem gordura no fígado?"], ["planoNutri", "Segue um plano de uma nutricionista?"]]
+      .find(q => !f[q[0]] && (q[0] !== "aguardaCirurgia" || f.vesicula === "sim"));
+    if (primeiro && falta) return aviso("Responda: " + falta[1] + " (Sim, Não ou Não sei).");
+    /* Campo que não veio no formulário (o primeiro uso não tem sexo, atividade nem saúde) mantém o que havia, ou o valor neutro. */
+    const sn = k => (k in f ? deSimNao(f[k]) : antes[k] === true || antes[k] === false ? antes[k] : null);
+    const masc = "sexo" in f ? f.sexo === "M" : antes.sexo === "M", diabetes = sn("diabetes"), vesicula = sn("vesicula");
     /* Caixa de marcar desmarcada não chega no formulário: a lista é refeita pelas que chegaram. Id que esta versão não conhece é mantido. */
     const naoCome = RESTRICOES.filter(r => f["nc_" + r.id]).map(r => r.id).concat((antes.naoCome || []).filter(id => !RESTRICOES.some(r => r.id === id)));
     const gravar = () => {
       E.perfil = Object.assign({}, PERFIL_NOVO, { gestante: null, discreto: false }, antes, {
-        nome: (f.nome || "").trim(), sexo: masc ? "M" : "F", nascimento: nasc, altura: alt, peso: peso, atividade: num(f.atividade) || 1.2,
+        nome: (f.nome || "").trim(), sexo: masc ? "M" : "F", nascimento: nasc, altura: alt, peso: peso, atividade: num(f.atividade) || antes.atividade || 1.2,
         metaKcal: kcal || null, metaProt: prot || null, metaAgua: agua || null,
-        gestante: masc ? null : deSimNao(f.gestante), diabetes: diabetes, insulinaSulf: diabetes === true ? deSimNao(f.insulinaSulf) : null, pilula: deSimNao(f.pilula),
-        vesicula: vesicula, aguardaCirurgia: vesicula === true ? deSimNao(f.aguardaCirurgia) : null, figado: deSimNao(f.figado),
+        gestante: masc ? null : sn("gestante"), diabetes: diabetes, insulinaSulf: diabetes === true ? sn("insulinaSulf") : null, pilula: sn("pilula"),
+        vesicula: vesicula, aguardaCirurgia: vesicula === true ? sn("aguardaCirurgia") : null, figado: sn("figado"),
         naoCome: naoCome, discreto: !!f.discreto });
+      /* Plano da nutricionista: Sim liga, Não desliga, "Não sei" deixa como está (ligado, que é o padrão do app). */
+      if (f.planoNutri === "sim") E.ui.planoNutri = true; else if (f.planoNutri === "nao") E.ui.planoNutri = false;
+      if (f.vesicula && f.figado && f.planoNutri) E.ui.puPerguntas = true;
       salvar(); aviso("Perfil salvo.");
       if (primeiro) { irPara("hoje"); render(true); } else render();
     };

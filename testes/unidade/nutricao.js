@@ -50,7 +50,7 @@ test("metas: a proteína não dá salto quando o IMC cruza 25 nem 30", () => {
 });
 test("perfil: idade abaixo de 18 é recusada; 18 é aceita", () => {
   const a = carregar();
-  const f = ano => a.v("FORM.perfil({ nome: '', sexo: 'F', nascimento: '" + ano + "', altura: '165', peso: '80', atividade: '1.2' })");
+  const f = ano => a.v("FORM.perfil({ nome: '', sexo: 'F', nascimento: '" + ano + "', altura: '165', peso: '80', atividade: '1.2', vesicula: 'nao', figado: 'nao', planoNutri: 'naosei' })");
   f(ANO - 17);
   assert.strictEqual(a.v("E.perfil"), null); assert.match(a.avisos[a.avisos.length - 1], /18 anos/);
   f(ANO - 16); assert.strictEqual(a.v("E.perfil"), null);
@@ -61,7 +61,7 @@ test("perfil: idade abaixo de 18 é recusada; 18 é aceita", () => {
 });
 test("perfil: números absurdos são recusados com mensagem", () => {
   const a = carregar();
-  const f = extra => a.v("FORM.perfil(Object.assign({ nome: '', sexo: 'F', nascimento: '1985', altura: '165', peso: '80', atividade: '1.2' }, " + JSON.stringify(extra) + "))");
+  const f = extra => a.v("FORM.perfil(Object.assign({ nome: '', sexo: 'F', nascimento: '1985', altura: '165', peso: '80', atividade: '1.2', vesicula: 'nao', figado: 'nao', planoNutri: 'nao' }, " + JSON.stringify(extra) + "))");
   for (const ruim of [{ altura: "16" }, { altura: "400" }, { peso: "8" }, { peso: "900" }, { metaKcal: "100" }, { metaKcal: "abc" }, { metaProt: "900" }, { metaAgua: "20" }]) {
     const n = a.avisos.length; f(ruim);
     assert.strictEqual(a.v("E.perfil"), null, JSON.stringify(ruim)); assert.strictEqual(a.avisos.length, n + 1);
