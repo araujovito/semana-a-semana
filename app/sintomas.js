@@ -54,7 +54,10 @@ FORM.sintoma = function (f) {
   if (ed) E.sintomas = E.sintomas.map(x => (x.id === ed.id ? s : x)); else E.sintomas.push(s);
   sintomaEmEdicao = null;
   salvar(); render();
-  if (s.dor || (s.vomito && s.enjoo >= 3)) alerta("Dor forte e contínua na barriga, ou vômito que não para, estão na lista de sinais de alerta do Guia. A orientação é procurar atendimento médico sem esperar a consulta.");
+  /* TEXTO DE SAÚDE (sinais de alerta, separados por urgência). Fonte: bula americana do Mounjaro (tirzepatida), seção 5.2
+     (pancreatite: dor abdominal forte e persistente, que pode irradiar para as costas, com ou sem vômito) e seção 5.4
+     (reações de hipersensibilidade graves: anafilaxia e angioedema). 192 é o SAMU. */
+  if (s.dor || (s.vomito && s.enjoo >= 3)) alerta("Dor forte e contínua na barriga, que pode ir para as costas, ou vômito em que você não consegue segurar nem água: vá ao pronto-socorro hoje. Inchaço no rosto, lábios ou garganta, falta de ar ou desmaio: ligue 192.");
   else aviso(ed ? "Registro corrigido." : "Registrado.");
 };
 
