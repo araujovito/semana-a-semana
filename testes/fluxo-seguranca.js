@@ -6,6 +6,7 @@ const RAIZ = path.join(__dirname, "..", "app");
 
 // Cada violação da política vira um item em window.__violacoes (o navegador também escreve no console, que apoio.js já confere).
 const ouvirViolacoes = () => { window.__violacoes = []; document.addEventListener("securitypolicyviolation", e => window.__violacoes.push(e.violatedDirective + " " + e.blockedURI)); };
+const ponte = () => { window.__enviados = []; window.Android = { compartilhar: x => window.__enviados.push(x), copiar() {} }; };
 const violacoes = p => p.evaluate(() => window.__violacoes.splice(0));
 
 (async () => {
@@ -42,7 +43,7 @@ const violacoes = p => p.evaluate(() => window.__violacoes.splice(0));
     const visiveis = await p.evaluate(() => [...document.querySelectorAll("#folha [data-nome]")].filter(x => x.offsetParent).length);
     ok(visiveis > 0 && visiveis < await p.evaluate(() => document.querySelectorAll("#folha [data-nome]").length), "busca de \"não gosto\" filtra com a política ligada (evento embutido liberado por hash)");
   } else ok(false, "folha de \"não gosto\" não abriu no teste");
-  // Fontes: as declaradas em CSS (Montserrat em app/fontes/, quando chegar) e, para provar que font-src aceita a própria pasta,
+  // Fontes: as declaradas em CSS (Zilla Slab em app/fontes/, quando chegar) e, para provar que font-src aceita a própria pasta,
   // cada arquivo de app/fontes/ carregado direto. Sem a pasta ainda, usa uma fonte do sistema por file:// (mesma regra do WebView).
   const pastaFontes = path.join(RAIZ, "fontes");
   const arquivosFonte = fs.existsSync(pastaFontes) ? fs.readdirSync(pastaFontes).filter(n => /\.(woff2?|ttf|otf)$/.test(n)).map(n => "fontes/" + n)
@@ -56,5 +57,24 @@ const violacoes = p => p.evaluate(() => window.__violacoes.splice(0));
   ok(fontes.every(f => /:loaded$/.test(f)), "fontes da própria origem carregam com a política ligada (" + (fontes.join(", ") || "nenhuma") + ")");
   const resto = await violacoes(p);
   ok(resto.length === 0, "nenhuma violação da política nas telas do app" + (resto.length ? ": " + resto.join(" / ") : ""));
+  await t.fechar();
+
+  // Aviso de dados de saúde antes de o texto sair do app (ponte falsa do Android guarda o que seria compartilhado).
+  t = await abrir({ estado: estadoBase({ doses: [{ id: "a1", data: d(3), mg: 2.5, local: "Coxa esquerda", obs: "" }], ui: { diario: "relatorio" } }), aba: "diario" }); p = t.p;
+  await p.addInitScript(ponte); await p.reload(); await p.waitForSelector("[data-ac=exportar]");
+  await p.click("[data-ac=exportar]");
+  ok(/dados de saúde/.test(await t.textoDialogo() || ""), "Exportar tudo avisa, antes, que o texto tem dados de saúde");
+  await t.nao();
+  ok((await p.evaluate(() => window.__enviados)).length === 0 && !(await t.ler()).ui.ultimaExportacao, "cancelar o aviso não exporta nada");
+  await p.click("[data-ac=exportar]"); await t.sim();
+  let enviados = await p.evaluate(() => window.__enviados);
+  ok(enviados.length === 1 && JSON.parse(enviados[0]).doses.length === 1, "seguir exporta o texto completo");
+  ok((await t.ler()).ui.ultimaExportacao === d(0) && JSON.parse(enviados[0]).ui.ultimaExportacao === d(0), "a data da exportação fica guardada (e vai junto na cópia)");
+  await p.click("[data-ac=compartilhar][data-de=rel]");
+  ok(/relatório tem dados de saúde/.test(await t.textoDialogo() || ""), "Compartilhar o relatório avisa, antes, que o texto tem dados de saúde");
+  await t.nao(); ok((await p.evaluate(() => window.__enviados)).length === 1, "cancelar não compartilha o relatório");
+  await p.click("[data-ac=compartilhar][data-de=rel]"); await t.sim();
+  enviados = await p.evaluate(() => window.__enviados);
+  ok(enviados.length === 2 && /RELATÓRIO DE ACOMPANHAMENTO/.test(enviados[1]), "seguir compartilha o relatório");
   await t.fechar();
 })().catch(e => { console.log("FALHOU: " + e.message); process.exit(1); });
