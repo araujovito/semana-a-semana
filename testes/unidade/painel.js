@@ -1,0 +1,74 @@
+// Painel: série de dias (lacuna não é zero), médias, proteína na faixa, dias abaixo de 1.200 kcal e modo discreto.
+const test = require("node:test"), assert = require("node:assert");
+const carregar = require("../carregar-app");
+
+function relogio(inicio) {
+  const agora = new Date(inicio).getTime();
+  return class R extends Date { constructor(...a) { if (a.length) super(...a); else super(agora); } static now() { return agora; } };
+}
+const PERFIL = { nome: "T", sexo: "F", nascimento: 1990, altura: 163, peso: 95.4, atividade: 1.2, metaKcal: null, metaProt: null, metaAgua: null, diabetes: null, insulinaSulf: null, pilula: null, naoCome: [], naoGosta: [] };
+const estado = (dias, perfil) => ({ v: 2, perfil: Object.assign({}, PERFIL, perfil || {}), doses: [], pesos: [], sintomas: [], treinos: [], dias: dias || {}, trocas: {}, caneta: null, suplementos: [], exames: [], lembretes: {}, ui: {} });
+// Dia que só tem proteína avulsa: proteína conhecida e 0 kcal (a conta fica exata sem depender do cardápio).
+const so = g => ({ enjoo: false, comido: [], agua: 0, protExtra: g, caminhada: 0 });
+const HOJE = "2026-11-20";
+function abrir(dias, perfil) { const app = carregar(estado(dias, perfil), { Date: relogio(HOJE + "T10:00:00") }); return { v: app.v, j: c => JSON.parse(app.v("JSON.stringify(" + c + ")")) }; }
+
+test("série: dias sem registro ficam null (lacuna), dia com 'nada' marcado é zero", () => {
+  const a = abrir({ "2026-11-18": so(50), "2026-11-19": { enjoo: false, comido: [{ q: 0 }], agua: 0, protExtra: 0, caminhada: 0 } });
+  const s = a.j("painelSerie('" + HOJE + "', 7)");
+  assert.strictEqual(s.length, 7);
+  assert.deepStrictEqual(s.map(x => x.data), ["2026-11-14", "2026-11-15", "2026-11-16", "2026-11-17", "2026-11-18", "2026-11-19", "2026-11-20"]);
+  assert.deepStrictEqual(s.map(x => x.registrou), [false, false, false, false, true, true, false]);
+  assert.strictEqual(s[0].prot, null); assert.strictEqual(s[0].kcal, null);
+  assert.strictEqual(s[4].prot, 50);
+  assert.deepStrictEqual([s[5].prot, s[5].kcal], [0, 0], "registrou 'nada': zero de verdade");
+});
+
+test("resumo: média só dos dias com registro; faixa inclusiva; abaixo de 1.200 kcal", () => {
+  const a = abrir();
+  const m = { protMin: 80, protMax: 110 };
+  const serie = [
+    { registrou: true, kcal: 1500, prot: 80 },     // na faixa (limite de baixo)
+    { registrou: false, kcal: null, prot: null },  // lacuna: fora de tudo
+    { registrou: true, kcal: 1199, prot: 110 },    // na faixa (limite de cima), abaixo de 1.200
+    { registrou: true, kcal: 1200, prot: 111 },    // acima da faixa, não está abaixo de 1.200
+    { registrou: true, kcal: 900, prot: 40 },      // abaixo dos dois
+  ];
+  const r = a.j("painelResumo(" + JSON.stringify(serie) + ", " + JSON.stringify(m) + ")");
+  assert.deepStrictEqual([r.dias, r.total, r.naFaixa, r.abaixoKcal], [4, 5, 2, 2]);
+  assert.strictEqual(r.mediaProt, (80 + 110 + 111 + 40) / 4);
+  assert.strictEqual(r.mediaKcal, (1500 + 1199 + 1200 + 900) / 4);
+  const vazio = a.j("painelResumo([{ registrou: false, kcal: null, prot: null }], " + JSON.stringify(m) + ")");
+  assert.deepStrictEqual([vazio.dias, vazio.mediaProt, vazio.mediaKcal, vazio.naFaixa], [0, null, null, 0]);
+});
+
+test("quanto falta de proteína nunca é negativo", () => {
+  const a = abrir();
+  assert.strictEqual(a.v("painelFaltaProt(30.4, 100)"), 70);
+  assert.strictEqual(a.v("painelFaltaProt(120, 100)"), 0);
+});
+
+test("tela: resumo usa os dias antes de hoje; lacunas no gráfico; discreto esconde calorias", () => {
+  const dias = { "2026-11-20": so(30), "2026-11-19": so(100), "2026-11-17": so(60) };
+  const a = abrir(dias);
+  const m = a.j("metas()");
+  const html = a.v("telaPainel()");
+  assert.ok(/Faltam [\d.]+ g de proteína/.test(html), "mostra quanto falta");
+  assert.ok(/Dias com registro: 2 de 7/.test(html), "hoje fica fora do resumo");
+  assert.ok(html.indexOf('data-graf="kcal"') > 0 && html.indexOf('data-graf="prot"') > 0);
+  assert.strictEqual((html.match(/class="dia lacuna"/g) || []).length * 1 + (html.match(/class="dia lacuna hoje"/g) || []).length, 2 * 4, "4 lacunas em cada gráfico");
+  assert.ok(m.protMin <= 100 && 100 <= m.protMax, "100 g está na faixa do perfil de teste");
+  assert.ok(/data-v="naFaixa">1 /.test(html));
+  assert.ok(/kcal/.test(html));
+  a.v("E.perfil.discreto = true");
+  const d = a.v("telaPainel()");
+  assert.ok(!/kcal|[Cc]alorias/.test(d), "modo discreto: nada de calorias");
+  assert.ok(/Proteína/.test(d) && d.indexOf('data-graf="prot"') > 0);
+});
+
+test("texto neutro: sem parabéns nem falhou", () => {
+  const a = abrir({ "2026-11-19": so(200), "2026-11-18": so(5) });
+  const html = a.v("telaPainel()") + a.v("painelPeriodo = 30, telaPainel()");
+  assert.ok(!/parab|falhou|fracass|deveria|o correto/i.test(html));
+  assert.ok(/Nos 30 dias antes de hoje/.test(html));
+});

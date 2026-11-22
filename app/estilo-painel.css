@@ -1,0 +1,36 @@
+/* Tela Painel (painel.js): anéis de hoje, barras por dia em SVG e números do período. Só usa as cores de estilo.css. */
+.painel-aneis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.painel-aneis.so-um { grid-template-columns: 1fr; }
+.painel-anel { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; min-width: 0; }
+.painel-anel svg { width: 72px; height: 72px; flex: none; }
+.painel-anel circle { fill: none; stroke-width: 9; }
+.painel-anel circle.fundo { stroke: var(--linha); }
+.painel-anel circle.feito { stroke: var(--cor); }
+.painel-anel text { fill: var(--texto); font-size: 15px; font-weight: 600; }
+.painel-num { font-size: 22px; font-weight: 700; line-height: 1.15; }
+.painel-num small { font-size: 13px; font-weight: 500; color: var(--suave); }
+.painel-falta { margin: 12px 0 4px; font-weight: 600; }
+
+.painel-periodo .linha { flex-wrap: wrap; }
+.painel-periodo .linha h2 { margin: 0; }
+.painel-chips { display: flex; gap: 6px; }
+.painel-chips button { min-height: 44px; }
+svg.painel-graf { width: 100%; height: auto; aspect-ratio: 320 / 150; display: block; margin-top: 4px; touch-action: manipulation; }
+svg.painel-graf text { fill: var(--suave); font-size: 10px; }
+svg.painel-graf line.eixo { stroke: var(--linha); }
+svg.painel-graf line.meta { stroke: var(--texto); stroke-width: 1.5; stroke-dasharray: 5 4; }
+svg.painel-graf rect.faixa { fill: var(--cor-clara); }
+svg.painel-graf rect.alvo { fill: transparent; cursor: pointer; }
+svg.painel-graf rect.coluna { fill: var(--cor); }
+svg.painel-graf rect.vazio { fill: none; stroke: var(--suave); stroke-width: 1; stroke-dasharray: 2 2; }
+svg.painel-graf g.hoje rect.coluna { fill: var(--cor); opacity: .55; }
+svg.painel-graf g.dia:hover rect.alvo, svg.painel-graf g.dia.sel rect.alvo { fill: var(--linha); opacity: .5; }
+.painel-leitura { margin: 8px 0 4px; font-weight: 600; min-height: 1.45em; }
+.painel-legenda { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+.painel-legenda .leg { display: inline-block; width: 14px; height: 10px; margin-right: 4px; vertical-align: middle; border-radius: 2px; }
+.painel-legenda .leg.coluna { background: var(--cor); }
+.painel-legenda .leg.vazio { border: 1px dashed var(--suave); }
+.painel-legenda .leg.meta { height: 0; border-top: 2px dashed var(--texto); border-radius: 0; }
+.painel-legenda .leg.faixa { background: var(--cor-clara); }
+
+.painel-numeros { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px; }
