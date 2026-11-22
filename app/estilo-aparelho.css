@@ -7,3 +7,7 @@ body.teclado main { padding-bottom: 12px; }
 .seg-lembrete { padding: 10px 14px; }
 .seg-lembrete p { margin: 0; }
 .seg-lembrete .botoes { margin-top: 6px; }
+
+/* Faixa de versão nova da PWA (pwa.js): no topo, acima de tudo, um toque atualiza. */
+#seg-versao-nova { position: fixed; top: 0; left: 0; right: 0; z-index: 20; padding: 8px 12px; padding-top: calc(8px + env(safe-area-inset-top)); background: var(--cartao); border-bottom: 1px solid var(--linha); }
+#seg-versao-nova button { display: block; width: 100%; min-height: 44px; }
