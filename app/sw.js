@@ -13,7 +13,7 @@
    Na primeira instalação o sw assume na hora. Versão nova instala e espera: pwa.js mostra a faixa "Versão nova pronta" e, no toque,
    manda { tipo: "ativar" }; só então ela assume (skipWaiting) e a página recarrega. Assim duas versões não se misturam na mesma tela. */
 "use strict";
-const VERSAO_APP = "2026.11.22-2";   // suba a cada entrega (ano.mês.dia-n)
+const VERSAO_APP = "2026.11.22-3";   // suba a cada entrega (ano.mês.dia-n)
 const CACHE = "semana-a-semana-" + VERSAO_APP;
 const ARQUIVOS = [
   "./", "index.html", "manifest.webmanifest", "icone-192.png", "icone-512.png", "icone-mascaravel-512.png",
