@@ -103,8 +103,10 @@ function cartaoComo() {
    para as costas, com ou sem vômito), 5.4 (reação alérgica grave) e 5.8 (vesícula); NIDDK, "Symptoms & Causes of Gallstones";
    Manual MSD. O limite de 1 ou 2 horas e a divisão 192 / pronto-socorro / médico são escolha conservadora da equipe e PRECISAM DE
    AVAL MÉDICO (revisao-clinica-onda2.md). */
+/* registrou: true (gravado hoje), a data do registro (de Diário > Sintomas, que pode ser de outro dia) ou falso (só consulta). */
 function htmlSinaisDor(registrou) {
-  return (registrou ? '<p class="sub" data-registrou>Registrado no seu dia: dor na barriga.</p>' : "") +
+  const outroDia = typeof registrou === "string" && registrou !== hoje();
+  return (registrou ? '<p class="sub" data-registrou>' + (outroDia ? "Registrado em " + esc(brAno(registrou)) + ": dor forte na barriga." : "Registrado no seu dia: dor na barriga.") + "</p>" : "") +
     '<div class="sinal s192"><h3>Ligue 192 agora</h3><p>Dor com febre e pele amarela e também confusão, desmaio ou muita fraqueza. Inchaço no rosto, lábios ou garganta, ou falta de ar.</p></div>' +
     '<div class="sinal sps"><h3>Pronto-socorro hoje</h3><p>Dor forte e contínua no alto da barriga, que pode ir para as costas (pode ser pâncreas). Dor que dura mais de 1 ou 2 horas, ou vem com enjoo e vômito; se for muito forte, vá logo. ' +
     "Febre, mesmo baixa, ou calafrio. Pele ou olhos amarelados, urina escura ou fezes claras. Vômito em que você não consegue segurar nem água.</p></div>" +

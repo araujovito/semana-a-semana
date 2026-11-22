@@ -1,4 +1,4 @@
-// Vesícula marcada: aviso de ritmo de perda em Hoje e na Semana (teste Android da onda 2, I2).
+// Vesícula marcada: aviso de ritmo de perda em Hoje e na Semana e sinais da vesícula ao registrar dor forte (teste Android da onda 2, I2).
 // Relógio fixo do apoio: sexta, 20/11/2026. Os pesos daqui são de teste, não os dela.
 const { abrir, ok, d, estadoBase } = require("./apoio");
 const texto = async (p, sel) => ((await p.locator(sel).count()) ? (await p.locator(sel).first().innerText()).replace(/\s+/g, " ") : "");
@@ -34,5 +34,25 @@ const doses = [{ id: "d1", data: d(14), mg: 2.5, local: "Abdômen", obs: "" }, {
   ok(await p.locator("[data-aviso=ritmo]").count() === 0, "sem vesícula: Hoje sem linha de ritmo");
   await p.goto(p.url().replace(/#.*$/, "") + "#semana"); await p.waitForSelector(".semana-atual");
   ok(await p.locator("[data-semana-ritmo]").count() === 0, "sem vesícula: Semana sem aviso de ritmo");
+  await t.fechar();
+
+  /* ---------- dor forte em Diário > Sintomas, com vesícula: abre a folha "Dor na barriga" de Hoje, não o texto geral ---------- */
+  t = await abrir({ estado: comPerfil({ vesicula: true }, { ui: { planoNutri: false, diario: "sintomas" } }), aba: "diario" }); p = t.p;
+  await p.waitForSelector("form[data-form=sintoma]");
+  await p.fill("form[data-form=sintoma] [name=data]", d(2)); await p.check("[name=dor]"); await p.click("form[data-form=sintoma] button:not([data-ac])");
+  ok(await t.textoDialogo() === null && await p.locator("#folha").isVisible(), "vesícula: dor forte abre a folha da dor na barriga, sem o diálogo geral");
+  const folhaDor = await texto(p, "#folha");
+  ok(/Registrado em 18\/11\/2026: dor forte na barriga\./.test(folhaDor), "a folha diz a data do registro: " + folhaDor.slice(0, 80));
+  ok(/Ligue 192 agora.*Pronto-socorro hoje.*dura mais de 1 ou 2 horas.*Febre, mesmo baixa.*Pele ou olhos amarelados, urina escura ou fezes claras.*Avise o médico no mesmo dia ou no seguinte/.test(folhaDor), "a folha traz os sinais da vesícula por urgência");
+  ok(await p.locator("#folha [data-ac=registrarDor]").count() === 0, "a folha não oferece registrar de novo");
+  ok((await t.ler()).sintomas.filter(x => x.dor && x.data === d(2)).length === 1, "o registro de dor forte foi salvo");
+  await t.alvosDeToque("folha da dor a partir de Sintomas"); await t.foto("dor-sintomas-vesicula");
+  await p.click("#folha [data-ac=fecharFolha]");
+  await t.fechar();
+  // Sem vesícula: continua o aviso geral no diálogo (conferido também em fluxo-peso-sintomas.js).
+  t = await abrir({ estado: comPerfil({ vesicula: null }, { ui: { planoNutri: false, diario: "sintomas" } }), aba: "diario" }); p = t.p;
+  await p.waitForSelector("form[data-form=sintoma]");
+  await p.check("[name=dor]"); await p.click("form[data-form=sintoma] button:not([data-ac])");
+  ok(/vá ao pronto-socorro hoje/.test(await t.textoDialogo() || "") && await p.locator("#folha").isHidden(), "sem vesícula: dor forte mostra o aviso geral, sem a folha");
   await t.fechar();
 })();

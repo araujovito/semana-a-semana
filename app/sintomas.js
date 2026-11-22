@@ -56,8 +56,12 @@ FORM.sintoma = function (f) {
   salvar(); render();
   /* TEXTO DE SAÚDE (sinais de alerta, separados por urgência). Fonte: bula americana do Mounjaro (tirzepatida), seção 5.2
      (pancreatite: dor abdominal forte e persistente, que pode irradiar para as costas, com ou sem vômito) e seção 5.4
-     (reações de hipersensibilidade graves: anafilaxia e angioedema). 192 é o SAMU. */
-  if (s.dor || (s.vomito && s.enjoo >= 3)) alerta("Dor forte e contínua na barriga, que pode ir para as costas, ou vômito em que você não consegue segurar nem água: vá ao pronto-socorro hoje. Inchaço no rosto, lábios ou garganta, falta de ar ou desmaio: ligue 192.");
+     (reações de hipersensibilidade graves: anafilaxia e angioedema). 192 é o SAMU.
+     Com pedra na vesícula marcada, a dor forte abre a folha "Dor na barriga" de Hoje (htmlSinaisDor em hoje.js, com as fontes lá):
+     os mesmos sinais acima e os da vesícula (1 ou 2 horas, febre mesmo baixa, pele amarela, urina escura ou fezes claras),
+     divididos em 192, pronto-socorro hoje e avisar o médico (teste Android da onda 2, I2). */
+  if (s.dor && (metas() || {}).vesicula) abrirSinaisDor(s.data);
+  else if (s.dor || (s.vomito && s.enjoo >= 3)) alerta("Dor forte e contínua na barriga, que pode ir para as costas, ou vômito em que você não consegue segurar nem água: vá ao pronto-socorro hoje. Inchaço no rosto, lábios ou garganta, falta de ar ou desmaio: ligue 192.");
   else aviso(ed ? "Registro corrigido." : "Registrado.");
 };
 
