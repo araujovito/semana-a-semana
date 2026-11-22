@@ -50,4 +50,34 @@ const comPerfil = (extra, resto) => estadoBase(Object.assign({ perfil: Object.as
     ok(await p.locator("[data-aviso=vesicula]").count() === 1, "vesícula marcada: cartão no Perfil" + nome);
     await t.fechar();
   }
+
+  /* ---------- ritmo de perda com pedra na vesícula (Diário > Peso): limite de 1%, encaminha aos sinais de alerta ---------- */
+  // 100 -> 95,5 kg em 21 dias: 1,5% por semana. 100 -> 98,5 kg: 0,5% por semana, sem aviso mesmo com vesícula.
+  const P = (n, kg) => ({ id: "p" + n, data: d(n), kg, cintura: null });
+  const rapido = { pesos: [P(21, 100), P(14, 98.5), P(7, 97), P(0, 95.5)], ui: { diario: "peso" } };
+  t = await abrir({ estado: comPerfil({ peso: 100, vesicula: true }, { pesos: [P(21, 100), P(0, 98.5)], ui: { diario: "peso" } }), aba: "diario" }); p = t.p;
+  await p.waitForSelector("form[data-form=peso]");
+  ok(await p.locator("#ritmo").count() === 0, "com vesícula, 0,5% por semana não gera aviso");
+  await t.fechar();
+  t = await abrir({ estado: comPerfil({ peso: 100 }, rapido), aba: "diario" }); p = t.p;
+  await p.waitForSelector("form[data-form=peso]");
+  ok(!/sinais de alerta/.test(await texto(p, "#ritmo")), "sem vesícula: aviso de ritmo como antes, sem o encaminhamento novo");
+  await t.fechar();
+  t = await abrir({ estado: comPerfil({ peso: 100, vesicula: true }, rapido), aba: "diario" }); p = t.p;
+  await p.waitForSelector("form[data-form=peso]");
+  const rit = await texto(p, "#ritmo");
+  ok(/Você perdeu em média 1,5% do peso por semana nos 21 dias entre .*levar ao seu médico\. Se tiver dor na barriga, veja os sinais de alerta no Guia\./.test(rit), "com vesícula: aviso de ritmo encaminha aos sinais de alerta: " + rit);
+  ok(!(await p.locator("#ritmo").evaluate(el => el.classList.contains("alerta"))), "aviso de ritmo continua neutro, sem cor de alarme");
+  await t.foto("vesicula-ritmo");
+  await t.fechar();
+  t = await abrir({ estado: comPerfil({ peso: 100, vesicula: true, discreto: true }, rapido), aba: "diario" }); p = t.p;
+  await p.waitForSelector("form[data-form=peso]");
+  const ritD = await texto(p, "#ritmo");
+  ok(/caiu mais de 1% por semana/.test(ritD) && !/kg|\d+,\d/.test(ritD), "modo sem peso em destaque: com vesícula o aviso aparece, sem o número do peso");
+  ok(await p.locator("#semanas").count() === 0 && !/Variação|Inicial/.test(await tela(p)), "modo sem peso em destaque continua sem variação nem peso inicial");
+  await t.fechar();
+  t = await abrir({ estado: comPerfil({ peso: 100, discreto: true }, rapido), aba: "diario" }); p = t.p;
+  await p.waitForSelector("form[data-form=peso]");
+  ok(await p.locator("#ritmo").count() === 0, "modo sem peso em destaque sem vesícula: continua sem aviso de ritmo");
+  await t.fechar();
 })();

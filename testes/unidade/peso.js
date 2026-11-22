@@ -133,3 +133,15 @@ test("relatório de peso: ritmo e semanas entram mesmo no modo discreto", () => 
   assert.match(rel, /Semana de \d\d\/\d\d: sem registro/);
   assert.match(rel, /Semana de \d\d\/\d\d: 95,5 kg, -4,5 kg \(-4,5%\) em 3 semanas/);
 });
+test("ritmo com pedra na vesícula: o limite continua 1% do peso por semana (decisão da direção, 22/11)", () => {
+  const l = [{ data: "2026-10-30", kg: 120 }, { data: "2026-11-20", kg: 116.7 }]; // 0,92% por semana
+  assert.strictEqual(f("ritmoPerda", l).rapida, false);
+  assert.strictEqual(app.v("LIMITE_RITMO"), 1);
+});
+test("texto do ritmo com vesícula encaminha aos sinais de alerta; versão discreta não tem número do peso", () => {
+  const r = 'ritmoPerda([{data:"2026-10-30",kg:100},{data:"2026-11-20",kg:95}])';
+  assert.doesNotMatch(app.v("textoRitmo(" + r + ")"), /sinais de alerta/);
+  assert.match(app.v("textoRitmo(" + r + ", true)"), /em média 1,7% do peso.*levar ao seu médico\. Se tiver dor na barriga, veja os sinais de alerta no Guia\./);
+  const d = app.v("textoRitmo(" + r + ", true, true)");
+  assert.match(d, /mais de 1% por semana.*levar ao seu médico/); assert.doesNotMatch(d, /kg|\d+,\d/);
+});

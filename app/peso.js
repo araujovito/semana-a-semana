@@ -44,7 +44,10 @@ function variacaoSemanal(pesos) {
    (empate, por exemplo 20 e 22 dias: fica a mais antiga). Sem pesagem nessa janela, devolve null (não há conta nem aviso).
    Só entram pesagens com data: o peso do perfil não tem data e não participa, então uma pesagem só nunca gera aviso.
    pct = perda média em % do peso por semana = (peso antigo − peso atual) / peso antigo / (dias / 7) × 100. Negativo = ganho.
-   rapida = pct acima de 1 (exatamente 1% não conta). O limite de 1% por semana foi definido pela chefia de engenharia. */
+   rapida = pct acima de 1 (exatamente 1% não conta). O limite de 1% por semana foi definido pela chefia de engenharia e mantido
+   pela direção em 22/11 para quem tem pedra na vesícula (empresa/relatorios/pesquisa-vesicula-figado.md, regra R1): para quem pesa
+   menos de 150 kg ele fica abaixo de 1,5 kg por semana, ritmo acima do qual o risco de formar pedra sobe muito (Weinsier RL e
+   colaboradores, Am J Med 1995;98:115-117, https://pubmed.ncbi.nlm.nih.gov/7847427/). */
 const LIMITE_RITMO = 1;
 function ritmoPerda(pesos) {
   const ps = pesagensEmOrdem(pesos);
@@ -105,10 +108,15 @@ function textoVariacao(l) {
   return comSinal(l.dif, 1) + " kg (" + comSinal(l.pct, 1) + "%)" + (l.semanas > 1 ? " em " + l.semanas + " semanas" : "");
 }
 
-/* TEXTO DE SAÚDE (aviso de perda rápida). Fonte: bula americana do Mounjaro (tirzepatida), seção 5.7 (doença aguda da vesícula
-   biliar: perda de peso rápida ou substancial aumenta o risco de colelitíase). O app só mostra o número e diz que é assunto para o médico. */
-function textoRitmo(r) {
-  return "Você perdeu em média " + pctRitmo(r) + "% do peso por semana nos " + r.dias + " dias entre " + br(r.de) + " e " + br(r.ate) + ". Perda de peso rápida aumenta o risco de pedra na vesícula. É um assunto para levar ao seu médico.";
+/* TEXTO DE SAÚDE (aviso de perda rápida). Fontes: bula americana do Zepbound (tirzepatida para obesidade), seção de doença aguda da
+   vesícula: os eventos de vesícula foram associados à redução de peso (https://pi.lilly.com/us/zepbound-uspi.pdf); Weinsier 1995
+   (acima). A bula do Mounjaro (seção 5.8) lista a doença da vesícula, mas não fala de perda rápida (pesquisa-vesicula-figado.md, item 4).
+   vesicula = true (pedra na vesícula marcada no Perfil): acrescenta o encaminhamento proposto na pesquisa (seção 1, "O que fazer se
+   passar"). discreto = true: a mesma mensagem sem números, para o modo sem peso em destaque. O app só mostra o número e encaminha. */
+function textoRitmo(r, vesicula, discreto) {
+  const fim = vesicula ? " Se tiver dor na barriga, veja os sinais de alerta no Guia." : "";
+  if (discreto) return "Nas últimas semanas, o peso caiu mais de 1% por semana, em média. Perda de peso rápida aumenta o risco de pedra na vesícula. É um assunto para levar ao seu médico." + fim;
+  return "Você perdeu em média " + pctRitmo(r) + "% do peso por semana nos " + r.dias + " dias entre " + br(r.de) + " e " + br(r.ate) + ". Perda de peso rápida aumenta o risco de pedra na vesícula. É um assunto para levar ao seu médico." + fim;
 }
 
 /* Datas dos formulários de peso e de sintomas: de 1 ano atrás até hoje. Devolve a mensagem de erro, ou "" se a data serve. */
@@ -131,7 +139,11 @@ function subPeso() {
   const ps = pesagensEmOrdem(E.pesos);
   /* Modo discreto (perfil.discreto === true; ausente = falso): nada de diferença, percentual ou aviso de ritmo em destaque.
      Fica a lista de pesagens, e o gráfico só aparece se você abrir "Ver gráfico". O relatório continua completo. */
+  const vesicula = E.perfil.vesicula === true;
   if (ps.length && discreto) {
+    /* Exceção do modo discreto: com pedra na vesícula o aviso de ritmo aparece, sem números (é cuidado de segurança para ela). */
+    const rd = vesicula ? ritmoPerda(E.pesos) : null;
+    if (rd && rd.rapida) out += '<div class="cartao" id="ritmo"><h2>Ritmo de perda</h2><p style="margin:0">' + esc(textoRitmo(rd, true, true)) + "</p></div>";
     out += '<div class="cartao" id="graf-discreto"><details><summary>Ver gráfico</summary>' + grafico(pontosDoGrafico(E.pesos, E.perfil.peso, E.doses), trocasDeDose(E.doses)) + "</details></div>";
   } else if (ps.length) {
     const ini = E.perfil.peso, at = ps[ps.length - 1].kg, dif = at - ini;
@@ -139,7 +151,7 @@ function subPeso() {
       grafico(pontosDoGrafico(E.pesos, ini, E.doses), trocasDeDose(E.doses)) +
       (E.doses.length ? '<p class="sub" style="margin:4px 0 0">As linhas tracejadas marcam a primeira aplicação de cada dose.</p>' : "") + "</div>";
     const r = ritmoPerda(E.pesos);
-    if (r && r.rapida) out += '<div class="cartao" id="ritmo"><h2>Ritmo de perda</h2><p style="margin:0">' + esc(textoRitmo(r)) + "</p></div>";
+    if (r && r.rapida) out += '<div class="cartao" id="ritmo"><h2>Ritmo de perda</h2><p style="margin:0">' + esc(textoRitmo(r, vesicula)) + "</p></div>";
     const sem = variacaoSemanal(E.pesos).reverse();
     if (sem.length > 1) {
       const lin = l => "<tr><td>" + br(l.semana) + "</td><td>" + (l.kg == null ? '<span class="sub">sem registro</span>' : fmt(l.kg, 1) + " kg") + "</td><td>" + (l.kg == null ? "" : esc(textoVariacao(l))) + "</td></tr>";
