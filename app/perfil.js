@@ -10,13 +10,13 @@ function telaEntrada() {
   return '<div class="cartao destaque"><h2>Antes de começar</h2>' +
     '<p style="margin:0">Este app foi feito para uma mulher adulta em tratamento com tirzepatida, acompanhada por médico. Ele organiza o cardápio, o treino e os seus registros. Não substitui a consulta.</p></div>' +
     '<div class="cartao"><h2>Converse com o seu médico antes de seguir o plano do app se você:</h2><ul class="lista">' +
-    "<li>tem menos de 18 anos;</li><li>está grávida ou amamentando;</li><li>tem ou já teve transtorno alimentar.</li></ul>" +
+    "<li>tem menos de 18 anos;</li><li>está grávida ou amamentando;</li><li>tem ou já teve transtorno alimentar;</li><li>já teve pancreatite;</li><li>tem, ou alguém da família tem, câncer medular de tireoide ou NEM2 (a bula contraindica o remédio nesses casos).</li></ul>" +
     '<div class="botoes"><button data-ac="entradaContinuar">Continuar</button></div></div>';
 }
 /* Cartão para as telas Perfil, Plano e Hoje. Devolve "" quando não se aplica. */
 function avisoGestante() {
   const m = metas(); if (!m || !m.gestante) return "";
-  return '<div class="cartao alerta"><h2>Gravidez e amamentação</h2><p style="margin:0">O remédio não é usado na gravidez nem na amamentação. Fale com o seu médico. Enquanto esta resposta estiver marcada no Perfil, o app não calcula redução de calorias.</p></div>';
+  return '<div class="cartao alerta"><h2>Gravidez e amamentação</h2><p style="margin:0">O remédio não é usado na gravidez; na amamentação, quem decide é o médico. Fale com o seu médico. Enquanto esta resposta estiver marcada no Perfil, o app não calcula redução de calorias.</p></div>';
 }
 /* Mais de 65 anos. Fonte: grupo PROT-AGE (Bauer e colaboradores, J Am Med Dir Assoc 2013): perda de peso em idosos leva junto
    mais massa muscular; recomenda mais proteína e exercício de força. O app não muda a meta sozinho: encaminha a conversa. */

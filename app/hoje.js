@@ -38,7 +38,7 @@ const TEXTO_POUCO = {
 };
 function cartaoComerPouco(motivo) {
   return '<div class="cartao aviso-pouco"><h2>Assunto para o médico</h2><p>' + TEXTO_POUCO[motivo] + " Se o enjoo impedir de comer ou beber, o médico pode prescrever remédio ou segurar o aumento de dose.</p>" +
-    (motivo === "vomito" ? '<p class="sub">Vômito que não para, boca seca, urina escura e pouca ou tontura ao levantar estão nos sinais de alerta do Guia: nesses casos, a orientação é procurar atendimento sem esperar a consulta.</p>' : "") +
+    (motivo === "vomito" ? '<p class="sub">Se você vomita tudo o que bebe, mesmo água em goles pequenos, ou quase não urina e a urina está escura, a orientação do Guia é ir ao pronto-socorro hoje.</p>' : "") +
     '<div class="botoes"><button data-ac="entendiPouco">Entendi</button><button class="sec" data-ac="ir" data-para="guia">Abrir o Guia</button></div></div>';
 }
 

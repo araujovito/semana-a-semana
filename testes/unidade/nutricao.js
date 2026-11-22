@@ -194,3 +194,10 @@ test("achado 2: meta de energia abaixo de 1.200 só é gravada depois de confirm
   assert.strictEqual(a.v("metas().kcal"), 1000);
   a.v(enviar); assert.strictEqual(a.v("perguntas.length"), 2, "mesma meta salva de novo não pergunta outra vez");
 });
+test("revisão clínica B1 e B2: sinais de alerta por urgência e o que fazer na hipoglicemia", () => {
+  const a = app({ diabetes: true, insulinaSulf: true });
+  const guia = a.v("JSON.stringify(G.filter(x => x.titulo === 'Sinais de alerta')[0].corpo)");
+  assert.match(guia, /Ligue 192 \(SAMU\) agora se/); assert.match(guia, /Vá ao pronto-socorro hoje se/); assert.match(guia, /Fale com o médico nos próximos dias se/);
+  assert.match(guia, /sem fazer cocô nem soltar gases/); assert.match(guia, /Perda de visão de repente em um olho/);
+  assert.match(a.v("avisoHipoglicemia('plano')"), /abaixo de 70.*Espere 15 minutos.*ligue 192 e não dê nada pela boca/);
+});

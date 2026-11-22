@@ -116,12 +116,15 @@ function cartaoTratamentoHoje() {
 /* Fonte: bula do Mounjaro (Anvisa), advertência sobre hipoglicemia: com insulina ou sulfonilureia o risco de hipoglicemia aumenta
    e pode ser preciso reduzir a dose desses remédios. Sinais: os do Guia ("Sinais de alerta"). O app não diz quanto reduzir.
    Treino: ADA, Standards of Care in Diabetes, seção 5 (atividade física): com insulina ou secretagogo, o exercício pode causar
-   hipoglicemia; ter carboidrato de ação rápida à mão. */
+   hipoglicemia; ter carboidrato de ação rápida à mão.
+   "Na hora" (revisão clínica de 22/11, achado B2): regra 15-15 da ADA (https://professional.diabetes.org/sites/dpro/files/2025-05/hypoglycemia-hcp-5-27-25.pdf)
+   e ADA Standards of Care 2025, seção 6. É primeiro socorro; não diz quanto mudar a insulina. */
 function avisoHipoglicemia(onde) {
   const p = E.perfil; if (!p || p.diabetes !== true || p.insulinaSulf !== true) return "";
   const extra = onde === "treino" ? " Exercício também baixa o açúcar no sangue: tenha algo doce por perto durante o treino."
     : onde === "plano" ? " Comer menos que o planejado, ou o dia de enjoo, aumenta esse risco." : "";
-  return '<div class="cartao alerta" data-aviso="hipoglicemia"><h2>Risco de hipoglicemia</h2><p style="margin:0">Junto com insulina ou sulfonilureia (glibenclamida, gliclazida, glimepirida), a tirzepatida aumenta o risco de hipoglicemia. O médico pode precisar ajustar a dose desses remédios: converse com ele antes de seguir o plano.' + extra + '</p><p class="sub" style="margin:6px 0 0">Sinais: tremor, suor frio, confusão.</p></div>';
+  return '<div class="cartao alerta" data-aviso="hipoglicemia"><h2>Risco de hipoglicemia</h2><p style="margin:0">Junto com insulina ou sulfonilureia (glibenclamida, gliclazida, glimepirida), a tirzepatida aumenta o risco de hipoglicemia. O médico pode precisar ajustar a dose desses remédios: converse com ele antes de seguir o plano.' + extra + '</p><p class="sub" style="margin:6px 0 0">Sinais: tremor, suor frio, coração acelerado, fome de repente, visão embaçada, confusão.</p>' +
+    '<p style="margin:6px 0 0"><strong>Na hora:</strong> se tiver aparelho, meça. Se der abaixo de 70, ou se não tiver como medir, tome algo com açúcar que age rápido: 1 colher de sopa de açúcar na água, ou meio copo de suco ou de refrigerante comum (não diet). Espere 15 minutos e meça de novo; se continuar baixo, repita. Depois, avise o médico. Se a pessoa desmaiar ou não conseguir engolir, ligue 192 e não dê nada pela boca.</p></div>';
 }
 
 /* ---------- aba Aplicações ---------- */
