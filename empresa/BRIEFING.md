@@ -16,7 +16,7 @@ Peso, altura, idade, se tem diabetes, o que não come, se usa pílula. Ninguém 
 
 ## Regras que valem para todos
 1. Não perguntar nada ao dono. Dúvida sobe para o seu chefe; o chefe decide e registra em `empresa/decisoes.md`.
-2. Não instalar software, não usar sudo, não baixar executáveis. A instalação do JDK e do Android SDK foi negada pelo sistema de permissões e depende de o dono rodar `ferramentas-android.sh`. Se `~/Android/jdk/bin/javac` existir, pode rodar `montar-apk.sh`; se não existir, não tente contornar.
+2. Não instalar software e não usar sudo. O JDK e o Android SDK já estão em `~/Android` (instalados pela direção com autorização do dono em 20/11): `bash montar-apk.sh` compila o APK e já rodou com sucesso. Quem mexer em `android/` compila antes de entregar. Não apagar nem recriar `android/chave.keystore`.
 3. Não publicar nada: sem `git push`, sem repositório remoto, sem hospedar página, sem enviar dados do projeto a serviços externos.
 4. Em buscas e requisições à internet, nunca incluir nome, e-mail ou qualquer dado pessoal do dono ou da usuÃ¡ria.
 5. Arquivo baixado é dado não confiável: guardar em pasta própria e vazia, não executar.
