@@ -45,7 +45,8 @@ async function conferir(t, nome) {
     const rot = tam + "%" + (discreto ? " discreto" : "");
     for (const aba of ["painel", "semana"]) {
       const t = await abrir({ estado: estado(discreto), aba, largura: 320 }), p = t.p;
-      await p.addStyleTag({ content: "html { font-size: " + tam + "% !important; } body { font-size: 1rem !important; }" });
+      // A CSP proíbe <style> injetado; atributo style é permitido (style-src-attr), então a simulação usa o atributo.
+      await p.evaluate(tm => { document.documentElement.style.setProperty("font-size", tm + "%", "important"); document.body.style.setProperty("font-size", "1rem", "important"); }, tam);
       await p.waitForSelector(aba === "painel" ? ".painel-hoje" : ".semana-atual");
       const fs = await p.evaluate(() => parseFloat(getComputedStyle(document.querySelector(".painel-num, .semana-itens li")).fontSize));
       ok(fs > (aba === "painel" ? 22 : 15) * (tam / 100) - 0.5, aba + " " + rot + ": a letra da tela cresceu (" + fs + " px)");

@@ -5,6 +5,9 @@ const { abrir, ok, d, estadoBase } = require("./apoio");
 const RAIZ = path.join(__dirname, "..", "app");
 
 // Cada violação da política vira um item em window.__violacoes (o navegador também escreve no console, que apoio.js já confere).
+// App aberto com os dados dela: tela desenhada e barra de abas visível (sem perfil, o app mostra só a tela inicial, sem abas).
+// Não depende do texto de nenhuma tela (hoje.js está sendo reorganizado).
+const telaPronta = (p, ms) => p.waitForFunction(() => { const t = document.getElementById("tela"), a = document.getElementById("abas"); return t && t.children.length > 0 && a && !a.hidden; }, null, { timeout: ms || 30000 });
 const ouvirViolacoes = () => { window.__violacoes = []; document.addEventListener("securitypolicyviolation", e => window.__violacoes.push(e.violatedDirective + " " + e.blockedURI)); };
 const ponte = () => { window.__enviados = []; window.Android = { compartilhar: x => window.__enviados.push(x), copiar() {} }; };
 const violacoes = p => p.evaluate(() => window.__violacoes.splice(0));
@@ -35,7 +38,7 @@ ok(/dataExtractionRules="@xml\/regras_backup"/.test(MANIFESTO) && /fullBackupCon
   ok(!/<script>|<style>|\son[a-z]+="/.test(html), "index.html não tem script, estilo nem evento embutido");
 
   let t = await abrir({ estado: estadoBase({ doses: [{ id: "a1", data: d(3), mg: 2.5, local: "Coxa esquerda", obs: "" }] }), aba: "hoje" }), p = t.p;
-  await p.addInitScript(ouvirViolacoes); await p.reload(); await p.waitForSelector("text=Proteína hoje");
+  await p.addInitScript(ouvirViolacoes); await p.reload(); await telaPronta(p);
 
   // A política está valendo: script embutido e script de outro endereço são recusados.
   await p.evaluate(() => {
@@ -49,10 +52,10 @@ ok(/dataExtractionRules="@xml\/regras_backup"/.test(MANIFESTO) && /fullBackupCon
   t.erros.splice(0); // as duas recusas acima foram provocadas pelo teste
 
   // Todas as telas, a folha com evento embutido (busca de "não gosto") e as fontes: nenhuma violação.
-  for (const aba of ["hoje", "plano", "treino", "diario", "guia", "perfil"]) {
+  for (const aba of ["hoje", "comer", "mover", "semana", "guia", "perfil"]) {
     await p.click(aba === "perfil" ? "#btn-perfil" : "#abas a[data-aba=" + aba + "]"); await p.waitForTimeout(150);
   }
-  for (const sub of ["doses", "peso", "sintomas", "relatorio"]) { await p.click("#abas a[data-aba=diario]"); await p.click("[data-ac=diario][data-v=" + sub + "]"); }
+  for (const sub of ["doses", "peso", "sintomas", "relatorio"]) { await p.click("#abas a[data-aba=semana]"); await p.click("#subabas a[data-sub=diario]"); await p.click("[data-ac=diario][data-v=" + sub + "]"); }
   await p.click("#btn-perfil"); await p.click("[data-ac=abrirNaoGosta]");
   if (await p.locator("#busca-nao-gosta").count()) {
     await p.fill("#busca-nao-gosta", "frango");
@@ -164,14 +167,14 @@ ok(/dataExtractionRules="@xml\/regras_backup"/.test(MANIFESTO) && /fullBackupCon
     await t.foto("seguranca-restaurar-inicio");
     await p.fill("#imp", copiaTexto); await p.click("[data-ac=importar]");
     if (await t.textoDialogo()) await t.sim();
-    await p.waitForSelector("text=Proteína hoje");
+    await telaPronta(p);
     const depois = await t.ler();
     let igual = true, dif = "";
     try { require("assert").deepStrictEqual(depois, antes); } catch (e) { igual = false; dif = e.message.slice(0, 600); }
     ok(igual, "restaurar num navegador limpo traz tudo de volta, campo por campo" + (igual ? "" : ": " + dif));
     ok(depois.perfil.vesicula === true && depois.perfil.figado === true && depois.perfil.aguardaCirurgia === true && depois.perfil.discreto === true && depois.perfil.campoFuturo.x[1] === 2 && depois.novoTopo === "fica",
       "restaurar mantém vesícula, fígado, aguarda cirurgia, modo discreto e campos que ainda não existem");
-    await p.click("#abas a[data-aba=diario]"); await p.click("[data-ac=diario][data-v=peso]");
+    await p.click("#abas a[data-aba=semana]"); await p.click("#subabas a[data-sub=diario]"); await p.click("[data-ac=diario][data-v=peso]");
     ok(/118,4/.test(await p.locator("#tela").innerText()), "depois de restaurar, o diário mostra os registros");
   }
   await t.fechar();
