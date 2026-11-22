@@ -9,6 +9,22 @@ const ouvirViolacoes = () => { window.__violacoes = []; document.addEventListene
 const ponte = () => { window.__enviados = []; window.Android = { compartilhar: x => window.__enviados.push(x), copiar() {} }; };
 const violacoes = p => p.evaluate(() => window.__violacoes.splice(0));
 
+// Casca Android com menor privilégio (conferência do código, porque o APK não roda aqui).
+const JAVA = fs.readFileSync(path.join(__dirname, "..", "android/java/br/semanaasemana/MainActivity.java"), "utf8");
+const MANIFESTO = fs.readFileSync(path.join(__dirname, "..", "android/AndroidManifest.xml"), "utf8");
+ok(/WebView\.setWebContentsDebuggingEnabled\(false\)/.test(JAVA), "Android: depuração remota da WebView desligada");
+ok(["setAllowFileAccess", "setAllowContentAccess", "setAllowFileAccessFromFileURLs", "setAllowUniversalAccessFromFileURLs", "setGeolocationEnabled", "setSaveFormData"]
+  .every(m => new RegExp("s\\." + m + "\\(false\\)").test(JAVA)), "Android: acesso a arquivos, content://, localização e dados de formulário desligados");
+ok(/shouldOverrideUrlLoading[\s\S]*?startsWith\(PASTA\)\) return false;[\s\S]*?return true;/.test(JAVA) && /shouldInterceptRequest[\s\S]*?403/.test(JAVA), "Android: navegação e arquivos fora de file:///android_asset/ são recusados");
+const ponteJava = [...JAVA.matchAll(/@JavascriptInterface\s+public\s+\w+\s+(\w+)\(/g)].map(m => m[1]);
+ok(JSON.stringify(ponteJava) === '["compartilhar","copiar","calendario"]' && (JAVA.match(/@JavascriptInterface/g) || []).length === 4, "Android: a ponte expõe só compartilhar, copiar e calendario (" + ponteJava.join(", ") + ")");
+ok(/compartilhar\(String texto\) \{\s+if \(!textoAceito\(texto\)\) return false;/.test(JAVA) && /copiar\(String texto\) \{\s+if \(!textoAceito\(texto\)\) return false;/.test(JAVA) && /data\.matches\("\\\\d\{4\}-\\\\d\{2\}-\\\\d\{2\}"\)/.test(JAVA),
+  "Android: a ponte confere tamanho do texto e formato da data");
+ok(!/uses-permission/.test(MANIFESTO) && /usesCleartextTraffic="false"/.test(MANIFESTO) && (MANIFESTO.match(/<activity/g) || []).length === 1, "Android: sem permissões, sem tráfego sem criptografia, uma activity só");
+const regras = ["regras_backup.xml", "backup_antigo.xml"].map(n => fs.readFileSync(path.join(__dirname, "..", "android/res/xml", n), "utf8"));
+ok(/dataExtractionRules="@xml\/regras_backup"/.test(MANIFESTO) && /fullBackupContent="@xml\/backup_antigo"/.test(MANIFESTO) &&
+  regras.every(r => [...r.matchAll(/<(include|exclude)[^>]*path="([^"]+)"/g)].every(m => m[1] === "include" && /Local Storage\/$/.test(m[2]))), "Android: a cópia do Google leva só o localStorage da WebView");
+
 (async () => {
   const html = fs.readFileSync(path.join(RAIZ, "index.html"), "utf8");
   const csp = (html.match(/<meta http-equiv="Content-Security-Policy" content="([^"]+)"/) || [])[1] || "";

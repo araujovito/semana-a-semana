@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12 ou mais novo: o que vai para a cópia do Google (cloud-backup) e para a passagem direta de um celular para outro
+     (device-transfer). Só o localStorage da WebView, onde ficam os registros (app/nucleo.js, chave "semana-a-semana.v1").
+     O caminho mudou entre versões da WebView, por isso os dois. Cache, cookies e o resto da pasta da WebView ficam de fora. -->
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="root" path="app_webview/Default/Local Storage/" />
+        <include domain="root" path="app_webview/Local Storage/" />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="root" path="app_webview/Default/Local Storage/" />
+        <include domain="root" path="app_webview/Local Storage/" />
+    </device-transfer>
+</data-extraction-rules>

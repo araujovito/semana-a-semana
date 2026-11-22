@@ -6,6 +6,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.view.View;
@@ -13,22 +14,34 @@ import android.view.Window;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.io.ByteArrayInputStream;
 import java.util.Calendar;
 import java.util.TimeZone;
 
 /** Casca mínima: uma WebView que abre o app guardado em assets. Toda a lógica está nos arquivos de app/. */
 public class MainActivity extends Activity {
     private static final String INICIO = "file:///android_asset/index.html";
+    private static final String PASTA = "file:///android_asset/";
+    /**
+     * Maior texto aceito por compartilhar() e copiar(). O texto passa para outro app dentro de um Intent, e o Android recusa
+     * transações acima de cerca de 1 MB (2 bytes por caractere). app/seguranca.js usa o mesmo número para avisar antes.
+     */
+    static final int MAX_TEXTO = 250000;
     private WebView web;
 
     @Override
     protected void onCreate(Bundle estado) {
         super.onCreate(estado);
         web = new WebView(this);
+        // Menor privilégio: a WebView só faz o que o app usa. Sem depuração remota (ninguém lê os dados pelo cabo USB),
+        // sem acesso a arquivos ou content://, sem localização, sem guardar o que se digita em formulários (setSavePassword
+        // não existe mais desde o Android 4.3: a WebView não guarda senha; minSdk é 26).
+        WebView.setWebContentsDebuggingEnabled(false);
         WebSettings s = web.getSettings();
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true); // localStorage: é onde os registros ficam
@@ -40,10 +53,24 @@ public class MainActivity extends Activity {
         s.setGeolocationEnabled(false);
         s.setSaveFormData(false);
         web.setWebViewClient(new WebViewClient() {
-            // Nada navega para fora dos arquivos do app.
+            // Nada navega para fora dos arquivos do app. Link http/https (hoje não há nenhum) abre no navegador, fora do app;
+            // qualquer outro esquema (intent:, javascript:, content:, file: fora da pasta) é recusado.
             @Override
             public boolean shouldOverrideUrlLoading(WebView v, WebResourceRequest r) {
-                return !r.getUrl().toString().startsWith("file:///android_asset/");
+                String u = r.getUrl().toString();
+                if (u.startsWith(PASTA)) return false;
+                String esquema = r.getUrl().getScheme();
+                if ("http".equals(esquema) || "https".equals(esquema)) {
+                    try { startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(u)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)); } catch (Exception e) { /* sem navegador */ }
+                }
+                return true;
+            }
+
+            // Arquivo pedido pela página fora da pasta do app (imagem, script, fonte de outro endereço) volta vazio, sem chegar à rede.
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView v, WebResourceRequest r) {
+                if (r.getUrl().toString().startsWith(PASTA)) return null;
+                return new WebResourceResponse("text/plain", "utf-8", 403, "Bloqueado", new java.util.HashMap<>(), new ByteArrayInputStream(new byte[0]));
             }
         });
         web.setWebChromeClient(new WebChromeClient()); // habilita alert() e confirm()
@@ -90,20 +117,31 @@ public class MainActivity extends Activity {
         });
     }
 
-    /** Funções que o JavaScript chama como window.Android.compartilhar(...), window.Android.copiar(...) e window.Android.calendario(...). */
+    /** Texto aceito pela ponte: não nulo e até MAX_TEXTO caracteres. */
+    static boolean textoAceito(String texto) { return texto != null && texto.length() <= MAX_TEXTO; }
+
+    /**
+     * Funções que o JavaScript chama como window.Android.compartilhar(...), window.Android.copiar(...) e window.Android.calendario(...).
+     * Só estas três têm @JavascriptInterface (é a anotação que as deixa visíveis para a página); nada mais da Activity fica exposto.
+     * Cada uma confere o argumento e devolve false quando recusa.
+     */
     private class Ponte {
         @JavascriptInterface
-        public void compartilhar(String texto) {
+        public boolean compartilhar(String texto) {
+            if (!textoAceito(texto)) return false;
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("text/plain");
             i.putExtra(Intent.EXTRA_TEXT, texto);
             startActivity(Intent.createChooser(i, "Compartilhar"));
+            return true;
         }
 
         @JavascriptInterface
-        public void copiar(String texto) {
+        public boolean copiar(String texto) {
+            if (!textoAceito(texto)) return false;
             ClipboardManager c = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             c.setPrimaryClip(ClipData.newPlainText("Semana a Semana", texto));
+            return true;
         }
 
         /**
