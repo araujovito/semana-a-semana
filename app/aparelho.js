@@ -46,9 +46,10 @@ Object.assign(AC, {
   importar() {
     let j; try { j = migrar(JSON.parse(texto("imp"))); } catch (e) { j = null; }
     if (!j || !j.perfil) { aviso("Texto inválido. Cole o conteúdo exportado inteiro."); return; }
-    if (!confirm("Substituir os dados deste celular pelos do texto colado?")) return;
-    E = j; salvar(); aviso("Dados restaurados."); location.hash = "hoje"; render(true);
+    confirmar("Substituir os dados deste celular pelos do texto colado?", function () {
+      E = j; salvar(); aviso("Dados restaurados."); irPara("hoje");
+    }, "Substituir");
   },
-  zerar() { if (!confirm("Apagar TODOS os dados deste celular? Não dá para desfazer.")) return; E = vazio(); salvar(); render(true); },
+  zerar() { confirmar("Apagar TODOS os dados deste celular? Não dá para desfazer.", function () { E = vazio(); salvar(); render(true); }, "Apagar tudo"); },
 });
 
