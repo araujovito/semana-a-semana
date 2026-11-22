@@ -3,14 +3,16 @@
 // Uso: node prototipo/fonte/montar.js
 const fs = require("fs"), path = require("path");
 const F = __dirname, SAI = path.join(F, "..");
-const css = fs.readFileSync(path.join(F, "base.css"), "utf8"), icones = fs.readFileSync(path.join(F, "icones.svg"), "utf8");
+// Opcional: node montar.js <tema> acrescenta fonte/tema-<tema>.css por cima dos tokens de base.css (ex.: rosa-azul).
+const tema = process.argv[2];
+const css = fs.readFileSync(path.join(F, "base.css"), "utf8") + (tema ? "\n" + fs.readFileSync(path.join(F, "tema-" + tema + ".css"), "utf8") : ""), icones = fs.readFileSync(path.join(F, "icones.svg"), "utf8");
 const ABAS = [["hoje", "Hoje"], ["semana", "Semana"], ["comer", "Comer"], ["mover", "Mover"], ["guia", "Guia"]];
 const abas = ativa => '<nav class="abas" aria-label="Seções">' + ABAS.map(([id, n]) =>
   '<a href="#"' + (id === ativa ? ' class="ativa" aria-current="page"' : "") + '><svg class="ic" aria-hidden="true"><use href="#i-' + id + '"/></svg>' + n + "</a>").join("") + "</nav>";
 for (const nome of fs.readdirSync(F).filter(n => n.endsWith(".html"))) {
   let h = fs.readFileSync(path.join(F, nome), "utf8");
   h = h.replace("<!--CSS-->", "<style>\n" + css + "</style>").replace("<!--ICONES-->", icones).replace(/<!--ABAS:(\w+)-->/, (_, a) => abas(a));
-  h = h.replace(/^<!doctype html>/i, m => m + "\n<!-- Gerado por fonte/montar.js a partir de fonte/" + nome + ". Edite a fonte. -->");
+  h = h.replace(/^<!doctype html>/i, m => m + "\n<!-- Gerado por fonte/montar.js a partir de fonte/" + nome + (tema ? " com fonte/tema-" + tema + ".css" : "") + ". Edite a fonte. -->");
   fs.writeFileSync(path.join(SAI, nome), h);
   console.log("montou", nome);
 }

@@ -162,3 +162,19 @@ O capturador acusa rolagem horizontal, botão ou link com menos de 44 px e qualq
 - As páginas são estáticas: os toques não fazem nada e os gráficos não mostram o valor ao tocar.
 - Não abri as páginas num celular de verdade, só no navegador sem janela, em 390 px.
 - Ainda não testei em 320 px. Com a grade de 4 atalhos e as duas colunas, telas estreitas vão precisar de ajuste quando isso for para o app.
+
+## Proposta "Rosa e azul" (22/11, aguardando o dono)
+
+O dono não gostou do laranja e pediu um degradê suave e difuso de rosa para azul, com lilás no meio, como uma malha de cores desfocada. O estilo foi usado como referência, sem copiar logotipo, marca ou tela de ninguém. Os tokens ficam em `prototipo/fonte/tema-rosa-azul.css`, por cima de `base.css`, e as páginas atuais de `prototipo/` foram montadas com eles (`node prototipo/fonte/montar.js rosa-azul`). Sem o argumento, volta o laranja.
+
+- **Topo:** três manchas radiais desfocadas sobre uma base lilás:
+  - claro: rosa `#ffb8dc` no canto de cima à esquerda, azul `#a8d0ff` à direita, lilás `#d9c6ff` no meio, base `#f3e8ff`;
+  - escuro: azul-noite `#0e1430` com rosa discreto `#6b1f55`, violeta `#2e2470` e azul `#123a7a`.
+  O topo se dissolve no fundo da página. O fundo (`#f6f5fb` / `#101119`) leva o mesmo degradê bem leve atrás dos cartões brancos.
+- **Primária azul-violeta:** `#5f3dc4`, com texto branco a 7,1:1. No escuro vira `#b197fc`, com texto `#160b3a` a 7,6:1. Escolhi o azul-violeta e não o rosa-framboesa porque o framboesa ficaria perto demais do vermelho do alerta.
+- **Texto sobre o degradê:** `#2a1846`, pelo menos 9,97:1 em qualquer mancha. No escuro, `#f3efff`, pelo menos 9,5:1.
+- **Gráficos:**
+  - proteína em violeta `#7950f2` (4,9:1) / `#b197fc` (7,0:1);
+  - calorias em rosa `#d6336c` (4,6:1) / `#f783ac` (7,1:1).
+- **Alerta da vesícula e do pâncreas:** continua vermelho `#c92a2a`, com borda grossa, triângulo e o rótulo "SINAL DE ALERTA". O rosa só aparece no degradê do topo e na linha de calorias. Não existe botão nem selo rosa que se confunda com o alerta.
+- **Atalhos:** peso passa a verde-água e aplicação a violeta. Os outros não mudam.
