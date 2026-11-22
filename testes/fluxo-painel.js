@@ -65,6 +65,7 @@ function semear() {
   ok(emenda && alvos.x[0][0] - alvos.svg[0] < 8 && alvos.svg[1] - alvos.x[29][1] < 8 && Math.min.apply(null, alvos.larg) > alvos.barra,
     "os alvos cobrem a coluna inteira de cada dia, emendados, mais largos que a barra (" + alvos.larg[0].toFixed(1) + " contra " + alvos.barra.toFixed(1) + " px)");
   // arrastar o dedo troca o dia
+  await p.locator("svg[data-graf=prot]").scrollIntoViewIfNeeded();
   const caixa = await p.locator("svg[data-graf=prot]").boundingBox();
   const meio = i => caixa.x + alvos.x[i][0] - alvos.svg[0] + alvos.larg[i] / 2;
   await p.evaluate(([x, y]) => { const svg = document.querySelector("svg[data-graf=prot]"); const el = document.elementFromPoint(x, y);

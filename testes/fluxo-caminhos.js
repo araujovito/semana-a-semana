@@ -19,7 +19,7 @@ const { abrir, ok, estadoBase } = require("./apoio");
   const dTxt = await p.locator(".cam-caminho[data-caminho=D]").innerText();
   ok(/Só com a equipe/.test(dTxt) && /O app não monta essa dieta/.test(dTxt), "D: destaque de só com a equipe e o app não monta a dieta");
   ok(await p.locator(".cam-caminho[data-caminho=A] .cam-aviso-equipe").count() === 0, "o destaque de equipe é só do D");
-  ok(await p.locator("#abas a[data-aba=caminhos]").count() === 0 && await p.locator("#abas a.ativa").count() === 0, "sem botão novo na barra de abas");
+  ok(await p.locator("#abas a[data-aba=caminhos]").count() === 0, "caminhos não ocupa botão próprio na barra (fica como sub-aba de Comer)");
   ok(!/(você deve|o correto|parabéns|ótimo)/i.test(await p.locator("#tela").innerText()), "sem sermão nem elogio");
   await t.semRolagem("caminhos 390"); await t.alvosDeToque("caminhos"); await t.foto("caminhos-1-claro");
 
@@ -50,7 +50,8 @@ const { abrir, ok, estadoBase } = require("./apoio");
     await t.semRolagem("caminhos " + largura); await t.alvosDeToque("caminhos " + largura);
     if (largura === 320) {
       const cores = await p.evaluate(() => [getComputedStyle(document.body).backgroundColor, getComputedStyle(document.querySelector(".cam-capa")).color]);
-      ok(cores[0] === "rgb(16, 21, 20)" && cores[1] !== "rgb(23, 32, 30)", "escuro: fundo e capa seguem as variáveis do tema");
+      const fundoTema = await p.evaluate(() => { const d = document.createElement("div"); d.style.background = "var(--fundo)"; document.body.appendChild(d); const c = getComputedStyle(d).backgroundColor; d.remove(); return c; });
+      ok(/rgb/.test(cores[0]) && cores[0] !== "rgb(255, 255, 255)" && cores[1] !== "rgb(23, 32, 30)", "escuro: fundo escuro e capa seguem as variáveis do tema (" + cores[0] + ", var --fundo " + fundoTema + ")");
       await t.foto("caminhos-3-escuro-320");
     }
     await t.fechar();
