@@ -105,11 +105,10 @@ function textoVariacao(l) {
   return comSinal(l.dif, 1) + " kg (" + comSinal(l.pct, 1) + "%)" + (l.semanas > 1 ? " em " + l.semanas + " semanas" : "");
 }
 
-/* TEXTO DE SAÚDE (aviso de perda rápida). Base: artigo "Músculo e osso" do Guia (app/conteudo.js: "Em qualquer emagrecimento
-   rápido, parte do peso perdido é músculo.") e o documento conjunto ACLM/ASN/OMA/TOS, "Nutritional priorities to support GLP-1
-   therapy for obesity" (2025), citado no Guia. O app só mostra o número e diz que é assunto para o médico. */
+/* TEXTO DE SAÚDE (aviso de perda rápida). Fonte: bula americana do Mounjaro (tirzepatida), seção 5.7 (doença aguda da vesícula
+   biliar: perda de peso rápida ou substancial aumenta o risco de colelitíase). O app só mostra o número e diz que é assunto para o médico. */
 function textoRitmo(r) {
-  return "Você perdeu em média " + pctRitmo(r) + "% do peso por semana nos " + r.dias + " dias entre " + br(r.de) + " e " + br(r.ate) + ". Perda rápida aumenta a perda de músculo. É um assunto para levar ao seu médico.";
+  return "Você perdeu em média " + pctRitmo(r) + "% do peso por semana nos " + r.dias + " dias entre " + br(r.de) + " e " + br(r.ate) + ". Perda de peso rápida aumenta o risco de pedra na vesícula. É um assunto para levar ao seu médico.";
 }
 
 /* Datas dos formulários de peso e de sintomas: de 1 ano atrás até hoje. Devolve a mensagem de erro, ou "" se a data serve. */

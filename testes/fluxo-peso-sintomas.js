@@ -18,7 +18,7 @@ const noPeso = extra => Object.assign({ ui: { diario: "peso" } }, extra);
   const xm = await p.$$eval("svg.graf line.marca", ls => ls.map(l => Number(l.getAttribute("x1"))));
   ok(Math.abs(xm[0] - cx[0]) < 0.5 && xm[1] > cx[2] && Math.abs(xm[1] - cx[3]) < 0.5, "gráfico: as marcas caem na data da primeira aplicação de cada dose");
   const ritmo = await p.locator("#ritmo").innerText();
-  ok(/Você perdeu em média 1,5% do peso por semana nos 21 dias entre/.test(ritmo) && /Perda rápida aumenta a perda de músculo\. É um assunto para levar ao seu médico\./.test(ritmo), "aviso de ritmo aparece com 1,5% por semana: " + ritmo.replace(/\n/g, " "));
+  ok(/Você perdeu em média 1,5% do peso por semana nos 21 dias entre/.test(ritmo) && /Perda de peso rápida aumenta o risco de pedra na vesícula\. É um assunto para levar ao seu médico\./.test(ritmo), "aviso de ritmo aparece com 1,5% por semana: " + ritmo.replace(/\n/g, " "));
   ok(!(await p.locator("#ritmo").evaluate(el => el.classList.contains("alerta"))), "aviso de ritmo sem cor de alarme");
   const sem = await p.locator("#semanas table tr").allInnerTexts();
   ok(sem.length === 6 && /95,5 kg/.test(sem[1]) && /-1,5 kg \(-1,5%\)/.test(sem[1]) && /sem registro/.test(sem[3]) && /em 2 semanas/.test(sem[2]), "variação por semana, com semana sem registro: " + sem.slice(1, 4).join(" / ").replace(/\s+/g, " "));

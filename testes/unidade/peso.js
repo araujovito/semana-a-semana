@@ -53,7 +53,7 @@ test("ritmo: o peso do perfil não entra na conta", () => {
 });
 test("texto do ritmo traz o número, os dias e as datas", () => {
   const t = app.v('textoRitmo(ritmoPerda([{data:"2026-10-30",kg:100},{data:"2026-11-20",kg:96.1}]))');
-  assert.strictEqual(t, "Você perdeu em média 1,3% do peso por semana nos 21 dias entre 30/10 e 20/11. Perda rápida aumenta a perda de músculo. É um assunto para levar ao seu médico.");
+  assert.strictEqual(t, "Você perdeu em média 1,3% do peso por semana nos 21 dias entre 30/10 e 20/11. Perda de peso rápida aumenta o risco de pedra na vesícula. É um assunto para levar ao seu médico.");
   // 1,04% não aparece como "1,0%"
   assert.match(app.v('textoRitmo(ritmoPerda([{data:"2026-10-30",kg:100},{data:"2026-11-20",kg:96.88}]))'), /em média 1,04% do peso/);
 });
