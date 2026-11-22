@@ -33,3 +33,72 @@ label.opcao:focus-within { outline: 2px solid var(--texto); outline-offset: 2px;
   .opcoes { grid-template-columns: 1fr 1fr; }
   label.opcao { min-height: 48px; }
 }
+
+/* ===== Tela Hoje reorganizada (onda 2). Só usa as cores do bloco de estilo.css. ===== */
+/* Topo: o mesmo degradê do cabeçalho, colado nele, com a semana, a aplicação e a proteína. */
+.hoje-topo { margin: -12px -12px 12px; padding: 4px 16px 18px; color: var(--sobre-topo);
+  background: linear-gradient(180deg, transparent 75%, var(--fundo) 100%),
+    radial-gradient(70% 80% at 0% 0%, var(--topo-rosa) 0%, transparent 70%), radial-gradient(70% 90% at 100% 15%, var(--topo-azul) 0%, transparent 70%),
+    radial-gradient(60% 70% at 45% 55%, var(--topo-lilas) 0%, transparent 75%), var(--topo-base); }
+.hoje-data { font-size: 15px; font-weight: 600; margin: 4px 0 8px; }
+.hoje-topo p { margin: 0 0 4px; }
+.hoje-selos { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.selo-topo { background: var(--vidro); border-radius: 8px; padding: 3px 8px; font-size: 14px; font-weight: 600; }
+.hoje-dose, .hoje-prot { background: var(--vidro); border-radius: 16px; padding: 12px 14px; }
+.hoje-prot { margin-top: 10px; }
+.hoje-prot .rot { font-size: 15px; font-weight: 600; }
+.hoje-num { font-size: 40px; font-weight: 700; line-height: 1.05; margin-top: 2px; }
+.hoje-num small { font-size: 18px; font-weight: 600; }
+.hoje-falta { font-size: 19px; font-weight: 700; margin-top: 2px; }
+.hoje-nota { font-size: 14px; margin: 4px 0 0; opacity: .92; }
+.cartao .hoje-nota { color: var(--suave); opacity: 1; }
+.hoje-topo .botoes { margin-top: 8px; }
+details.por-que { border: 0; padding: 4px 0 0; }
+details.por-que summary { min-height: 44px; font-weight: 600; font-size: 15px; }
+details.por-que p { font-size: 15px; margin: 0; }
+/* Fora do topo (dia passado), o bloco de proteína é um cartão comum. */
+.cartao .hoje-prot { background: none; padding: 0; margin: 0; }
+
+/* Marcar o dia: a refeição já marcada encolhe; as quatro marcas continuam à mão para corrigir. */
+.hoje-marcar .refeicao.feita-r .tit { font-size: 15px; font-weight: 500; color: var(--suave); }
+.hoje-marcar .refeicao.feita-r .pn-opcao { display: none; }
+/* A nota da refeição (texto do plano) fica na tela Plano; em Hoje o título do que vai comer cabe em 2 linhas. */
+.hoje-marcar select.pn-opcao + .sub { display: none; }
+.hoje-marcar .refeicao .tit { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.hoje-marcar .refeicao .tipo .g-prot { text-transform: none; letter-spacing: 0; }
+.hoje-porque { font-size: 15px; background: var(--cor-clara); border-radius: 12px; padding: 8px 12px; margin: 8px 0 4px; }
+select.pn-opcao { margin-top: 6px; font-size: 15px; }
+
+/* Como está hoje: cinco toques. */
+.como-toques { display: flex; flex-wrap: wrap; gap: 8px; }
+.como-toques button.como { background: var(--cartao); color: var(--texto); border: 1.5px solid var(--linha); font-weight: 600; font-size: 16px; padding: 8px 14px; }
+.como-toques button.como.ativa { background: var(--cor); border-color: var(--cor); color: var(--sobre-cor); }
+.como-toques button.como[data-k=dor] { border-color: var(--alerta); color: var(--alerta); }
+.como-toques button.como[data-k=dor].ativa { background: var(--alerta); color: var(--cartao); }
+
+/* Vesícula curta: 2 linhas e um botão. Forma do alerta: borda grossa à esquerda (nunca só a cor). */
+.vesicula-curta { border-left: 5px solid var(--alerta); }
+.vesicula-curta p { margin: 0; }
+
+/* Atalhos: grade 4 x 2 com ícones coloridos. Cada cor tem o nome escrito embaixo. */
+.atalhos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px 2px; padding: 12px 6px; }
+.atalhos button.atalho { display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 84px; padding: 4px 2px; background: none; color: var(--texto);
+  font-size: 14px; font-weight: 500; line-height: 1.15; text-align: center; border-radius: 12px; overflow-wrap: anywhere; }
+.atalhos .q { display: flex; align-items: center; justify-content: center; width: 46px; height: 46px; border-radius: 14px; color: #fff; flex: none; }
+.atalhos .q svg { width: 25px; height: 25px; }
+.a-comida .q { background: var(--at-comida); } .a-agua .q { background: var(--at-agua); } .a-como .q { background: var(--at-como); } .a-aplic .q { background: var(--at-aplic); }
+.a-dor .q { background: var(--at-dor); } .a-consulta .q { background: var(--at-consulta); } .a-painel .q { background: var(--at-painel); } .a-peso .q { background: var(--at-peso); }
+
+/* Ainda hoje: lista compacta. */
+ul.ainda { list-style: none; margin: 0; padding: 0; }
+ul.ainda li { display: flex; gap: 10px; padding: 8px 0; border-top: 1px solid var(--linha); font-size: 16px; }
+ul.ainda li:first-child { border-top: 0; }
+ul.ainda .hora { width: 52px; flex: none; color: var(--suave); }
+ul.ainda .txt { flex: 1; min-width: 0; }
+
+/* Folha "Dor na barriga": três níveis, cada um com borda própria (forma + título, não só cor). */
+.sinal { border-radius: 12px; padding: 10px 12px; margin-top: 10px; border-left: 5px solid var(--alerta); background: var(--alerta-fundo); }
+.sinal h3 { margin: 0 0 4px; font-size: 17px; }
+.sinal p { margin: 0; font-size: 16px; }
+.sinal.s192 h3 { color: var(--alerta); }
+.sinal.smed { border-left-color: var(--suave); background: var(--cor-clara); }

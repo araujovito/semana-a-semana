@@ -215,5 +215,8 @@ test("perfil discreto: relatório e tela Hoje sem kcal", () => {
   assert.match(t, /Média de proteína: \d+ g/);
   assert.ok(!/kcal|Energia/.test(tela), "tela sem kcal");
   assert.ok(/Proteína hoje/.test(tela) && /Água hoje/.test(tela));
-  assert.ok(/kcal/.test(abrir().v("telaHoje()")), "sem a chave, a energia aparece");
+  // Sem a chave, Hoje também fica sem calorias (vão para o Painel, usabilidade da onda 2); o relatório continua com a energia.
+  const b = abrir({ dias: { "2026-11-15": diaCom(1, 5), [SEG]: diaCom(0.5, 3) } });
+  assert.ok(!/kcal|energia|calorias/i.test(b.v("telaHoje()")), "sem a chave, Hoje sem calorias");
+  assert.match(b.j("relAlimentacao(mais(hoje(), -29))").join("\n"), /Média de energia: [\d.]+ kcal/, "sem a chave, o relatório mostra a energia");
 });

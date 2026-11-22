@@ -20,7 +20,10 @@ const diaVazio = extra => Object.assign({ enjoo: false, comido: [], agua: 0, pro
   await p.click(opcao(0, "comi tudo"));
   let c = await consumo(d(0));
   ok(perto(c.prot, pl[0].prot) && perto(c.kcal, pl[0].kcal), "comi tudo conta a refeição inteira");
-  ok(await topo("prot") === Math.round(pl[0].prot) && await topo("kcal") === Math.round(pl[0].kcal), "o cartão do topo mostra proteína e energia do que foi comido");
+  ok(await topo("prot") === Math.round(pl[0].prot), "o topo mostra a proteína do que foi comido");
+  const meta = await p.evaluate(() => pnReferenciaDoDia(metas()).prot);
+  ok((await p.locator(".hoje-topo .hoje-falta").innerText()).trim() === "Faltam " + Math.round(meta - pl[0].prot) + " g", "a proteína é dita como quanto falta para o alvo único do dia");
+  ok(await p.locator("#tela [data-v=kcal]").count() === 0 && !/kcal|calorias|energia/i.test(await p.locator("#tela").innerText()), "calorias ficam fora de Hoje (vão para o Painel)");
   await p.click(opcao(2, "metade"));
   c = await consumo(d(0));
   ok(perto(c.prot, pl[0].prot + pl[2].prot / 2) && perto(c.kcal, pl[0].kcal + pl[2].kcal / 2), "metade conta 50%");
@@ -44,14 +47,11 @@ const diaVazio = extra => Object.assign({ enjoo: false, comido: [], agua: 0, pro
   await p.click("[data-ac=prot][data-g='-10']");
   ok((await t.ler()).dias[d(0)].protExtra === 0 && await p.locator("[data-ac=prot][data-g='-10']").count() === 0, "− 10 g desfaz e some");
 
-  // vitaminas e minerais do dia
-  ok(await p.locator(".micro-dia").count() === 0, "vitaminas e minerais começam fechados");
-  await p.click("[data-ac=microDia]");
-  ok(await p.locator(".micro-dia .nutri").count() === 13, "o bloco abre com os 13 micronutrientes do que foi comido");
+  // vitaminas e minerais saem de Hoje (ficam no Plano e no relatório); o que já foi marcado continua contando nelas
+  ok(await p.locator(".micro-dia, [data-ac=microDia]").count() === 0, "vitaminas e minerais fora de Hoje");
   await p.click(opcao(1, "comi tudo"));
-  ok(await p.locator(".micro-dia .nutri").count() === 13, "o bloco continua aberto depois de marcar uma refeição");
-  await t.foto("hoje-2-marcado-micro");
-  await p.click("[data-ac=microDia]");
+  ok(await p.evaluate(() => consumoDoDia(hoje()).total.ca > 0), "o que foi marcado continua somando vitaminas e minerais (relatório e Plano)");
+  await t.foto("hoje-2-marcado");
 
   // dia de enjoo: liga e desliga sem perder marcas
   const antes = await consumo(d(0));
@@ -68,9 +68,10 @@ const diaVazio = extra => Object.assign({ enjoo: false, comido: [], agua: 0, pro
   await p.click("[data-ac=enjoo]");
 
   // treino e caminhada
-  await p.click("[data-ac=treino]"); await p.click("[data-ac=caminhada][data-min='10']");
+  ok(await p.locator("[data-ac=treino]").count() === 0 && !/treinos? de força|\b\d \/ 3\b/i.test(await p.locator("#tela").innerText()), "contagem de treinos fora de Hoje (fica na aba Mover)");
+  await p.click("[data-ac=caminhada][data-min='10']");
   let e = await t.ler();
-  ok(e.dias[d(0)].agua === 700 && e.dias[d(0)].caminhada === 10 && e.treinos.length === 1, "água, caminhada e treino gravados");
+  ok(e.dias[d(0)].agua === 700 && e.dias[d(0)].caminhada === 10, "água e caminhada gravadas");
   ok(await p.locator("[data-ac=ir][data-para=plano]").count() === 1, "botão Ver porções e nutrientes continua");
   await t.semRolagem("hoje"); await t.alvosDeToque("hoje");
 
@@ -79,7 +80,7 @@ const diaVazio = extra => Object.assign({ enjoo: false, comido: [], agua: 0, pro
   ok(await p.locator(".faixa-dia").count() === 0 && (await p.locator(".dia-rotulo strong").textContent()) === "Hoje", "a barra de dias mostra Hoje");
   await p.click("[data-ac=diaVer][data-n='-1']");
   ok((await p.locator(".dia-rotulo strong").textContent()) === "Ontem" && /Você está vendo/.test(await p.locator(".faixa-dia").textContent()), "dia anterior mostra Ontem e a faixa de que não é hoje");
-  ok(await p.locator("[data-ac=treino]").count() === 0 && await p.locator("text=Registrar >> visible=true").count() === 0 && await p.locator("[data-ac=ir][data-sub]").count() === 0, "em dia passado não há tratamento, treino nem atalhos de registrar");
+  ok(await p.locator("[data-ac=treino], [data-dose], .atalhos, .hoje-como, [data-ac=atalho]").count() === 0 && await p.locator("text=Registrar >> visible=true").count() === 0 && await p.locator("[data-ac=ir][data-sub]").count() === 0, "em dia passado não há tratamento, atalhos nem \"como está hoje\"");
   ok(await p.locator("[data-mud=refeicao]:checked").count() === 0, "ontem começa sem marcas");
   await p.click(opcao(4, "comi tudo")); await p.click("[data-ac=agua][data-ml='500']"); await p.click("[data-ac=caminhada][data-min='10']"); await p.click("[data-ac=caminhada][data-min='10']");
   e = await t.ler();
@@ -142,10 +143,10 @@ const diaVazio = extra => Object.assign({ enjoo: false, comido: [], agua: 0, pro
   const base = estadoBase({ dias: { [d(1)]: diaVazio({ comido: [{ q: 1 }, { q: 0.5 }, { q: 1 }] }) } }); base.perfil.discreto = true;
   t = await abrir({ estado: base }); p = t.p;
   await p.waitForSelector("text=Proteína hoje");
-  await p.click(opcao(0, "metade")); await p.click("[data-ac=microDia]");
+  await p.click(opcao(0, "metade"));
   const txt = await p.locator("#tela").textContent();
-  ok(!/kcal|energia/i.test(txt) && /g de proteína/.test(txt) && /Água hoje/.test(txt), "modo discreto: tela Hoje sem kcal, com proteína e água");
-  ok(await p.locator(".micro-dia .nutri").count() === 13, "modo discreto: micronutrientes continuam");
+  ok(!/kcal|energia|calorias/i.test(txt) && /g de proteína/.test(txt) && /Água hoje/.test(txt), "modo discreto: tela Hoje sem calorias, com proteína e água");
+  ok(/Média do que foi comido/.test(await p.evaluate(() => relAlimentacao(mais(hoje(), -29)).join("\n"))), "modo discreto: micronutrientes continuam no relatório");
   ok(!/kcal|energia/i.test(await p.evaluate(() => relAlimentacao(mais(hoje(), -29)).join("\n"))), "modo discreto: relatório de alimentação sem kcal");
   await t.foto("hoje-5-discreto");
   await t.fechar();
@@ -154,7 +155,7 @@ const diaVazio = extra => Object.assign({ enjoo: false, comido: [], agua: 0, pro
   const marcado = estadoBase({ dias: Object.assign({ [d(0)]: diaVazio() }, enjoo3) }); marcado.dias[d(0)] = diaVazio({ enjoo: true, protExtra: 10 });
   t = await abrir({ estado: marcado, largura: 320 }); p = t.p;
   await p.waitForSelector("text=Proteína hoje");
-  await p.click(opcao(0, "comi tudo")); await p.click(opcao(1, "um pouco")); await p.click(opcao(2, "nada")); await p.click("[data-ac=microDia]");
+  await p.click(opcao(0, "comi tudo")); await p.click(opcao(1, "um pouco")); await p.click(opcao(2, "nada"));
   const baixos = await p.evaluate(() => [...document.querySelectorAll("label.opcao")].filter(el => { const r = el.getBoundingClientRect(); return r.height < 44 || r.width < 44; }).length);
   ok(baixos === 0, "as quatro opções têm 44 px ou mais em 320 px");
   await t.semRolagem("hoje em 320 px"); await t.alvosDeToque("hoje em 320 px"); await t.foto("hoje-6-320");
@@ -165,9 +166,52 @@ const diaVazio = extra => Object.assign({ enjoo: false, comido: [], agua: 0, pro
   // modo escuro
   t = await abrir({ estado: estadoBase({ dias: enjoo3 }), escuro: true }); p = t.p;
   await p.waitForSelector("text=Proteína hoje");
-  await p.click(opcao(0, "comi tudo")); await p.click(opcao(1, "metade")); await p.click(opcao(2, "nada")); await p.click("[data-ac=microDia]");
+  await p.click(opcao(0, "comi tudo")); await p.click(opcao(1, "metade")); await p.click(opcao(2, "nada"));
   ok(await p.locator("label.opcao.ativa").count() === 3, "modo escuro abre e marca sem erro");
   await t.foto("hoje-8-escuro");
   await p.click("[data-ac=diaVer][data-n='-1']"); await t.foto("hoje-9-escuro-ontem");
+  await t.fechar();
+
+  // "Como está hoje?": um toque grava no registro de sintomas de hoje; "Enjoo forte" oferece as refeições leves;
+  // "Dor na barriga" grava a dor e abre os sinais por urgência. Atalhos na ordem do uso. Letra de 14 px ou mais.
+  t = await abrir({ estado: estadoBase({ doses: [{ id: "x", data: d(4), mg: 5, local: "Coxa esquerda", obs: "" }] }), largura: 440 }); p = t.p;
+  await p.waitForSelector(".hoje-como");
+  ok((await p.locator(".hoje-como button.como").allInnerTexts()).map(x => x.trim()).join(",") === "Bem,Enjoo leve,Enjoo forte,Sem fome,Dor na barriga", "Como está hoje: Bem, Enjoo leve, Enjoo forte, Sem fome, Dor na barriga");
+  await p.click("[data-ac=como][data-k=leve]");
+  let ss = (await t.ler()).sintomas;
+  ok(ss.length === 1 && ss[0].data === d(0) && ss[0].enjoo === 1 && await p.locator("[data-ac=como][data-k=leve].ativa").count() === 1, "Enjoo leve: um toque grava o enjoo de hoje e fica aceso");
+  await p.click("[data-ac=como][data-k=forte]");
+  ok(/Trocar as refeições de hoje pelas leves/.test(await t.textoDialogo()), "Enjoo forte pergunta se troca pelas refeições leves");
+  await t.sim(); await p.waitForSelector("text=Refeições leves de hoje");
+  e = await t.ler();
+  ok(e.sintomas.length === 1 && e.sintomas[0].enjoo === 3 && e.dias[d(0)].enjoo === true, "Enjoo forte grava no mesmo registro e, com o sim, liga as refeições leves");
+  await p.click("[data-ac=como][data-k=semFome]");
+  ok(/Sem fome/.test((await t.ler()).sintomas[0].nota) && await p.locator("[data-ac=como][data-k=semFome].ativa").count() === 1, "Sem fome fica anotado no registro de hoje");
+  await p.click("[data-ac=como][data-k=dor]"); await p.waitForSelector("#folha:not([hidden])");
+  const folha = (await p.locator("#folha").innerText()).replace(/\s+/g, " ");
+  ok((await t.ler()).sintomas[0].dor === true && /Registrado no seu dia: dor na barriga/.test(folha) && /Ligue 192 agora.*Pronto-socorro hoje.*Avise o médico no mesmo dia ou no seguinte/.test(folha), "Dor na barriga grava a dor e abre os sinais: 192, pronto-socorro hoje, avisar o médico");
+  await t.alvosDeToque("folha de dor na barriga");
+  await p.click("#folha [data-ac=fecharFolha]");
+  await p.click("[data-ac=como][data-k=bem]");
+  ss = (await t.ler()).sintomas;
+  ok(ss.length === 1 && ss[0].enjoo === 0 && !ss[0].dor && !/Sem fome/.test(ss[0].nota || ""), "Bem desfaz enjoo, dor e sem fome no registro de hoje");
+  ok((await p.locator(".atalhos button.atalho").allInnerTexts()).map(x => x.trim()).join(",") === "Comida,Água,Como estou,Aplicação,Dor na barriga,Para a consulta,Painel,Peso", "atalhos na ordem do uso: Comida, Água, Como estou, Aplicação / Dor na barriga, Para a consulta, Painel, Peso");
+  const agua0 = (await t.ler()).dias[d(0)].agua || 0;
+  await p.click(".atalhos .a-agua");
+  ok((await t.ler()).dias[d(0)].agua === agua0 + 200, "atalho Água soma 1 copo");
+  await p.click(".atalhos .a-dor"); await p.waitForSelector("#folha:not([hidden])");
+  ok(await p.locator("#folha [data-ac=registrarDor]").count() === 1, "atalho Dor na barriga abre os sinais e oferece registrar (sem registrar sozinho)");
+  await p.click("#folha [data-ac=fecharFolha]");
+  ok(await p.locator(".hoje-topo [data-dose]").count() === 1 && /Semana 1 do tratamento/.test(await p.locator(".hoje-topo").innerText()) && /Próxima aplicação: em 3 dias/.test(await p.locator(".hoje-topo").innerText()), "topo com a semana, a dose e a próxima aplicação");
+  const y = await p.evaluate(() => document.querySelector(".refeicao[data-i='0'] label.opcao").getBoundingClientRect().top + scrollY);
+  ok(y < 1.5 * 900, "o primeiro \"comi tudo\" fica na primeira tela e meia (" + Math.round(y) + " px)");
+  const pequenos = await p.evaluate(() => [...document.querySelectorAll("#tela *")].filter(el => !el.closest("svg") && [...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()) && el.getBoundingClientRect().width > 0 && parseFloat(getComputedStyle(el).fontSize) < 14).map(el => el.tagName + " " + el.textContent.trim().slice(0, 20)));
+  ok(pequenos.length === 0, "letra de 14 px ou mais em Hoje" + (pequenos.length ? ": " + pequenos.slice(0, 5).join("; ") : ""));
+  await t.semRolagem("hoje em 440 px"); await t.alvosDeToque("hoje em 440 px"); await t.foto("hoje-10-440");
+  await p.click(".atalhos .a-consulta"); await p.waitForSelector("#rel");
+  ok(await p.evaluate(() => location.hash) === "#diario", "atalho Para a consulta abre o relatório");
+  await p.click("#abas a[data-aba=hoje]"); await p.waitForSelector(".atalhos");
+  await p.click(".atalhos .a-painel"); await p.waitForSelector(".painel-hoje");
+  ok(await p.evaluate(() => location.hash) === "#painel", "atalho Painel abre o painel");
   await t.fechar();
 })();

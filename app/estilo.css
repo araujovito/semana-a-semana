@@ -20,6 +20,12 @@
   --topo-rosa: #ffb8dc; --topo-lilas: #d9c6ff; --topo-azul: #a8d0ff; --topo-base: #f3e8ff;
   --sobre-topo: #2a1846; --vidro: rgba(255, 255, 255, .55);           /* texto sobre o degradê: 9,97:1 ou mais */
   --leve-rosa: rgba(255, 184, 220, .20); --leve-azul: rgba(168, 208, 255, .20);
+  /* Atalhos da tela Hoje: gradiente sob ícone branco; o nome vai sempre escrito embaixo. Iguais no claro e no escuro.
+     Dor na barriga usa o vermelho do alerta. */
+  --at-comida: linear-gradient(135deg, #ffa94d, #f76707); --at-agua: linear-gradient(135deg, #74c0fc, #1c7ed6);
+  --at-como: linear-gradient(135deg, #faa2c1, #d6336c); --at-aplic: linear-gradient(135deg, #b197fc, #5f3dc4);
+  --at-dor: linear-gradient(135deg, #ff8787, #c92a2a); --at-consulta: linear-gradient(135deg, #91a7ff, #4263eb);
+  --at-painel: linear-gradient(135deg, #ffe066, #f59f00); --at-peso: linear-gradient(135deg, #63e6be, #0ca678);
   --sombra: 0 1px 2px rgba(16, 24, 40, .04), 0 2px 8px rgba(16, 24, 40, .05);
   --fonte: "Zilla Slab", Georgia, serif;
   color-scheme: light dark;

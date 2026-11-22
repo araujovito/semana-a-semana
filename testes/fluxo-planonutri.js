@@ -13,8 +13,8 @@ const opcao = (i, nome) => ".refeicao[data-i='" + i + "'] label.opcao:has-text('
   await p.waitForSelector("text=Plano da sua nutricionista");
   ok(await p.locator(".refeicao").count() === 5 && await p.locator("select[data-mud=pnOpcao]").count() === 5, "Hoje mostra as 5 refeições do plano dela, cada uma com a escolha de opção");
   ok(/Café da manhã · 7h30/.test(await p.locator(".refeicao[data-i='0'] .tipo").textContent()), "a refeição mostra o horário do plano");
-  ok(/plano da nutricionista: /.test(await p.locator("#tela .cartao").filter({ hasText: "Proteína hoje" }).textContent()) &&
-    !/meta \d/.test(await p.locator("#tela .cartao").filter({ hasText: "Proteína hoje" }).textContent()), "o cartão de proteína usa a faixa da nutricionista, não a meta do app");
+  ok(/plano da nutricionista: /.test(await p.locator(".hoje-topo .hoje-prot").textContent()) &&
+    !/meta \d/.test(await p.locator(".hoje-topo .hoje-prot").textContent()), "a proteína de Hoje usa o alvo do plano da nutricionista, não a meta do app");
 
   // escolher a opção 2 do café e marcar tudo
   await p.selectOption("select[data-mud=pnOpcao][data-i='0']", "1");
@@ -58,7 +58,7 @@ const opcao = (i, nome) => ".refeicao[data-i='" + i + "'] label.opcao:has-text('
   ok(perto(c.prot, cafe.prot + almoco.prot / 2), "desligar não apaga o que já foi marcado hoje");
   await p.evaluate(() => { location.hash = "#hoje"; });
   await p.waitForSelector("text=Proteína hoje");
-  ok(/meta \d/.test(await p.locator("#tela .cartao").filter({ hasText: "Proteína hoje" }).textContent()), "desligado, o topo de Hoje volta à meta do app");
+  ok(/meta \d/.test(await p.locator(".hoje-topo .hoje-prot").textContent()), "desligado, o topo de Hoje volta à meta do app");
   await p.click("[data-ac=diaVer][data-n='-1']");
   ok(await p.locator("select[data-mud=pnOpcao]").count() === 0 && /Refeições de/.test(await p.locator("#tela").textContent()), "desligado, um dia sem marca mostra o cardápio do app");
   await t.fechar();

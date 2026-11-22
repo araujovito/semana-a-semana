@@ -21,20 +21,22 @@ const texto = async (p, sel) => (await p.locator(sel).innerText()).replace(/\s+/
     ["em dia (segundas 02, 09 e 16/11)", [dose("2026-11-02"), dose("2026-11-09"), dose("2026-11-16")], "emDia", /Próxima aplicação: em 3 dias \(Seg, 23\/11\)/, false],
     ["prevista para hoje (sextas 06 e 13/11)", [dose("2026-11-06"), dose("2026-11-13")], "hoje", /Próxima aplicação: hoje/, true],
     ["última em 06/11, 14 dias: a prevista é hoje", [dose("2026-11-06")], "hoje", /Próxima aplicação: hoje/, true],
-    ["atrasada 1 dia (quintas 05 e 12/11)", [dose("2026-11-05"), dose("2026-11-12")], "atrasada", /estava prevista para Qui, 19\/11, há 1 dia\. Até 4 dias depois do dia previsto, a orientação da bula é aplicar assim que lembrar e seguir o dia habitual na semana seguinte \(Qui, 26\/11\)\./, true],
-    ["atrasada 4 dias (segundas 02 e 09/11)", [dose("2026-11-02"), dose("2026-11-09")], "atrasada", /estava prevista para Seg, 16\/11, há 4 dias\. Até 4 dias/, true],
-    ["atrasada 5 dias (domingos 01 e 08/11)", [dose("2026-11-01"), dose("2026-11-08")], "pular", /Próxima aplicação: Dom, 22\/11\. A que estava prevista para Dom, 15\/11 passou de 4 dias: a orientação da bula é pular essa dose e aplicar a próxima no dia habitual\. Não aplicar duas doses para compensar\./, true],
+    ["atrasada 1 dia (quintas 05 e 12/11)", [dose("2026-11-05"), dose("2026-11-12")], "atrasada", /Atrasada 1 dia \(era Qui, 19\/11\)\. Pode aplicar hoje\. A próxima continua Qui, 26\/11\..*Por quê \(bula\).*estava prevista para Qui, 19\/11, há 1 dia\. Até 4 dias depois do dia previsto, a orientação da bula é aplicar assim que lembrar e seguir o dia habitual na semana seguinte \(Qui, 26\/11\)\./, true],
+    ["atrasada 4 dias (segundas 02 e 09/11)", [dose("2026-11-02"), dose("2026-11-09")], "atrasada", /Atrasada 4 dias \(era Seg, 16\/11\)\. Pode aplicar hoje\..*Hoje é o 4º dia: se já passaram 96 horas do horário em que você costuma aplicar, pule esta dose\..*estava prevista para Seg, 16\/11, há 4 dias\. Até 4 dias/, true],
+    ["atrasada 5 dias (domingos 01 e 08/11)", [dose("2026-11-01"), dose("2026-11-08")], "pular", /Próxima aplicação: Dom, 22\/11\. Pule a de Dom, 15\/11\. Não aplique duas doses para compensar\..*A que estava prevista para Dom, 15\/11 passou de 4 dias: a orientação da bula é pular essa dose e aplicar a próxima no dia habitual\./, true],
     ["habitual segunda, aplicou atrasada na quinta 19/11", [dose("2026-11-02"), dose("2026-11-09"), dose("2026-11-19")], "emDia", /Próxima aplicação: em 3 dias \(Seg, 23\/11\)/, false],
-    ["15 dias sem registro (última em 05/11)", [dose("2026-11-05")], "medico", /A última aplicação registrada foi em 05\/11\/2026, há 15 dias\. Depois de várias semanas sem aplicar, fale com o médico antes de retomar: pode ser preciso recomeçar numa dose menor\./, true],
-    ["18 dias sem registro (última em 02/11)", [dose("2026-11-02")], "medico", /há 18 dias\. Depois de várias semanas sem aplicar, fale com o médico/, true],
-    ["97 dias sem registro, 10 mg (última em 15/08)", [dose("2026-08-15", 10)], "medico", /há 97 dias\. Depois de várias semanas sem aplicar, fale com o médico antes de retomar/, true],
-    ["4 registros em 10 dias", [dose("2026-11-08"), dose("2026-11-11"), dose("2026-11-14"), dose("2026-11-17")], "emDia", /Nesta dose 2ª semana/, false],
-    ["registro faltando no meio (23/10, 30/10, 13/11)", [dose("2026-10-23"), dose("2026-10-30"), dose("2026-11-13")], "hoje", /Nesta dose 5ª semana .*Já são 4 semanas nesta dose: subir ou manter é assunto para a consulta\./, true],
+    ["15 dias sem registro (última em 05/11)", [dose("2026-11-05")], "medico", /A última aplicação registrada foi em 05\/11\/2026, há 15 dias\. Fale com o médico antes de retomar\..*Depois de várias semanas sem aplicar, pode ser preciso recomeçar numa dose menor\./, true],
+    ["18 dias sem registro (última em 02/11)", [dose("2026-11-02")], "medico", /há 18 dias\. Fale com o médico antes de retomar\..*Depois de várias semanas sem aplicar/, true],
+    ["97 dias sem registro, 10 mg (última em 15/08)", [dose("2026-08-15", 10)], "medico", /há 97 dias\. Fale com o médico antes de retomar\..*pode ser preciso recomeçar numa dose menor/, true],
+    ["4 registros em 10 dias", [dose("2026-11-08"), dose("2026-11-11"), dose("2026-11-14"), dose("2026-11-17")], "emDia", /2ª semana nesta dose/, false],
+    ["registro faltando no meio (23/10, 30/10, 13/11)", [dose("2026-10-23"), dose("2026-10-30"), dose("2026-11-13")], "hoje", /5ª semana nesta dose .*Já são 4 semanas nesta dose: subir ou manter é assunto para a consulta\./, true],
     ["dose futura vinda de restauração, junto de uma de 13/11", [dose("2026-11-13"), dose("2026-12-25", 5)], "hoje", /Semana 2 do tratamento 2,5 mg/, true],
   ];
   for (const [nome, doses, estado, re, botao] of casos) {
     await t.semear(estadoBase({ doses })); await p.waitForSelector("[data-dose]");
-    const c = await texto(p, "[data-dose]"), est = await p.locator("[data-dose]").getAttribute("data-dose");
+    // innerText (o que está à vista) mais o porquê fechado (textContent dos blocos "Por quê (bula)").
+    const c = (await texto(p, "[data-dose]")) + " " + (await p.locator("[data-dose] details.por-que").allTextContents()).join(" ").replace(/\s+/g, " "), est = await p.locator("[data-dose]").getAttribute("data-dose");
+    if (/^(atrasada|pular|medico)$/.test(estado)) ok(await p.locator("[data-dose] details.por-que:not([open])").count() === 1 && (await texto(p, "[data-dose]")).split(" ").length < 60, "Hoje, " + nome + ": texto curto à vista e o porquê fechado");
     ok(est === estado && re.test(c), "Hoje, " + nome + ": " + c.slice(0, 150));
     ok((await p.locator("[data-dose] button").count() === 1) === botao, "Hoje, " + nome + ": botão de registrar " + (botao ? "presente" : "ausente"));
     if (estado === "medico") ok(!/mg|Próxima aplicação|Local sugerido|pular|\(\w{3}, \d\d\/\d\d\)/.test(c), "Hoje, " + nome + ": sem dose, sem data de próxima e sem local");
