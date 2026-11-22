@@ -11,8 +11,15 @@ Leia `LEIAME.md` e os arquivos de `app/` antes de opinar ou mexer.
 - Teste de ponta a ponta:
   `node testes/fluxo.js ~/Documents/hub-integracoes/backend/node_modules/playwright-core "$(ls ~/.cache/ms-playwright/chromium_headless_shell-1254/*/chrome-headless-shell)"`
 
-## O que não se sabe sobre a usuária
-Peso, altura, idade, se tem diabetes, o que não come, se usa pílula. Ninguém vai perguntar ao dono: o app tem de perguntar a ela e funcionar para qualquer resposta.
+## Quem é a usuária (informado pelo dono em 22/11; NÃO gravar estes dados no código: ela preenche no Perfil)
+Mulher, [dados pessoais removidos da versÃ£o pÃºblica]. Tem pedra na vesícula (colelitíase) e gordura no fígado (esteatose);
+a cirurgia da vesícula só será feita depois que a gordura do fígado diminuir. Começa tirzepatida (Mounjaro).
+Ainda não sabemos: se tem diabetes, o que não come, se usa pílula. O app continua perguntando a ela.
+O que o dono pediu (onda 2): um app só para ela, que leve em conta vesícula e fígado, que INDIQUE caminhos de alimentação
+(explique o porquê e dê opções para ela escolher), não só prescreva um cardápio, e que tenha um painel para ela acompanhar
+calorias e proteína. Também: identidade visual própria, a tela Hoje organizada pelo tratamento (números a um toque) e uma visão semanal.
+Atenção clínica: a bula lista doença da vesícula (colelitíase, colecistite) como efeito da tirzepatida, e perda de peso rápida
+aumenta o risco. Para ela isso é central: ritmo de perda, sinais de cólica biliar e pancreatite com destaque, sempre com fonte.
 
 ## Regras que valem para todos
 1. Não perguntar nada ao dono. Dúvida sobe para o seu chefe; o chefe decide e registra em `empresa/decisoes.md`.

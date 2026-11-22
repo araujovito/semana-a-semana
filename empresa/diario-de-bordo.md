@@ -54,3 +54,4 @@
 - 22/11 16:24 [direção] Juntados em main: peso e sintomas (gráfico, edição, modo discreto, alerta por urgência), correção da escala que barrava (IMC abaixo de 25), aplicação pulada sem contradição, versão web instalável (PWA) e textos da revisão clínica. Testes verdes.
 - 22/11 16:27 [direção] Ramo Android juntado (voltar sai do app, modo escuro, diálogos da página, versão 2, script que não cria chave sozinho). APK recompilado em main com todo o trabalho do dia. Testes verdes.
 - 22/11 16:29 [direção] Dono decidiu não publicar a versão web por enquanto. Entrega: APK de main + PWA pronta para publicar quando ele quiser.
+- 22/11 16:40 [direção] Começou a onda 2: app personalizado para ela (vesícula e fígado), painel de calorias e proteína, identidade visual nova e visão semanal.
