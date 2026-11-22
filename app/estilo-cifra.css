@@ -1,0 +1,11 @@
+/* PIN e cifra (app/cifra.js): portão de desbloqueio, código de recuperação e troca de PIN. Usa as cores de estilo.css. */
+.cif-portao { max-width: 440px; margin: 24px auto 0; }
+.cif h2 { margin-top: 0; }
+.cif label { display: block; margin-top: 10px; }
+.cif input.cif-pin, .cif input.cif-grupo { display: block; width: 100%; box-sizing: border-box; min-height: 52px; font-size: 24px; letter-spacing: 6px; text-align: center; }
+.cif input.cif-grupo { letter-spacing: 3px; text-transform: uppercase; }
+.cif .botoes { margin-top: 14px; }
+.cif-msg { color: var(--alerta); font-weight: 600; margin: 10px 0 0; }
+.cif-codigo { font-family: ui-monospace, "Roboto Mono", "DejaVu Sans Mono", monospace; font-size: 22px; font-weight: 700; letter-spacing: 1px; line-height: 1.6;
+  text-align: center; padding: 12px 8px; border: 2px dashed var(--cor); border-radius: 12px; word-spacing: 4px; overflow-wrap: anywhere; user-select: all; }
+.cif-aviso { font-weight: 600; }

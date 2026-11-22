@@ -86,9 +86,14 @@ function migrar(j) {
    Enquanto ele existir, salvar() não grava nada: dado que não foi lido nunca é sobrescrito. A tela de início oferece as saídas. */
 let ILEGIVEL = null;
 let FALHA_SALVAR = false;
+/* PIN e cifra (app/cifra.js). Com dados cifrados em CIF_GUARDA, carregar() não lê nada: o estado só entra depois do PIN.
+   CIF_TRANCADO: há dados cifrados e a chave não está em memória; salvar() não grava nada (nem em texto puro).
+   CIF_GRAVAR: função de cifra.js que grava o estado cifrado; existe só enquanto o app está desbloqueado. */
+const CIF_GUARDA = "semana-a-semana.cifrado";
+let CIF_TRANCADO = false, CIF_GRAVAR = null;
 function carregar() {
   let bruto = null;
-  try { bruto = localStorage.getItem(CHAVE); } catch (x) { return vazio(); }
+  try { if (localStorage.getItem(CIF_GUARDA) != null) { CIF_TRANCADO = true; return vazio(); } bruto = localStorage.getItem(CHAVE); } catch (x) { return vazio(); }
   if (bruto == null) return vazio();
   try { const e = migrar(JSON.parse(bruto)); if (e) return e; } catch (x) {}
   ILEGIVEL = bruto;
@@ -97,7 +102,9 @@ function carregar() {
 /* Devolve true se gravou. Se não gravou, a faixa de erro fica na tela e as mensagens de sucesso ("registrado") não aparecem. */
 function salvar() {
   let certo = false;
-  if (ILEGIVEL == null) { try { localStorage.setItem(CHAVE, JSON.stringify(E)); certo = true; } catch (x) {} }
+  if (CIF_TRANCADO) return false;
+  if (ILEGIVEL == null && CIF_GRAVAR) certo = CIF_GRAVAR(JSON.stringify(E));
+  else if (ILEGIVEL == null) { try { localStorage.setItem(CHAVE, JSON.stringify(E)); certo = true; } catch (x) {} }
   FALHA_SALVAR = !certo;
   const f = document.getElementById("erro-salvar"); if (f) f.hidden = certo;
   return certo;

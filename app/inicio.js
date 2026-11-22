@@ -42,6 +42,7 @@ let diaDesenhado = null;
 function render(topo) {
   const h = atual();
   diaDesenhado = hoje();
+  if (cifDesenharPortao()) return; // PIN (app/cifra.js): enquanto bloqueado, só o portão aparece
   tela.innerHTML = ILEGIVEL != null ? telaIlegivel() : (E.perfil ? subAbas(h) : "") + TELAS[h]();
   tela.querySelectorAll("form").forEach(f => { f.noValidate = true; }); // a validação é a de enviarFormulario, que mostra mensagem
   const g = grupoDe(h);
@@ -159,4 +160,5 @@ document.addEventListener("focusin", e => {
 document.addEventListener("focusout", () => { setTimeout(() => { if (!campoDeTexto(document.activeElement)) document.body.classList.remove("teclado"); }, 100); });
 
 window.addEventListener("hashchange", () => render(true));
+cifIniciar(TELAS);
 render(true);

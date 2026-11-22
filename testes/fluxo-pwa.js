@@ -13,6 +13,7 @@ const TIPOS = { ".html": "text/html", ".js": "text/javascript", ".css": "text/cs
   const URL = "http://127.0.0.1:" + srv.address().port + "/";
   const a = achar(), { chromium } = require(a.pw);
   const b = await chromium.launch({ executablePath: a.exe }), ctx = await b.newContext({ viewport: { width: 390, height: 800 } }), p = await ctx.newPage();
+  await ctx.addInitScript(() => { window.cifTesteSemPin = true; }); // o PIN tem teste próprio (fluxo-cifra.js)
   const erros = []; p.on("pageerror", e => erros.push(String(e)));
   try {
     // sw.js lista tudo o que index.html carrega
@@ -27,6 +28,7 @@ const TIPOS = { ".html": "text/html", ".js": "text/javascript", ".css": "text/cs
     await p.evaluate(x => localStorage.setItem(x[0], JSON.stringify(x[1])), [CHAVE, estadoBase()]);
     await p.reload(); await p.waitForSelector("text=Proteína hoje");
     ok(await p.evaluate(() => window.EH_PWA === true), "por HTTP, o app se reconhece como versão web");
+    ok(await p.evaluate(() => isSecureContext && !!(window.crypto && crypto.subtle && crypto.subtle.wrapKey)), "por HTTP local, a cifra do navegador (crypto.subtle) existe para o PIN");
     const pronto = await p.evaluate(async () => { const r = await navigator.serviceWorker.ready; return !!r.active; });
     ok(pronto, "service worker registrado e ativo");
     await p.waitForFunction(async () => (await (await caches.open("semana-a-semana-v1")).keys()).length >= 30, null, { timeout: 15000 });

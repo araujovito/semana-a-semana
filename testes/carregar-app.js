@@ -11,7 +11,7 @@ module.exports = function (estado, opcoes) {
   // opcoes: { Date: classe de relogio falso, guardado: objeto que faz as vezes do localStorage, falhaAoGravar: true }
   const guardado = o.guardado || {}; if (estado) guardado["semana-a-semana.v1"] = JSON.stringify(estado);
   const avisos = [];
-  const ctx = { console, Date: o.Date || Date, Math, JSON, Intl, setTimeout, clearTimeout,
+  const ctx = { console, Date: o.Date || Date, Math, JSON, Intl, setTimeout, clearTimeout, crypto: globalThis.crypto, TextEncoder, TextDecoder, btoa, atob,
     localStorage: { getItem: k => (k in guardado ? guardado[k] : null), setItem: (k, v) => { if (o.falhaAoGravar) throw new Error("sem espaço"); guardado[k] = String(v); }, removeItem: k => { delete guardado[k]; } },
     document: { getElementById: () => ({ set textContent(t) { avisos.push(t); }, hidden: true, value: "" }), querySelectorAll: () => [], addEventListener() {} },
     navigator: {}, location: { hash: "" }, confirm: () => true, alert: () => {}, render: () => {},

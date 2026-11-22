@@ -43,6 +43,9 @@ async function abrir(opcoes) {
     window.Date = Relogio;
     window.__relogio = quando => { desvio = new Real(quando).getTime() - Real.now(); };
   }, agoraDoTeste);
+  // PIN (app/cifra.js): os testes que não são sobre o PIN rodam sem ele (sem dados cifrados, o app segue em texto como antes).
+  // Os testes do PIN abrem com { comPin: true }.
+  if (!o.comPin) await p.addInitScript(() => { window.cifTesteSemPin = true; });
   const erros = []; p.on("pageerror", e => erros.push(String(e))); p.on("console", m => { if (m.type() === "error") erros.push(m.text()); });
   p.on("dialog", x => { erros.push("diálogo do navegador (use confirmar/alerta da página): " + x.message()); x.accept(); });
   const semear = async estado => { await p.goto(URL_APP); await p.evaluate(x => localStorage.setItem(x[0], JSON.stringify(x[1])), [CHAVE, estado]); await p.goto(URL_APP + "#" + (o.aba || "hoje")); await p.reload(); };
