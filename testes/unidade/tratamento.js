@@ -138,7 +138,7 @@ test("semanas nesta dose: quatro registros em 10 dias não viram '4 semanas' (au
   assert.strictEqual(sit(ds).semanaNaDose, 2);
   assert.doesNotMatch(cartao(ds), /4 semanas nesta dose/);
 });
-test("semanas nesta dose: conta desde a primeira aplicação da sequência atual; a frase aparece na 4ª semana e não em 15 mg", () => {
+test("semanas nesta dose: conta desde a primeira aplicação da sequência atual; a frase não aparece em 15 mg", () => {
   const ds = [dose("2026-10-02", 2.5), dose("2026-10-09", 2.5), dose("2026-10-16", 2.5), dose("2026-10-23", 2.5), dose("2026-10-30", 5), dose("2026-11-06", 5), dose("2026-11-13", 5)];
   assert.deepStrictEqual([sit(ds).semanaNaDose, sit(ds).naDose, sit(ds).semana], [4, 3, 8]);
   assert.deepStrictEqual(["2026-11-19", "2026-11-20"].map(h => sit(ds.slice(0, 6).concat([dose("2026-11-13", 5)]), h).semanaNaDose), [3, 4]);
@@ -233,4 +233,12 @@ test("primeira aplicação grava o dia habitual e diz qual ficou", () => {
   a.v("FORM.dose({ data: '2026-11-12', mg: '2.5', local: 'Coxa direita', obs: '' })");
   assert.strictEqual(a.v("E.diaDose"), 3);
   assert.strictEqual(a.avisos[a.avisos.length - 1], "Aplicação registrada.", "a partir da segunda, o aviso é o curto");
+});
+test("auditoria 2, resíduo 4: 'Já são 4 semanas nesta dose' só com 28 dias desde a primeira aplicação nesta dose", () => {
+  const ds = [dose("2026-10-23"), dose("2026-10-30"), dose("2026-11-06"), dose("2026-11-13")];   // sextas, 4ª aplicação em 13/11
+  const c = h => em(h, base({ doses: ds })).v("cartaoTratamentoHoje()").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+  assert.match(c("2026-11-13"), /Nesta dose 4ª semana/);
+  assert.doesNotMatch(c("2026-11-13"), /4 semanas nesta dose/, "dia da 4ª aplicação: 21 dias, 3 semanas completas");
+  assert.doesNotMatch(c("2026-11-19"), /4 semanas nesta dose/, "27 dias");
+  assert.match(c("2026-11-20"), /Já são 4 semanas nesta dose: subir ou manter é assunto para a consulta\./, "28 dias");
 });

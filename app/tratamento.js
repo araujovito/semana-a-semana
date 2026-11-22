@@ -120,7 +120,9 @@ function cartaoTratamentoHoje() {
   else quando = "<strong>Próxima aplicação:</strong> " + diaCurto(s.prox) + ". A que estava prevista para " + diaCurto(s.prevista) + " passou de 4 dias: a orientação da bula é pular essa dose e aplicar a próxima no dia habitual. Não aplicar duas doses para compensar.";
   return '<div class="cartao destaque" data-dose="' + s.estado + '"><div class="linha"><div><div class="sub">Semana ' + s.semana + ' do tratamento</div><div class="grande">' + fmt(s.ult.mg, 1) + ' mg</div></div><div style="text-align:right"><div class="sub">Nesta dose</div><div><strong>' + ordinalF(s.semanaNaDose) + " semana</strong></div></div></div>" +
     '<p style="margin:10px 0 0">' + quando + '</p><p class="sub" style="margin:4px 0 0">Local sugerido: ' + esc(s.sugerido) + "." +
-    (s.semanaNaDose >= 4 && s.ult.mg < 15 ? " Já são 4 semanas nesta dose: subir ou manter é assunto para a consulta." : "") + "</p>" +
+    /* Só com 4 semanas completas (28 dias desde a primeira aplicação nesta dose). No dia da 4ª aplicação são 3 semanas: a frase
+       adiantava uma semana (auditoria 2, A1, resíduo 4). O rótulo "4ª semana" continua contando a semana em curso. */
+    (entre(s.inicioNaDose, hoje()) >= 28 && s.ult.mg < 15 ? " Já são 4 semanas nesta dose: subir ou manter é assunto para a consulta." : "") + "</p>" +
     (s.estado === "hoje" || s.estado === "atrasada" ? botao() : s.estado === "pular" ? botao("sec") : "") + "</div>";
 }
 
