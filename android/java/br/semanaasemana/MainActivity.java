@@ -79,14 +79,14 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * Botão voltar: quem decide é a página, na função aoVoltar(). Ela fecha a folha aberta ou volta para a aba Hoje e devolve
-     * outra coisa qualquer; devolve "saiu" quando já está na aba Hoje e o app deve sair. Se a página não tiver a função
-     * (ou não tiver carregado), voltar sai do app.
+     * Botão voltar: quem decide é a página, em window.aoVoltar() (app/inicio.js). Ela fecha o diálogo ou a folha aberta ou volta
+     * para a aba Hoje e devolve "ficar"; devolve "sair" quando já está na aba Hoje e o app deve sair. Se a página não tiver a
+     * função (ou não tiver carregado), voltar sai do app. testes/fluxo-aparelho.js roda este mesmo trecho de JavaScript.
      */
     @Override
     public void onBackPressed() {
-        web.evaluateJavascript("(function(){try{return typeof aoVoltar==='function'?String(aoVoltar()):'saiu'}catch(e){return 'saiu'}})()", r -> {
-            if (r == null || "null".equals(r) || "\"saiu\"".equals(r)) MainActivity.super.onBackPressed();
+        web.evaluateJavascript("(function(){try{return typeof aoVoltar==='function'?String(aoVoltar()):'sair'}catch(e){return 'sair'}})()", r -> {
+            if (r == null || "null".equals(r) || "\"sair\"".equals(r)) MainActivity.super.onBackPressed();
         });
     }
 

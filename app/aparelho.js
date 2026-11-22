@@ -1,5 +1,5 @@
 "use strict";
-/* Aparelho: o que depende do celular (evento no calendário, cópia de segurança, botão voltar). Tudo aqui tem caminho alternativo no navegador.
+/* Aparelho: o que depende do celular (evento no calendário, cópia de segurança). Tudo aqui tem caminho alternativo no navegador.
    Ponte com o Android (android/java/br/semanaasemana/MainActivity.java), sempre conferida antes de usar:
      window.Android.compartilhar(texto), window.Android.copiar(texto)
      window.Android.calendario("AAAA-MM-DD") -> true se abriu o calendário do celular com um evento semanal a partir dessa data */
@@ -52,33 +52,3 @@ Object.assign(AC, {
   zerar() { if (!confirm("Apagar TODOS os dados deste celular? Não dá para desfazer.")) return; E = vazio(); salvar(); render(true); },
 });
 
-/* ---------- PROVISÓRIO, para testar a casca Android no emulador. O definitivo é do chefe (app/inicio.js e app/estilo.css). ---------- */
-
-/* Botão voltar do Android. O Java chama aoVoltar() e só sai do app se a resposta for "saiu".
-   Folha aberta: fecha a folha. Qualquer aba que não seja Hoje: vai para Hoje. Na aba Hoje (ou sem perfil): sai. */
-function aoVoltar() {
-  if (folhaAberta()) { fecharFolha(); return "folha"; }
-  if (E.perfil && atual() !== "hoje") { location.hash = "hoje"; return "hoje"; }
-  return "saiu";
-}
-
-/* Teclado aberto: a janela encolhe (adjustResize no manifesto) e a barra de abas, que é fixa embaixo, subiria para cima do teclado,
-   tapando o campo. Enquanto a janela estiver bem mais baixa que o normal e o foco estiver num campo de digitar, o corpo ganha a
-   classe "teclado" (estilo-aparelho.css esconde a barra) e o campo em foco é trazido para o meio da tela. */
-function ligarTeclado(janela, doc) {
-  let largura = 0, alturaCheia = 0;
-  const digitando = () => { const el = doc.activeElement; return !!el && (el.tagName === "TEXTAREA" || (el.tagName === "INPUT" && !/^(checkbox|radio|button|submit|file|range|color)$/.test(el.type))); };
-  const conferir = () => {
-    if (janela.innerWidth !== largura) { largura = janela.innerWidth; alturaCheia = 0; } // girou o celular: recomeça a medida
-    alturaCheia = Math.max(alturaCheia, janela.innerHeight);
-    const aberto = digitando() && janela.innerHeight < 0.75 * alturaCheia;
-    const mudou = doc.body.classList.contains("teclado") !== aberto;
-    doc.body.classList.toggle("teclado", aberto);
-    if (aberto && mudou && doc.activeElement.scrollIntoView) doc.activeElement.scrollIntoView({ block: "center" });
-  };
-  janela.addEventListener("resize", conferir);
-  doc.addEventListener("focusin", conferir);
-  doc.addEventListener("focusout", () => setTimeout(conferir, 0));
-  conferir();
-}
-if (typeof window !== "undefined" && typeof window.addEventListener === "function" && typeof document !== "undefined" && document.body) ligarTeclado(window, document);
