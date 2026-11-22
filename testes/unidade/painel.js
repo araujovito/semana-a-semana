@@ -111,3 +111,10 @@ test("tabela equivalente ao gráfico: um dia por linha, lacuna escrita, hoje em 
   assert.strictEqual((d.match(/data-tabela=/g) || []).length, 1);
   assert.ok(d.indexOf('data-tabela="prot"') > 0);
 });
+test("auditoria 3 (I3): dia só com proteína avulsa não vira dia de 0 kcal", () => {
+  const carregar = require("../carregar-app");
+  const a = carregar({ v: 2, perfil: { nome: "", sexo: "F", nascimento: 1981, altura: 159, peso: 100, atividade: 1.2, metaKcal: null, metaProt: null, metaAgua: null, diabetes: null, insulinaSulf: null, pilula: null, naoCome: [], naoGosta: [] },
+    doses: [], pesos: [], sintomas: [], treinos: [], dias: { "2026-11-18": { enjoo: false, protExtra: 10, agua: 0, caminhada: 0 } }, trocas: {}, caneta: null, suplementos: [], exames: [], lembretes: {}, ui: { usarPlanoNutri: false } });
+  const r = JSON.parse(a.v("JSON.stringify(painelResumo(painelSerie('2026-11-19', 7), metas()))"));
+  assert.strictEqual(r.dias, 1); assert.strictEqual(r.diasKcal, 0); assert.strictEqual(r.abaixoKcal, 0); assert.strictEqual(r.mediaKcal, null);
+});

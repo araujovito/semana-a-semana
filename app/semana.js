@@ -90,9 +90,10 @@ function semanasDoTratamento(h) {
       tontura: diasCom(r => r.tontura), cansaco: diasCom(r => r.cansaco), dor: diasCom(r => r.dor) };
     s.enjooMarcado = dias.filter(x => E.dias[x] && E.dias[x].enjoo).length;
     /* comida */
-    let dc = 0, prot = 0, kcal = 0;
-    dias.forEach(x => { if (!E.dias[x]) return; const c = consumoDoDia(x); if (!c.registrou) return; dc++; prot += c.total.prot; kcal += c.total.kcal; });
-    s.comida = { dias: dc, prot: dc ? prot / dc : null, kcal: dc ? kcal / dc : null };
+    let dc = 0, dk = 0, prot = 0, kcal = 0;
+    /* Auditoria 3 (I3): dia só com proteína avulsa entra na proteína, não nas calorias. */
+    dias.forEach(x => { if (!E.dias[x]) return; const c = consumoDoDia(x); if (!c.registrou) return; dc++; prot += c.total.prot; if (c.refeicoes > 0) { dk++; kcal += c.total.kcal; } });
+    s.comida = { dias: dc, prot: dc ? prot / dc : null, kcal: dk ? kcal / dk : null };
     /* padrão de enjoo da semana: precisa de aplicação, de registro nos 2 dias depois e de 2 dias com registro fora deles */
     const dose = s.doses.length ? s.doses[s.doses.length - 1].data : null;
     s.janela = dose ? semanaJanelaEnjoo(dose, dias, porDia) : { dentro: [], fora: [] };

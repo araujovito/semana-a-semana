@@ -20,7 +20,8 @@ function painelSerie(fim, n) {
   const s = [];
   for (let i = n - 1; i >= 0; i--) {
     const data = mais(fim, -i), c = consumoDoDia(data);
-    s.push({ data, registrou: c.registrou, kcal: c.registrou ? c.total.kcal : null, prot: c.registrou ? c.total.prot : null });
+    /* Auditoria 3 (I3): dia só com proteína avulsa tem proteína, mas não tem calorias conhecidas; não pode virar "dia de 0 kcal". */
+    s.push({ data, registrou: c.registrou, kcal: c.refeicoes > 0 ? c.total.kcal : null, prot: c.registrou ? c.total.prot : null });
   }
   return s;
 }
@@ -28,13 +29,13 @@ function painelSerie(fim, n) {
    dias (com registro), total (dias na série), mediaKcal e mediaProt (null sem registro),
    naFaixa: dias com proteína entre m.protMin e m.protMax (inclusive); abaixoKcal: dias com menos de m.pisoDia kcal (PISO_DIA se faltar). */
 function painelResumo(serie, m) {
-  const piso = m.pisoDia == null ? PISO_DIA : m.pisoDia, com = serie.filter(x => x.registrou), soma = k => com.reduce((t, x) => t + x[k], 0);
+  const piso = m.pisoDia == null ? PISO_DIA : m.pisoDia, com = serie.filter(x => x.registrou), comKcal = com.filter(x => x.kcal != null), soma = (l, k) => l.reduce((t, x) => t + x[k], 0);
   return {
-    dias: com.length, total: serie.length,
-    mediaKcal: com.length ? soma("kcal") / com.length : null,
-    mediaProt: com.length ? soma("prot") / com.length : null,
+    dias: com.length, total: serie.length, diasKcal: comKcal.length,
+    mediaKcal: comKcal.length ? soma(comKcal, "kcal") / comKcal.length : null,
+    mediaProt: com.length ? soma(com, "prot") / com.length : null,
     naFaixa: com.filter(x => x.prot >= m.protMin && x.prot <= m.protMax).length,
-    abaixoKcal: com.filter(x => x.kcal < piso).length,
+    abaixoKcal: comKcal.filter(x => x.kcal < piso).length,
   };
 }
 /* Quanto falta de proteína para a meta (g, nunca negativo). */
@@ -117,7 +118,7 @@ function telaPainel() {
       '<div><div class="sub">Média de proteína</div><div class="painel-num" data-v="mediaProt">' + fmt(r.mediaProt) + " <small>g</small></div></div>" +
       (disc ? "" : '<div><div class="sub">Média de calorias</div><div class="painel-num" data-v="mediaKcal">' + fmt(r.mediaKcal) + " <small>kcal</small></div></div>") +
       '<div><div class="sub">Proteína na faixa</div><div class="painel-num" data-v="naFaixa">' + r.naFaixa + " <small>de " + r.dias + "</small></div></div>" +
-      (disc ? "" : '<div><div class="sub">Abaixo de ' + fmt(m.pisoDia) + ' kcal</div><div class="painel-num" data-v="abaixoKcal">' + r.abaixoKcal + " <small>de " + r.dias + "</small></div></div>") +
+      (disc ? "" : '<div><div class="sub">Abaixo de ' + fmt(m.pisoDia) + ' kcal</div><div class="painel-num" data-v="abaixoKcal">' + r.abaixoKcal + " <small>de " + r.diasKcal + "</small></div></div>") +
       "</div>";
   }
   out += '<p class="sub" data-v="diasRegistro">Dias com registro: ' + r.dias + " de " + r.total + ". Médias e contagens usam só os dias com registro; hoje fica de fora porque ainda não acabou." +
