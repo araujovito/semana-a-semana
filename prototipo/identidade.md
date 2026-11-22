@@ -146,3 +146,25 @@ O capturador acusa rolagem horizontal, botão ou link com menos de 44 px e qualq
 - As páginas são estáticas: os toques não fazem nada e os gráficos não mostram o valor ao tocar.
 - Não abri as páginas num celular de verdade, só no navegador sem janela, em 390 px.
 - Ainda não testei em 320 px. Com a grade de 4 atalhos e as duas colunas, telas estreitas vão precisar de ajuste quando isso for para o app.
+
+## Variações de cor da tela Hoje (para o dono escolher)
+
+O dono aprovou o estilo, mas achou o verde-hortelã esquisito. Fiz três variações só de cor, com layout, fonte, ícones e textos iguais. Cada uma é um arquivo de tokens em `prototipo/fonte/tema-<nome>.css`, que sobrepõe `base.css`. O `montar.js` gera `prototipo/hoje-<nome>.html` a partir dele. O alerta da vesícula e do pâncreas não muda em nenhuma: continua vermelho, com borda grossa à esquerda, triângulo e o rótulo "SINAL DE ALERTA".
+
+| | (a) coral (`hoje-coral.html`) | (b) azul (`hoje-azul.html`) | (c) roxo (`hoje-roxo.html`) |
+|---|---|---|---|
+| Ideia | quente e acolhedora | limpa, de app de serviço | suave, calma |
+| Primária claro / escuro | `#c2410c` / `#ff9a76` | `#1971c2` / `#74c0fc` | `#6741d9` / `#b197fc` |
+| Topo claro | `#ff8a65 → #ffb38a → #ffe3c4`, texto `#4a1504` | `#4dabf7 → #a5d8ff → #e7f5ff`, texto `#0b2a4a` | `#b197fc → #d0bfff → #f3f0ff`, texto `#2b1a5c` |
+| Topo escuro | `#7a2e12 → #5c2a14 → #2b1d12`, texto `#fff1ea` | `#0b3d6b → #10345a → #141b2b`, texto `#eaf4ff` | `#3b2a77 → #2d2260 → #1a1726`, texto `#f3f0ff` |
+| Atalhos que mudam | comida passa a amarelo, aplicação a coral, painel a verde | água passa a ciano, aplicação a azul, caminhada a verde | peso passa a azul, água a ciano, aplicação a roxo, caminhada a verde |
+| Dica do dia | amarelo (`#7a4a00` sobre `#fff9db`), para não se confundir com a primária | laranja, como antes | laranja, como antes |
+| Ponto da aplicação no anel | marrom escuro (claro) / amarelo (escuro) | laranja | laranja |
+
+Contraste AA conferido em cada variação, nos dois temas:
+- **Botão** (texto sobre a primária): coral 5,2 / 8,7; azul 5,0 / 8,3; roxo 6,3 / 7,1.
+- **Selo** (primária sobre o fundo claro dela): coral 4,7 / 7,2; azul 4,5 / 7,5; roxo 5,6 / 6,2.
+- **Texto do topo** no pior ponto do gradiente: coral 6,5 / 8,5; azul 5,9 / 10,0; roxo 6,2 / 10,5.
+- **Barras de gráfico**: todas acima de 3:1.
+
+**Risco da (a):** a primária coral fica perto do vermelho do alerta. Nessa variação, o alerta se distingue só pela forma, pelo ícone e pelo rótulo, que estão lá, mas a separação pela cor é menor que no azul e no roxo.

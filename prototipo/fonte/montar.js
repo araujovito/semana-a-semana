@@ -14,3 +14,10 @@ for (const nome of fs.readdirSync(F).filter(n => n.endsWith(".html"))) {
   fs.writeFileSync(path.join(SAI, nome), h);
   console.log("montou", nome);
 }
+// Variações de cor da tela Hoje: fonte/tema-<nome>.css sobrepõe os tokens de base.css e gera prototipo/hoje-<nome>.html.
+const hoje = fs.readFileSync(path.join(SAI, "hoje.html"), "utf8");
+for (const t of fs.readdirSync(F).filter(n => /^tema-.+\.css$/.test(n))) {
+  const nome = t.slice(5, -4), extra = fs.readFileSync(path.join(F, t), "utf8");
+  fs.writeFileSync(path.join(SAI, "hoje-" + nome + ".html"), hoje.replace("</style>", "</style>\n<style>\n" + extra + "</style>").replace("fonte/hoje.html", "fonte/hoje.html + fonte/" + t));
+  console.log("montou hoje-" + nome + ".html");
+}

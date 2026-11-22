@@ -1,0 +1,16 @@
+/* Variação (b) azul vivo: limpa, estilo app de serviço. */
+:root {
+  --pri: #1971c2; --sobre-pri: #ffffff; --pri-clara: #e7f5ff; --pri-tinta: #0b2a4a;
+  --topo-a: #4dabf7; --topo-b: #a5d8ff; --topo-c: #e7f5ff; --sobre-topo: #0b2a4a; --vidro: rgba(255, 255, 255, .55);
+  --dado: #1c7ed6; --dado-suave: #a5d8ff; --faixa: #e7f5ff;
+  --ap: #f76707; --mover-cor: #12b886;
+  --c-agua: linear-gradient(135deg, #66d9e8, #0c8599); --c-aplic: linear-gradient(135deg, #74c0fc, #1971c2);
+  --c-mover: linear-gradient(135deg, #63e6be, #0ca678);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --pri: #74c0fc; --sobre-pri: #04213d; --pri-clara: #132a40; --pri-tinta: #d0ebff;
+    --topo-a: #0b3d6b; --topo-b: #10345a; --topo-c: #141b2b; --sobre-topo: #eaf4ff; --vidro: rgba(255, 255, 255, .09);
+    --dado: #74c0fc; --dado-suave: #1d4166; --faixa: #132a40;
+  }
+}
