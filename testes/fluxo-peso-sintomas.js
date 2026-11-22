@@ -43,7 +43,12 @@ const noPeso = extra => Object.assign({ ui: { diario: "peso" } }, extra);
   await p.click("#hist-peso .reg:nth-of-type(2) [data-ac=editarPeso]"); await p.fill("[name=data]", d(8)); await p.click("form[data-form=peso] button:not([data-ac])");
   e = await t.ler(); ok(e.pesos.length === 4 && e.pesos.find(x => x.id === "p7").data === d(8), "corrigir a data mantém o id");
   // Apagar o registro que está em correção não deixa o formulário preso
+  // (apagar pede confirmação no diálogo da página; Cancelar não apaga nem tira da correção)
   await p.click("#hist-peso .reg:nth-of-type(1) [data-ac=editarPeso]"); await p.click("#hist-peso .reg:nth-of-type(1) [data-ac=apagar]");
+  ok(await t.textoDialogo() === "Apagar este registro?", "apagar pesagem pergunta antes, no diálogo da página");
+  await t.nao();
+  ok(await p.locator("form[data-form=peso] h2").innerText() === "Corrigir peso" && (await t.ler()).pesos.length === 4, "cancelar o apagar mantém o registro e a correção");
+  await p.click("#hist-peso .reg:nth-of-type(1) [data-ac=apagar]"); await t.sim();
   ok(await p.locator("form[data-form=peso] h2").innerText() === "Registrar peso" && (await t.ler()).pesos.length === 3, "apagar o registro em correção devolve o formulário ao normal");
   // Datas: ano absurdo e mais de 1 ano atrás são recusados com mensagem
   for (const [data, nome] of [["0026-11-20", "ano 0026"], [d(400), "mais de 1 ano atrás"]]) {
@@ -52,7 +57,8 @@ const noPeso = extra => Object.assign({ ui: { diario: "peso" } }, extra);
     ok((await t.ler()).pesos.length === 3 && /Confira a data/.test(await p.locator("#aviso").innerText()), "peso com data errada (" + nome + ") é recusado com mensagem");
   }
   await p.evaluate(() => { const c = document.querySelector("form[data-form=peso]"); c.noValidate = true; c.querySelector("[name=data]").value = ""; }); await p.click("form[data-form=peso] button:not([data-ac])");
-  ok(/Informe a data/.test(await p.locator("#aviso").innerText()), "peso sem data avisa em vez de não fazer nada");
+  // A checagem de campo obrigatório da página (campoFaltando, em inicio.js) pega a data vazia antes de FORM.peso
+  ok(/Preencha o campo: Data\.|Informe a data/.test(await p.locator("#aviso").innerText()), "peso sem data avisa em vez de não fazer nada");
   ok(await p.getAttribute("[name=data]", "min") === d(365) && await p.getAttribute("[name=data]", "max") === d(0), "campo de data limitado de 1 ano atrás até hoje");
   await t.fechar();
 
