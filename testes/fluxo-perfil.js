@@ -2,7 +2,15 @@
 const { abrir, ok, d, CHAVE } = require("./apoio");
 (async () => {
   const t = await abrir(), p = t.p;
-  ok(await p.locator("form[data-form=perfil]").count() === 1, "primeira abertura cai no perfil");
+  // Achado 2: primeiro a tela de entrada (para quem o app serve e quem deve falar com o médico antes), depois o perfil.
+  ok(/Converse com o seu médico antes de seguir o plano do app se você/.test(await p.locator("#tela").innerText()) && await p.locator("form[data-form=perfil]").count() === 0, "primeira abertura mostra a tela de entrada");
+  ok(!(await p.locator("#abas").isVisible()), "barra de abas escondida na tela de entrada"); await t.foto("0-entrada");
+  await p.click("[data-ac=entradaContinuar]");
+  ok(await p.locator("form[data-form=perfil]").count() === 1, "continuar leva ao perfil");
+  // Achado 2: menos de 18 anos é recusado.
+  await p.fill("[name=nascimento]", String(new Date().getFullYear() - 16)); await p.fill("[name=altura]", "163"); await p.fill("[name=peso]", "60");
+  await p.click("form[data-form=perfil] button");
+  ok(/18 anos ou mais/.test(await p.locator("#aviso").innerText()) && (await t.ler()).perfil === null, "menos de 18 anos: perfil recusado");
   ok(!(await p.locator("#abas").isVisible()), "barra de abas escondida enquanto não há perfil");
   await p.fill("[name=nome]", "Teste"); await p.fill("[name=nascimento]", "1990"); await p.fill("[name=altura]", "163"); await p.fill("[name=peso]", "95,4");
   await p.click("form[data-form=perfil] button");

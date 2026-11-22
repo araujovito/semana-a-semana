@@ -113,7 +113,16 @@ function cartaoTratamentoHoje() {
 }
 
 /* Destaque do risco de hipoglicemia para quem tem diabetes e usa insulina ou sulfonilureia. onde: "treino" ou "guia". Devolve "" quando não se aplica. */
-function avisoHipoglicemia(onde) { return ""; }
+/* Fonte: bula do Mounjaro (Anvisa), advertência sobre hipoglicemia: com insulina ou sulfonilureia o risco de hipoglicemia aumenta
+   e pode ser preciso reduzir a dose desses remédios. Sinais: os do Guia ("Sinais de alerta"). O app não diz quanto reduzir.
+   Treino: ADA, Standards of Care in Diabetes, seção 5 (atividade física): com insulina ou secretagogo, o exercício pode causar
+   hipoglicemia; ter carboidrato de ação rápida à mão. */
+function avisoHipoglicemia(onde) {
+  const p = E.perfil; if (!p || p.diabetes !== true || p.insulinaSulf !== true) return "";
+  const extra = onde === "treino" ? " Exercício também baixa o açúcar no sangue: tenha algo doce por perto durante o treino."
+    : onde === "plano" ? " Comer menos que o planejado, ou o dia de enjoo, aumenta esse risco." : "";
+  return '<div class="cartao alerta" data-aviso="hipoglicemia"><h2>Risco de hipoglicemia</h2><p style="margin:0">Junto com insulina ou sulfonilureia (glibenclamida, gliclazida, glimepirida), a tirzepatida aumenta o risco de hipoglicemia. O médico pode precisar ajustar a dose desses remédios: converse com ele antes de seguir o plano.' + extra + '</p><p class="sub" style="margin:6px 0 0">Sinais: tremor, suor frio, confusão.</p></div>';
+}
 
 /* ---------- aba Aplicações ---------- */
 function subDoses() {

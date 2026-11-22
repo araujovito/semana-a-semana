@@ -1,1 +1,13 @@
 /* Estilos de: plano, perfil e lista de compras. O que é comum a todas as telas fica em estilo.css. */
+
+/* Perfil: blocos que abrem e fecham dentro do formulário, e listas de caixas de marcar em coluna. */
+.blocos { margin-top: 14px; border-top: 1px solid var(--linha); border-bottom: 1px solid var(--linha); margin-bottom: 8px; }
+.blocos summary > span { min-width: 0; }
+.blocos .sub { font-weight: 400; }
+.marcas.coluna { flex-direction: column; flex-wrap: nowrap; gap: 0; }
+.grupo-marcas h3 { margin: 14px 0 0; font-size: 14px; color: var(--suave); }
+
+/* Plano: item trocado por causa do que você não come. */
+.marca-troca { display: inline-block; font-size: 12px; font-weight: 500; color: var(--cor); border: 1px solid var(--cor); border-radius: 999px; padding: 0 8px; margin-left: 4px; white-space: nowrap; }
+.refeicao .troca { font-size: 13px; color: var(--suave); }
+.refeicao li.fora { color: var(--suave); }

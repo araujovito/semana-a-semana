@@ -61,8 +61,10 @@ test("cardápio base: média de energia entre 1.400 e 1.470 kcal e de proteína 
 
 test("as contas do app dão a mesma média do conferidor", () => {
   const app = require("../carregar-app")();
-  assert.ok(Math.abs(app.v("BASE.kcal") - r.media.kcal) < 5, "BASE.kcal " + app.v("BASE.kcal") + " x " + r.media.kcal);
-  assert.ok(Math.abs(app.v("BASE.prot") - r.media.prot) < 1);
+  // Cardápio base: sem restrições e com os dois fatores da escala em 1.
+  const base = JSON.parse(app.v("JSON.stringify((function () { const m = zeros(); for (let i = 0; i < 7; i++) { const t = somarPlano(escalar(resolverDia(i, SEM_RESTRICAO), { prot: 1, energia: 1 })); CAMPOS.forEach(c => { m[c] += t[c] / 7; }); } return m; })())"));
+  assert.ok(Math.abs(base.kcal - r.media.kcal) < 5, "base " + base.kcal + " x " + r.media.kcal);
+  assert.ok(Math.abs(base.prot - r.media.prot) < 1);
 });
 
 test("achado 14: batata-doce não entra como fonte de vitamina A", () => {
