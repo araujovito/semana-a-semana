@@ -38,3 +38,12 @@
 - 20/11 12:49 [chefe de engenharia] A empresa parou por limite de uso da conta. Main está com os testes verdes e tem as correções gerais da auditoria e dos dados; os dois achados que barram a entrega (próxima aplicação e limites de segurança) ficaram pela metade nas cópias de trabalho e NÃO estão em main. Detalhes em empresa/relatorios/engenharia-onda-1.md.
 - 20/11 12:49 [revisora clínica] parei por ordem da direção (fim do limite da conta); relatório INCOMPLETO gravado em empresa/relatorios/revisao-clinica.md, sem pesquisa na internet e sem ler parte dos arquivos
 - 22/11 15:46 [direção] Retomei a empresa depois da parada de 20/11. Ordem: A1 (próxima aplicação), A2 (limites de segurança), juntar hoje/peso/android, recompilar e testar no celular virtual.
+- 22/11 15:49 [direção] A1 resolvido e em main: a próxima aplicação segue o dia habitual, dose atrasada até 4 dias aplica, 5 ou 6 dias pula, mais de 14 dias sem registro manda falar com o médico. Testes verdes.
+- 22/11 15:56 [direção] A2 resolvido e em main: tela de entrada, recusa de menores de 18, sem redução de calorias com IMC abaixo de 25 ou gravidez, aviso de hipoglicemia para quem usa insulina, aviso acima de 65 anos, confirmação de meta baixa e opção de esconder calorias. Testes verdes.
+- 22/11 16:03 [direção] Tela Hoje juntada em main: marcar quanto comeu (tudo, metade, um pouco, nada), ver dias anteriores, dia de enjoo sem perder marcas. Testes verdes.
+- 22/11 16:07 [auditoria] começou a auditoria 2 (de entrega): confere se os achados da auditoria 1 foram resolvidos no ramo main
+- 22/11 16:07 [revisora clínica] retomei a revisão clínica de 20/11 para terminá-la, agora com pesquisa na internet (só leitura no código)
+- 22/11 16:07 [engenheiro de app: peso e sintomas] começou: trocar alertas e confirmações nativos de peso e sintomas pelos diálogos do app e consertar o teste que falha
+- 22/11 16:07 [engenheiro Android] começou: trazer o ramo android para cima do main, tirar duplicações, testar, compilar e percorrer o app no emulador
+- 22/11 16:07 [redator técnico] começou: reescrever LEIAME.md e escrever os guias de entrega (instalação para o familiar, primeiros passos para ela)
+- 22/11 16:11 [redator técnico] terminou: LEIAME.md reescrito; empresa/ENTREGA-instalacao.md e empresa/ENTREGA-primeiros-passos.md escritos. Testes verdes. Atenção: o APK da raiz é de 20/11 e precisa ser compilado de novo; a regra nova do Android para instalar por arquivo no Brasil só se confirma testando no celular dela
