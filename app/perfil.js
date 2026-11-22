@@ -24,7 +24,28 @@ function avisoIdade() {
   const m = metas(); if (!m || m.idade <= 65) return "";
   return '<div class="cartao"><h2>Depois dos 65 anos</h2><p style="margin:0">Nessa idade, quem perde peso costuma perder mais músculo junto. Vale combinar com o médico a meta de energia e a de proteína. O treino de força ajuda a manter o músculo.</p></div>';
 }
-function avisosDoPerfil() { return avisoGestante() + avisoPesoBaixo() + avisoHipoglicemia("plano") + avisoIdade(); }
+function avisosDoPerfil() { return avisoGestante() + avisoPesoBaixo() + avisoVesicula("perfil") + avisoHipoglicemia("plano") + avisoIdade(); }
+
+/* ---------- vesícula e fígado ---------- */
+/* TEXTO DE SAÚDE: pedra na vesícula marcada no Perfil. Cartão fixo nas telas Hoje, Plano e Perfil.
+   Fontes:
+   - bula americana do Mounjaro (tirzepatida), seção 5.7, doença aguda da vesícula biliar: colelitíase e colecistite foram
+     relatadas nos estudos; perda de peso substancial ou rápida pode aumentar o risco; https://pi.lilly.com/us/mounjaro-uspi.pdf
+   - sinais da crise e quando procurar atendimento: NIDDK (National Institutes of Health), "Symptoms & Causes of Gallstones":
+     dor no alto da barriga à direita, às vezes por várias horas, muitas vezes depois de refeição pesada, à noite; procurar
+     atendimento já se a dor dura várias horas, ou com febre ou calafrio, pele ou olhos amarelados, urina cor de chá ou fezes claras;
+     https://www.niddk.nih.gov/health-information/digestive-diseases/gallstones/symptoms-causes
+   - a divisão 192 / pronto-socorro / médico repete a de "Sinais de alerta" do Guia (conteudo.js), sem orientação nova.
+   onde: "hoje", "plano" ou "perfil". */
+function avisoVesicula(onde) {
+  const m = metas(); if (!m || !m.vesicula) return "";
+  let t = '<div class="cartao alerta" data-aviso="vesicula"><h2>Pedra na vesícula</h2>' +
+    '<p style="margin:0">A bula da tirzepatida lista problemas de vesícula (pedra e inflamação) entre os efeitos do remédio, e perder peso rápido aumenta esse risco. O seu médico sabe que você tem pedra na vesícula? Confirme com ele antes de começar.</p>' +
+    '<p style="margin:6px 0 0"><strong>Crise de vesícula:</strong> dor no alto da barriga, do lado direito, que pode durar horas, muitas vezes depois de uma refeição pesada ou à noite.</p>' +
+    '<p style="margin:6px 0 0">Vá ao pronto-socorro hoje se a dor durar várias horas, ou vier com febre ou calafrio, pele ou olhos amarelados, urina cor de chá ou fezes claras. Dor forte e contínua que vai para as costas também é pronto-socorro (pode ser pâncreas). Desmaio ou confusão: ligue 192. Se teve uma dor assim que passou sozinha, conte ao médico.</p>';
+  if (onde === "hoje") t += '<div class="botoes"><button class="sec" data-ac="ir" data-para="guia">Ver todos os sinais de alerta</button></div>';
+  return t + "</div>";
+}
 function avisoPesoBaixo() {
   const m = metas(); if (!m || !m.abaixoDoPeso) return "";
   return '<div class="cartao alerta"><h2>Peso abaixo da faixa de referência</h2><p style="margin:0">Pelo peso e pela altura registrados, você está abaixo da faixa de referência (IMC menor que 18,5). Fale com o seu médico sobre a dose e o peso. O app não calcula redução de calorias nesta faixa.</p></div>';

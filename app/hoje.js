@@ -54,6 +54,7 @@ function telaHoje() {
 
   if (eHoje) {
     out += cartaoTratamentoHoje();
+    out += avisoVesicula("hoje");
     if (riscoHipoHoje(h, new Date().getHours())) out += avisoHipoglicemia("hoje");
     const motivo = avisoComerPoucoHoje(h);
     if (motivo) out += cartaoComerPouco(motivo);

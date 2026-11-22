@@ -252,6 +252,8 @@ function metas() {
   return {
     peso, idade, imc, tmb, gasto, piso, kcalCalc, kcal, pesoRef, protCalc, prot,
     semDeficit, abaixoDoPeso, gestante, discreto: p.discreto === true, pisoDia,
+    /* Respostas do bloco Saúde do Perfil usadas pelos avisos de vesícula e fígado (perfil.js). aguardaCirurgia só vale com vesícula. */
+    vesicula: p.vesicula === true, figado: p.figado === true, aguardaCirurgia: p.vesicula === true && p.aguardaCirurgia === true,
     protMin: Math.round(1.2 * pesoRef), protMax: Math.round(1.6 * pesoRef), gord, carb,
     fibra: masc ? (idade > 50 ? 30 : 38) : (idade > 50 ? 21 : 25),
     agua: p.metaAgua || 2000,
