@@ -37,3 +37,5 @@ Uma linha por decisão: data, quem decidiu, o que e por quê.
 - 22/11 [direção] Ela tem plano da nutricionista (04/11/2026): o app passa a seguir esse plano (escolher a opção prescrita em cada refeição, marcar, somar no painel). O cardápio próprio do app vira reserva. PDFs pessoais fora do git.
 - 22/11 [dono] Paleta aprovada: degradê rosa/lilás/azul, primária azul-violeta, estilo de app chinês (sem serifa, grade de atalhos, cartões, marcar o dia sem cobrança).
 - 22/11 [dono] Celular dela: Xiaomi Redmi Note 13 Pro. Alvo de teste: 440 px de largura e letra grande.
+- 22/11 [dono] Pedido de PIN de 6 dígitos com cifra dos dados. Decisão da direção: o PIN NÃO vai no código (seria legível no APK); o app pede para criar o PIN no primeiro uso, com código de recuperação. O número do PIN não é registrado em nenhum arquivo do projeto.
+- 22/11 [dono] Autorizou a direção a tocar o projeto até terminar, decidindo as dúvidas sem perguntar. Limites mantidos: nada publicado, PIN fora do código, documentos pessoais fora do git.
