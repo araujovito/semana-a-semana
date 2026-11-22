@@ -55,14 +55,16 @@ Object.assign(AC, {
     avisoCalendario = abriu ? "" : "Não foi possível abrir um app de calendário neste celular. Dá para criar o evento à mão, no calendário que você usa.";
     render();
   },
-  exportar() { compartilhar(JSON.stringify(E)); },
+  // exportar fica em seguranca.js (aviso de dados de saúde e cópia com código de verificação).
   importar() {
-    let j; try { j = migrar(JSON.parse(texto("imp"))); } catch (e) { j = null; }
-    if (!j || !j.perfil) { aviso("Texto inválido. Cole o conteúdo exportado inteiro."); return; }
-    const restaurar = function () { E = j; salvar(); aviso("Dados restaurados."); irPara("hoje"); };
-    // Sem perfil não há o que substituir (celular novo ou dados apagados): restaura direto.
-    if (!E.perfil) { restaurar(); return; }
-    confirmar("Substituir os dados deste celular pelos do texto colado?", restaurar, "Substituir");
+    segLerCopia(texto("imp")).then(function (r) {
+      if (r.erro) { if (/Texto inválido/.test(r.erro)) aviso(r.erro); else alerta(r.erro); return; }
+      const restaurar = function () { E = r.estado; salvar(); aviso("Dados restaurados."); irPara("hoje"); };
+      const semCodigo = r.conferida ? "" : " Esta cópia é de uma versão anterior do app e não tem código de verificação: confira os registros depois.";
+      // Sem perfil não há o que substituir (celular novo ou dados apagados): restaura direto, a não ser que a cópia seja antiga.
+      if (!E.perfil && r.conferida) { restaurar(); return; }
+      confirmar((E.perfil ? "Substituir os dados deste celular pelos do texto colado?" : "Restaurar os dados do texto colado?") + semCodigo, restaurar, E.perfil ? "Substituir" : "Restaurar");
+    });
   },
   zerar() { confirmar("Apagar TODOS os dados deste celular? Não dá para desfazer.", function () { E = vazio(); salvar(); render(true); }, "Apagar tudo"); },
 });

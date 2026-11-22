@@ -82,10 +82,14 @@ ok(/dataExtractionRules="@xml\/regras_backup"/.test(MANIFESTO) && /fullBackupCon
   ok(/dados de saúde/.test(await t.textoDialogo() || ""), "Exportar tudo avisa, antes, que o texto tem dados de saúde");
   await t.nao();
   ok((await p.evaluate(() => window.__enviados)).length === 0 && !(await t.ler()).ui.ultimaExportacao, "cancelar o aviso não exporta nada");
-  await p.click("[data-ac=exportar]"); await t.sim();
+  await p.click("[data-ac=exportar]"); await t.sim(); await p.waitForFunction(() => window.__enviados.length === 1);
   let enviados = await p.evaluate(() => window.__enviados);
-  ok(enviados.length === 1 && JSON.parse(enviados[0]).doses.length === 1, "seguir exporta o texto completo");
-  ok((await t.ler()).ui.ultimaExportacao === d(0) && JSON.parse(enviados[0]).ui.ultimaExportacao === d(0), "a data da exportação fica guardada (e vai junto na cópia)");
+  const copia1 = JSON.parse(enviados[0] || "{}");
+  ok(enviados.length === 1 && copia1.formato === "semana-a-semana/copia" && copia1.versao === 1 && /^[0-9a-f]{64}$/.test(copia1.sha256) && copia1.dados.doses.length === 1, "seguir exporta o texto completo, com versão e código de verificação");
+  ok(/Cópia pronta e conferida/.test(await p.locator("#aviso").innerText()), "o app relê a cópia gerada e só então diz \"Cópia pronta e conferida\"");
+  ok(await p.evaluate(h => segSha256Js(JSON.stringify(JSON.parse(h).dados)), enviados[0]) === copia1.sha256 && await p.evaluate(() => isSecureContext && !!crypto.subtle),
+    "no arquivo (file://) o código vem do WebCrypto e bate com o cálculo em JavaScript puro");
+  ok((await t.ler()).ui.ultimaExportacao === d(0) && copia1.dados.ui.ultimaExportacao === d(0), "a data da exportação fica guardada (e vai junto na cópia)");
   await p.click("[data-ac=compartilhar][data-de=rel]");
   ok(/relatório tem dados de saúde/.test(await t.textoDialogo() || ""), "Compartilhar o relatório avisa, antes, que o texto tem dados de saúde");
   await t.nao(); ok((await p.evaluate(() => window.__enviados)).length === 1, "cancelar não compartilha o relatório");
@@ -106,7 +110,7 @@ ok(/dataExtractionRules="@xml\/regras_backup"/.test(MANIFESTO) && /fullBackupCon
   await t.alvosDeToque("lembrete de cópia");
   await p.click("#seg-lembrete-copia [data-ac=exportar]");
   ok(/dados de saúde/.test(await t.textoDialogo() || ""), "exportar pelo lembrete também passa pelo aviso de dados de saúde");
-  await t.sim();
+  await t.sim(); await p.waitForFunction(() => window.__enviados.length === 1);
   ok((await p.evaluate(() => window.__enviados)).length === 1 && await p.locator("#seg-lembrete-copia").count() === 0, "depois de exportar, o lembrete some");
   await t.semear(estadoBase(Object.assign({ ui: { diario: "relatorio", ultimaExportacao: d(16) } }, antigo))); await p.waitForSelector("#seg-lembrete-copia");
   ok(/há 16 dias/.test(await p.locator("#seg-lembrete-copia").innerText()), "com exportação antiga, o lembrete diz há quantos dias foi");
@@ -115,6 +119,15 @@ ok(/dataExtractionRules="@xml\/regras_backup"/.test(MANIFESTO) && /fullBackupCon
   await t.semear(estadoBase(Object.assign({ ui: { diario: "relatorio", ultimaExportacao: d(10) } }, antigo))); await p.waitForSelector("[data-ac=zerar]");
   ok(await p.locator("#seg-lembrete-copia").count() === 0, "exportação há 10 dias: sem lembrete");
   await t.fechar();
+
+  // Cópia maior que o limite da ponte do Android (MAX_TEXTO em MainActivity.java, o mesmo SEG_MAX_TEXTO): avisa e não envia.
+  const max = Number((JAVA.match(/MAX_TEXTO = (\d+);/) || [])[1]);
+  ok(max > 0 && max === Number((fs.readFileSync(path.join(RAIZ, "seguranca.js"), "utf8").match(/SEG_MAX_TEXTO = (\d+);/) || [])[1]), "limite de tamanho igual no Java e no JavaScript (" + max + ")");
+  t = await abrir({ estado: estadoBase({ sintomas: [{ id: "s1", data: d(1), enjoo: 0, nota: "x".repeat(max) }], ui: { diario: "relatorio" } }), aba: "diario" }); p = t.p;
+  await p.addInitScript(ponte); await p.reload(); await p.waitForSelector("[data-ac=exportar]");
+  await p.click("[data-ac=exportar]"); await t.sim(); await p.waitForSelector("#dialogo:not([hidden])");
+  ok(/grande demais/.test(await t.textoDialogo()) && (await p.evaluate(() => window.__enviados)).length === 0 && !(await t.ler()).ui.ultimaExportacao, "cópia grande demais para o Android: avisa, não envia e não marca como exportada");
+  await t.nao(); await t.fechar();
 
   // Restaurar de ponta a ponta: exporta um estado com tudo preenchido (inclui os campos de vesícula e fígado da onda 2 e um campo
   // que ainda não existe, para provar que campo novo não se perde), apaga tudo e restaura num navegador limpo, pela primeira tela.
@@ -132,8 +145,14 @@ ok(/dataExtractionRules="@xml\/regras_backup"/.test(MANIFESTO) && /fullBackupCon
   });
   t = await abrir({ estado: cheio, aba: "diario" }); p = t.p;
   await p.addInitScript(ponte); await p.reload(); await p.waitForSelector("[data-ac=exportar]");
-  await p.click("[data-ac=exportar]"); await t.sim();
+  await p.click("[data-ac=exportar]"); await t.sim(); await p.waitForFunction(() => window.__enviados.length === 1);
   const copiaTexto = (await p.evaluate(() => window.__enviados))[0], antes = await t.ler();
+  // Texto editado à mão (um peso trocado) não restaura e não muda nada.
+  await p.fill("#imp", copiaTexto.replace("118.4", "98.4")); await p.click("[data-ac=importar]");
+  await p.waitForSelector("#dialogo:not([hidden])");
+  ok(/não confere com o código de verificação/.test(await t.textoDialogo()), "cópia alterada: o app recusa e explica");
+  await t.nao();
+  ok(JSON.stringify(await t.ler()) === JSON.stringify(antes), "cópia alterada: nada foi mudado");
   await p.click("[data-ac=zerar]"); await t.sim();
   ok(!(await t.ler()).perfil, "restaurar: dados apagados antes de restaurar");
   await t.fechar();
