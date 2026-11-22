@@ -6,111 +6,118 @@
 <title>Caminhos · protótipo</title>
 <!--CSS-->
 <style>
-.base-comum { margin-top: 14px; }
-.base-comum ul { margin: 8px 0 0; padding: 0; list-style: none; }
-.base-comum li { display: flex; gap: 10px; padding: 5px 0; font-size: 15px; }
-.base-comum li::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--cor); margin-top: 8px; }
-.caminho { position: relative; padding: 0; overflow: hidden; }
-.caminho .cab { display: flex; gap: 14px; align-items: center; padding: 16px 16px 0; }
-.caminho .cab svg { width: 60px; height: 60px; flex: none; }
-.caminho .corpo { padding: 4px 16px 16px; }
-.caminho.escolhido { border: 2px solid var(--cor); }
-.selo { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: var(--sobre-cor); background: var(--cor);
-  border-radius: 999px; padding: 3px 10px; margin-bottom: 4px; }
-.serve { margin: 10px 0 0; font-size: 15px; }
-.pc { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 12px; }
-.pc div { background: var(--fundo); border-radius: 14px; padding: 10px 12px; }
-.pc h3 { margin: 0 0 4px; font: 700 12.5px var(--corpo); letter-spacing: .06em; text-transform: uppercase; color: var(--suave); }
-.pc ul { margin: 0; padding-left: 16px; font-size: 14px; }
-.pc li + li { margin-top: 4px; }
-.exemplo { margin-top: 12px; font-size: 14.5px; }
-.exemplo b { color: var(--cor); }
-.prato .p { fill: var(--cartao); stroke: var(--dado); stroke-width: 2; }
-.prato .a { fill: var(--dado); }
-.prato .b { fill: var(--dado-suave); }
-.prato .c { fill: var(--acento); }
-.fonte { font-size: 12.5px; color: var(--suave); margin-top: 10px; }
+.vale { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.vale div { display: flex; gap: 8px; align-items: flex-start; background: var(--cinza); border-radius: 12px; padding: 10px; font-size: 13px; line-height: 1.3; }
+.vale .ico-c { width: 26px; height: 26px; border-radius: 8px; }
+.vale .ico-c svg { width: 15px; height: 15px; }
+.caminho { padding: 0; overflow: hidden; }
+.capa { display: flex; align-items: center; gap: 12px; padding: 14px; color: #fff; }
+.capa svg.prato { width: 56px; height: 56px; flex: none; }
+.capa h2 { font-size: 18px; color: #fff; }
+.capa .sel { display: inline-block; margin-bottom: 4px; font-size: 11.5px; font-weight: 800; background: #fff; color: #087f5b; border-radius: 6px; padding: 3px 7px; }
+.capa p { font-size: 13px; opacity: .95; }
+.c1 { background: linear-gradient(120deg, #1864ab, #1971c2); }
+.c2 { background: linear-gradient(120deg, #0f6e52, #087f5b); }
+.c3 { background: linear-gradient(120deg, #a93a0c, #c2410c); }
+.corpo { padding: 12px 14px 14px; }
+.prc { list-style: none; margin: 8px 0 0; padding: 0; font-size: 13.5px; }
+.prc li { display: flex; gap: 8px; padding: 3px 0; }
+.prc li::before { flex: none; width: 18px; height: 18px; border-radius: 50%; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+.prc li.a::before { content: "✓"; background: var(--pri-clara); color: var(--pri); }
+.prc li.t::before { content: "!"; background: var(--laranja-clara); color: var(--laranja); }
+.almoco { margin-top: 10px; background: var(--cinza); border-radius: 12px; padding: 9px 11px; font-size: 13px; }
+.almoco b { display: block; font-size: 12px; color: var(--suave); }
+.caminho.escolhido { box-shadow: 0 0 0 2px var(--pri); }
+.caminho .botoes { display: flex; gap: 8px; margin-top: 12px; }
+.caminho .botoes > * { flex: 1; }
 </style>
 </head>
 <body>
 <!--ICONES-->
 <header class="topo">
-  <span class="marca">Semana a Semana</span>
-  <a class="redondo" href="#" aria-label="Perfil e metas"><svg class="ic p" aria-hidden="true"><use href="#i-perfil"/></svg></a>
+  <div class="barra">
+    <b>Comer</b>
+    <a class="botao-topo" href="#" aria-label="Perfil e metas"><svg class="ic p" aria-hidden="true"><use href="#i-perfil"/></svg></a>
+  </div>
+  <h1 style="font-size:24px;margin-top:4px">Caminhos para comer</h1>
+  <p style="font-size:13.5px;font-weight:500;margin-top:4px">Três jeitos de montar a semana. Você escolhe um e troca quando quiser; o cardápio segue o caminho escolhido.</p>
+  <div class="vidro" style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+    <span style="font-size:13px;font-weight:600">Seu caminho agora</span><b>Prato dividido</b>
+  </div>
 </header>
 <main>
-  <p class="sobre" style="margin:6px 0 4px">Comer</p>
-  <h1>Caminhos para comer</h1>
-  <p class="sub" style="margin:6px 0 0">Três jeitos de montar a semana. Nenhum é obrigatório: você escolhe um para começar e pode trocar quando quiser. O cardápio do app segue o caminho escolhido.</p>
-
-  <section class="cartao suave base-comum" aria-labelledby="t-base">
-    <h2 id="t-base">O que vale em todos</h2>
-    <p class="sub" style="margin:0">Pensado para a vesícula e o fígado.</p>
-    <ul>
-      <li>Refeições menores, sem muita gordura de uma vez.</li>
-      <li>Proteína em todas as refeições.</li>
-      <li>Pouco açúcar, refrigerante e álcool.</li>
-      <li>Perda de peso sem pressa: o ritmo é combinado com o médico.</li>
-    </ul>
-    <p class="fonte">Fontes: anotadas no app, item por item.</p>
+  <section class="cartao sobe" aria-labelledby="t-vale">
+    <div class="cab"><h2 id="t-vale">Vale em todos</h2><span class="selo">vesícula e fígado</span></div>
+    <div class="vale">
+      <div><span class="ico-c" style="background:var(--c-comida)"><svg aria-hidden="true"><use href="#i-comer"/></svg></span>Refeições menores, pouca gordura de uma vez</div>
+      <div><span class="ico-c" style="background:var(--c-peso)"><svg aria-hidden="true"><use href="#i-peso"/></svg></span>Proteína em todas as refeições</div>
+      <div><span class="ico-c" style="background:var(--c-agua)"><svg aria-hidden="true"><use href="#i-agua"/></svg></span>Pouco açúcar, refrigerante e álcool</div>
+      <div><span class="ico-c" style="background:var(--c-aplic)"><svg aria-hidden="true"><use href="#i-semana"/></svg></span>Perder peso sem pressa, no ritmo do médico</div>
+    </div>
+    <p class="mini" style="margin-top:8px">Cada item tem a fonte anotada no app.</p>
   </section>
 
   <article class="cartao caminho" aria-labelledby="c1">
-    <div class="cab">
-      <svg class="prato" viewBox="0 0 60 60" aria-hidden="true"><circle class="p" cx="30" cy="30" r="26"/><path class="a" d="M14 32c6-8 18-9 26-3l5-4v12l-5-4c-8 6-20 5-26-1z"/><circle class="b" cx="22" cy="18" r="4"/><circle class="b" cx="30" cy="15" r="3.5"/><circle class="c" cx="38" cy="44" r="3"/><circle class="b" cx="28" cy="45" r="4"/></svg>
-      <div><h2 id="c1" style="margin:0">Mediterrâneo adaptado</h2><div class="sub">peixe, legumes, grãos, azeite em fio</div></div>
+    <div class="capa c1">
+      <svg class="prato" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="27" fill="rgba(255,255,255,.22)"/><circle cx="30" cy="30" r="21" fill="#fff"/><path d="M15 31c6-7 17-8 24-3l5-4v11l-5-4c-7 6-18 5-24 0z" fill="#1c7ed6"/><circle cx="23" cy="20" r="3.5" fill="#94d82d"/><circle cx="31" cy="18" r="3" fill="#94d82d"/><circle cx="29" cy="42" r="3.5" fill="#fab005"/></svg>
+      <div><h2 id="c1">Mediterrâneo adaptado</h2><p>peixe, legumes, grãos, azeite em fio</p></div>
     </div>
     <div class="corpo">
-      <p class="serve"><b>Para quem:</b> gosta de variedade e de cozinhar um pouco, e quer um jeito de comer para a vida toda.</p>
-      <div class="pc">
-        <div><h3>A favor</h3><ul><li>Um dos mais estudados para gordura no fígado</li><li>Comida de verdade, sem cortar grupos</li></ul></div>
-        <div><h3>Atenção</h3><ul><li>Azeite e castanhas em porções pequenas, por causa da vesícula</li><li>Peixe pesa no orçamento</li></ul></div>
-      </div>
-      <p class="exemplo"><b>Um almoço assim:</b> sardinha assada, grão-de-bico, salada de tomate e pepino.</p>
-      <div class="botoes"><button class="sec">Escolher este caminho</button></div>
+      <div class="selos"><span class="selo">comida de verdade</span><span class="selo laranja">cozinhar um pouco</span><span class="selo cinza">para a vida toda</span></div>
+      <p style="margin-top:8px;font-size:14px"><b>Para quem:</b> gosta de variedade e de cozinhar.</p>
+      <ul class="prc">
+        <li class="a">Um dos mais estudados para gordura no fígado</li>
+        <li class="a">Não corta nenhum grupo de alimento</li>
+        <li class="t">Azeite e castanhas em porções pequenas, por causa da vesícula</li>
+        <li class="t">Peixe pesa no orçamento</li>
+      </ul>
+      <div class="almoco"><b>Um almoço assim</b>Sardinha assada, grão-de-bico, salada de tomate e pepino</div>
+      <div class="botoes"><button class="leve">Ver a semana</button><button>Escolher</button></div>
     </div>
   </article>
 
   <article class="cartao caminho escolhido" aria-labelledby="c2">
-    <div class="cab">
-      <svg class="prato" viewBox="0 0 60 60" aria-hidden="true"><circle class="p" cx="30" cy="30" r="26"/><path class="b" d="M30 6a24 24 0 0 0 0 48z"/><path class="a" d="M31.5 6a24 24 0 0 1 22.5 22.5H31.5z"/><path class="c" d="M31.5 31.5H54A24 24 0 0 1 31.5 54z"/></svg>
-      <div><span class="selo">Seu caminho atual</span><h2 id="c2" style="margin:0">Prato dividido</h2><div class="sub">metade legumes, ¼ proteína, ¼ arroz, feijão ou raiz</div></div>
+    <div class="capa c2">
+      <svg class="prato" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="27" fill="rgba(255,255,255,.22)"/><circle cx="30" cy="30" r="21" fill="#fff"/><path d="M30 11a19 19 0 0 0 0 38z" fill="#94d82d"/><path d="M31.5 11A19 19 0 0 1 49 28.5H31.5z" fill="#ff922b"/><path d="M31.5 31.5H49A19 19 0 0 1 31.5 49z" fill="#fcc419"/></svg>
+      <div><span class="sel">✓ seu caminho</span><h2 id="c2">Prato dividido</h2><p>½ legumes · ¼ proteína · ¼ arroz, feijão ou raiz</p></div>
     </div>
     <div class="corpo">
-      <p class="serve"><b>Para quem:</b> não quer contar nem pesar nada e come muitas vezes fora de casa.</p>
-      <div class="pc">
-        <div><h3>A favor</h3><ul><li>Fácil de lembrar e de usar no restaurante</li><li>Prato menor combina com o apetite do tratamento</li></ul></div>
-        <div><h3>Atenção</h3><ul><li>Números menos precisos</li><li>O preparo conta: fritura e molho gorduroso pesam na vesícula</li></ul></div>
-      </div>
-      <p class="exemplo"><b>Um almoço assim:</b> frango grelhado, arroz e feijão, abobrinha e salada.</p>
+      <div class="selos"><span class="selo">sem contar nada</span><span class="selo">serve fora de casa</span><span class="selo cinza">prato pequeno</span></div>
+      <p style="margin-top:8px;font-size:14px"><b>Para quem:</b> não quer pesar nem contar e come muito fora.</p>
+      <ul class="prc">
+        <li class="a">Fácil de lembrar e de usar no restaurante</li>
+        <li class="a">Prato menor combina com o apetite do tratamento</li>
+        <li class="t">Números menos precisos</li>
+        <li class="t">O preparo conta: fritura e molho gorduroso pesam na vesícula</li>
+      </ul>
+      <div class="almoco"><b>Um almoço assim</b>Frango grelhado, arroz e feijão, abobrinha e salada</div>
       <div class="botoes"><button>Ver a semana deste caminho</button></div>
     </div>
   </article>
 
   <article class="cartao caminho" aria-labelledby="c3">
-    <div class="cab">
-      <svg class="prato" viewBox="0 0 60 60" aria-hidden="true"><circle class="p" cx="30" cy="30" r="26"/><rect class="b" x="17" y="22" width="14" height="14" rx="2"/><path d="M14 44 46 16" stroke="var(--acento)" stroke-width="3" stroke-linecap="round"/><circle class="a" cx="38" cy="38" r="7"/></svg>
-      <div><h2 id="c3" style="margin:0">Menos açúcar e farinha</h2><div class="sub">doce, pão branco e massa ficam para às vezes</div></div>
+    <div class="capa c3">
+      <svg class="prato" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="27" fill="rgba(255,255,255,.22)"/><circle cx="30" cy="30" r="21" fill="#fff"/><rect x="18" y="21" width="12" height="12" rx="2" fill="#ffd8a8"/><circle cx="37" cy="37" r="6.5" fill="#e8590c"/><path d="M16 44 44 16" stroke="#c2410c" stroke-width="3" stroke-linecap="round"/></svg>
+      <div><h2 id="c3">Menos açúcar e farinha</h2><p>doce, pão branco e massa ficam para às vezes</p></div>
     </div>
     <div class="corpo">
-      <p class="serve"><b>Para quem:</b> sente que doce e pão são o ponto fraco, ou tem glicose alta no exame.</p>
-      <div class="pc">
-        <div><h3>A favor</h3><ul><li>Açúcar em excesso alimenta a gordura no fígado</li><li>Menos picos de fome</li></ul></div>
-        <div><h3>Atenção</h3><ul><li>Dá mais trabalho no começo</li><li>Não é cortar todo carboidrato: em dia de enjoo, pão e arroz ajudam</li></ul></div>
-      </div>
-      <p class="exemplo"><b>Um almoço assim:</b> carne moída com legumes, feijão e meia concha de arroz integral.</p>
-      <div class="botoes"><button class="sec">Escolher este caminho</button></div>
+      <div class="selos"><span class="selo">bom para o fígado</span><span class="selo laranja">mais trabalho no começo</span></div>
+      <p style="margin-top:8px;font-size:14px"><b>Para quem:</b> sente que doce e pão são o ponto fraco, ou tem glicose alta.</p>
+      <ul class="prc">
+        <li class="a">Açúcar em excesso alimenta a gordura no fígado</li>
+        <li class="a">Menos picos de fome</li>
+        <li class="t">Não é cortar todo carboidrato: em dia de enjoo, pão e arroz ajudam</li>
+      </ul>
+      <div class="almoco"><b>Um almoço assim</b>Carne moída com legumes, feijão e meia concha de arroz integral</div>
+      <div class="botoes"><button class="leve">Ver a semana</button><button>Escolher</button></div>
     </div>
   </article>
 
-  <section class="cartao" style="display:flex;gap:12px;align-items:flex-start" aria-labelledby="t-nutri">
-    <svg class="ic" aria-hidden="true" style="color:var(--cor);margin-top:2px"><use href="#i-conversa"/></svg>
-    <div>
-      <h2 id="t-nutri">Converse com sua nutricionista</h2>
-      <p style="margin:0">Leve esta comparação para a consulta. Ela pode ajustar qualquer caminho ao que você come, aos exames e à data da cirurgia.</p>
-      <div class="botoes"><a class="botao leve" href="#">Mostrar na consulta</a></div>
-    </div>
+  <section class="banner" style="background:var(--pri-clara)" aria-labelledby="t-nutri">
+    <span class="ico-c" style="background:var(--c-guia);width:40px;height:40px;border-radius:12px"><svg aria-hidden="true" style="width:22px;height:22px"><use href="#i-conversa"/></svg></span>
+    <div class="t"><b id="t-nutri">Converse com sua nutricionista</b>Ela ajusta qualquer caminho ao que você come, aos exames e à data da cirurgia.</div>
   </section>
+  <a class="botao" href="#" style="width:100%">Mostrar esta comparação na consulta</a>
 </main>
 <!--ABAS:comer-->
 </body>

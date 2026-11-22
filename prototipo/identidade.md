@@ -1,108 +1,148 @@
-# Identidade visual "Ciclo de sete" (protótipo para aprovação)
+# Identidade visual "Hortelã" (protótipo, revisão 2)
 
-**Conclusão:** a proposta troca a cara de "contador de calorias" (verde-água, números grandes no topo) por um caderno da semana de tratamento. O centro de cada tela passa a ser o ciclo de 7 dias entre uma aplicação e a próxima. Calorias e proteína continuam no app, a um toque, num painel próprio. Nada disto foi aplicado em `app/`: são quatro páginas estáticas em `prototipo/` para o dono aprovar ou recusar a direção.
+**Conclusão:** a revisão segue o pedido do dono depois do primeiro protótipo. Saíram a serifa e o caderno cor de ameixa ("fonte de IA"). Entrou a linguagem dos apps chineses atuais de saúde e dia a dia: um topo colorido que já mostra o essencial, uma grade de atalhos com ícones coloridos, números grandes em negrito, cartões em duas colunas, selos e "marcar o dia" com um toque. A semana do tratamento continua no centro: semana 6, anel de 7 dias e próxima aplicação aparecem antes de qualquer outra coisa. Nada foi aplicado em `app/`. São quatro páginas estáticas em `prototipo/` para o dono aprovar.
 
 ## Conceito
 
-- A vida dela no tratamento anda de aplicação em aplicação: dose, enjoo nos dias seguintes, apetite que volta, véspera da próxima. O nome do app já diz isso. A identidade desenha essa unidade: **um anel de 7 partes**, com a aplicação marcada no alto e o dia de hoje em destaque. O anel aparece na tela Hoje e vira o ícone da aba Semana.
-- Ela tem [idade], faz um tratamento longo e está esperando uma cirurgia. O visual é de **caderno de papel**: fundo cor de papel, títulos com serifa, cor de tinta ameixa. Fica longe do visual de academia ou de hospital. É sóbrio, adulto e sem tom infantil.
-- Os números não julgam. Ficar abaixo da meta aparece em tom mais claro da mesma cor, nunca em vermelho. Vermelho fica só para os **sinais de alerta** (vesícula e pâncreas), que assim não se perdem no meio da tela.
-- Ordem da tela Hoje: em que ponto da semana ela está, como está se sentindo, o que comer agora e por quê. Só depois vêm os números.
+- **Inspiração na linguagem, sem cópia.** A referência é a gramática dos apps de saúde e de serviços (Boohee, Keep, Meituan, Alipay, Xiaohongshu): muita informação organizada em blocos pequenos, cor viva e números grandes. Não usei marca, logotipo, ilustração nem tela de nenhum deles. Ícones, pratos e gráficos foram desenhados à mão para este app.
+- **O essencial no topo.** O gradiente de hortelã já traz a semana do tratamento, a dose, a proteína de hoje em número grande, o anel do ciclo (dia 4 de 7, com a aplicação marcada em laranja), a próxima aplicação e a água. Ela abre o app e já sabe onde está.
+- **Atalhos antes de menus.** Uma grade 4×2 leva a tudo o que ela registra ou consulta: Comida, Água, Peso, Aplicação, Sintomas, Caminhada, Painel e Guia. Cada atalho tem uma cor fixa, que se repete na tela Semana.
+- **Marcar o dia (打卡) sem cobrança.** Refeições, copos de água e aplicação ganham um selo de feito quando ela marca. Não existe sequência de dias, contagem de "dias seguidos", mensagem de que ela "perdeu" algo, nem sermão. O texto diz: "O que você não marcar fica em branco, sem cobrança. Dá para marcar depois."
+- **Alerta inconfundível.** O aviso de vesícula e pâncreas se diferencia pela forma (borda grossa à esquerda), pelo ícone de triângulo e pelo rótulo "SINAL DE ALERTA", e o vermelho fica reservado para ele. A cor principal é verde, e as dicas usam laranja num cartão sem borda, com ícone de lâmpada.
 
 ## Paleta (tokens)
 
-Todos os pares de texto conferidos pela fórmula de contraste WCAG 2.1. O mínimo AA é 4,5:1 para texto normal e 3:1 para texto grande ou elementos gráficos.
+Pares de texto conferidos pela fórmula de contraste WCAG 2.1. O mínimo AA é 4,5:1 para texto normal e 3:1 para texto grande e marcas de gráfico.
 
 | Token | Claro | Escuro | Uso |
 |---|---|---|---|
-| `--fundo` | `#f6f1ea` | `#16121a` | papel da tela |
-| `--cartao` | `#fffdfa` | `#211b25` | cartões |
-| `--texto` | `#2b2230` | `#f2ebf0` | texto principal |
-| `--suave` | `#685d6b` | `#b4a8b6` | texto secundário |
-| `--linha` | `#e6ddd4` | `#352c39` | bordas, divisórias |
-| `--cor` | `#6d3b5e` | `#dcaacb` | ameixa: ação, aba ativa, dados |
-| `--sobre-cor` | `#ffffff` | `#2a1525` | texto sobre `--cor` |
-| `--cor-clara` | `#efe2ea` | `#38243a` | fundo de destaque, "por quê" |
-| `--acento` | `#a8481f` | `#f0a57a` | terracota: só aplicação e caneta |
-| `--alerta` | `#b42318` | `#f59a8e` | só sinais de alerta |
-| `--alerta-clara` | `#fbe9e7` | `#3a1f1d` | fundo do cartão de sinais |
-| `--ok` | `#3d6f4f` | `#8fc8a2` | reservado, pouco uso |
-| `--dado-suave` | `#c9a9bf` | `#6e4a64` | dia já passado no anel, "abaixo da faixa" |
-| `--faixa` | `#e9dfe5` | `#2f2533` | faixa da meta nos gráficos |
-| `--vazio` | `#e6ddd4` | `#3a313e` | trilho vazio, dia que ainda não chegou |
+| `--fundo` | `#f5f6f8` | `#111214` | fundo cinza bem claro / quase preto |
+| `--cartao` | `#ffffff` | `#1c1d21` | cartões |
+| `--texto` | `#1d2129` | `#e9eaec` | texto principal |
+| `--suave` | `#646a73` | `#9ea3ab` | texto secundário |
+| `--cinza` | `#f2f3f5` | `#25272c` | fundo de botão neutro e de blocos internos |
+| `--pri` | `#087f5b` | `#38d9a9` | verde hortelã: botões, links, aba ativa |
+| `--sobre-pri` | `#ffffff` | `#04241b` | texto sobre `--pri` |
+| `--pri-clara` | `#e6fcf5` | `#12342b` | selo verde, botão leve |
+| `--topo-a / b / c` | `#38d9a9 / #96f2d7 / #fff3bf` | `#0e5a47 / #134e4a / #2b2a1a` | gradiente do topo |
+| `--sobre-topo` | `#0b3d2e` | `#e9fbf3` | texto no topo |
+| `--dado` | `#0ca678` | `#63e6be` | barras e anéis de proteína (só gráfico) |
+| `--dado2` | `#e8590c` | `#ffa94d` | linha de calorias (só gráfico) |
+| `--laranja` / `--laranja-clara` | `#b54708` / `#fff4e6` | `#ffb366` / `#2b2017` | dica do dia, selos de atenção |
+| `--alerta` / `--alerta-clara` | `#c92a2a` / `#fff0f0` | `#ff8787` / `#2c1a1c` | **só** sinais de alerta |
+
+Cores dos atalhos (gradiente sob o ícone branco; o ícone sempre tem o nome escrito embaixo): comida laranja, água azul, peso roxo, aplicação verde, sintomas rosa, caminhada ciano, painel amarelo, guia índigo.
 
 Contraste medido:
 
 | Par | Claro | Escuro |
 |---|---|---|
-| texto × fundo | 13,6 | 15,8 |
-| texto × cartão | 15,1 | 14,4 |
-| suave × fundo | 5,6 | 8,1 |
-| suave × cartão | 6,1 | 7,4 |
-| suave × cor-clara | 5,0 | 6,2 |
-| cor × cartão (links, botão secundário) | 8,5 | 8,5 |
-| sobre-cor × cor (botão) | 8,6 | 8,7 |
-| cor × cor-clara (botão leve, aba ativa) | 6,9 | 7,2 |
-| acento × cartão | 5,7 | 8,3 |
-| alerta × cartão | 6,5 | 7,9 |
+| texto × fundo | 14,9 | 15,6 |
+| suave × cartão | 5,5 | 6,6 |
+| suave × fundo | 5,0 | 7,4 |
+| sobre-pri × pri (botão) | 5,0 | 9,2 |
+| pri × cartão (link) | 5,0 | 9,4 |
+| pri × pri-clara (selo verde) | 4,7 | 7,5 |
+| sobre-topo × topo (pior ponto do gradiente) | 6,8 | 7,6 |
+| laranja × laranja-clara (selo, dica) | 5,0 | 9,0 |
+| alerta × alerta-clara | 4,9 | 7,1 |
+| alerta × cartão | 5,5 | 7,3 |
+| dado × cartão (marca de gráfico) | 3,1 | 10,9 |
+| dado2 × cartão (marca de gráfico) | 3,6 | 8,9 |
+| branco × capas dos caminhos (azul, verde, laranja) | ≥ 5,0 | iguais |
 
-O escuro foi escolhido à parte, não é a inversão automática do claro: a ameixa clareia para rosa-ameixa e o terracota para pêssego, para manter o contraste sobre o fundo escuro.
+O escuro foi escolhido à parte: o topo vira verde-garrafa com texto claro, e os botões passam a hortelã clara com texto escuro.
 
 ## Tipografia
 
-- **Títulos:** `"Noto Serif", "Droid Serif", Georgia, serif`. A Noto Serif já vem no Android, então não vai arquivo de fonte junto com o app. Nas capturas deste computador aparece a DejaVu Serif no lugar, que é um pouco mais larga. No celular o título fica um pouco mais estreito.
-- **Texto:** `system-ui, Roboto` (a fonte do Android).
-- Tamanhos: título da tela 27 px, título de cartão 19 px, texto 16 px, secundário 14 px. Números com algarismos de largura fixa (`tabular-nums`).
-- Rótulos pequenos em caixa alta com espaçamento ("SEXTA, 20 DE NOVEMBRO", "PRÓXIMA") marcam a seção sem pesar.
+- Só sem serifa do sistema: `system-ui, -apple-system, Roboto, "Noto Sans", sans-serif`. No Android aparece a Roboto. Nenhuma fonte vai dentro do app. Nas capturas deste computador aparece a DejaVu Sans, um pouco mais larga.
+- Hierarquia densa:
+  - números grandes 30–34 px, peso 800;
+  - números de cartão 22 px, peso 800;
+  - títulos de cartão 16 px, peso 700;
+  - texto 15 px;
+  - rótulos e selos 11,5–13 px.
+- Números com algarismos de largura fixa.
 
 ## Ícones
 
-Desenhados à mão em SVG, traço de 1,8 px, grade de 24 px, cor do texto (`currentColor`). Ficam em `prototipo/fonte/icones.svg`. Saem os emojis da barra de abas (☀ 🍽 💪 📓 📖), que mudam de desenho conforme o celular.
+Todos próprios, em SVG preenchido, numa grade de 24 px, guardados em `prototipo/fonte/icones.svg`. Substituem os emojis da barra de abas.
 
 | Aba | Ícone |
 |---|---|
-| Hoje | sol nascendo sobre a linha do horizonte |
-| Semana | anel de 7 pontos, o primeiro cheio (dia da aplicação) |
-| Comer | tigela com vapor |
+| Hoje | sol cheio com raios |
+| Semana | calendário com os dias vazados |
+| Comer | tigela com hashis |
 | Mover | pessoa caminhando |
 | Guia | livro aberto |
 
-Também desenhados: perfil, caneta (aplicação), balança, gota, alerta, relógio, setas, balão de conversa. A aba ativa ganha uma pílula `--cor-clara` atrás do ícone.
+Também desenhados: água (gota), peso (balança com mostrador), aplicação (caneta), sintomas (coração), painel (barras), perfil, alerta (triângulo com exclamação), feito (círculo com visto), dica (lâmpada), conversa, setas. Aba ativa em verde `--pri`, as outras em cinza.
 
 ## Tom dos textos
 
-Continua o do briefing: frases curtas, fatos, riscos e opções. O que muda:
-- Cada sugestão traz **"por quê"** em uma frase (ex.: "pouca gordura de uma vez é mais leve para a vesícula").
-- Pergunta em vez de cobrança: "Como você está hoje?", nunca "Você não bateu a meta".
-- Abaixo da meta tem explicação neutra ("Quarta, dia seguinte à aplicação, teve menos comida e mais enjoo. Isso costuma acontecer...").
-- Caminhos de alimentação são **opções**, cada uma com "para quem", "a favor" e "atenção", e a decisão volta para a nutricionista.
+Continua o do briefing: frases curtas, fatos, riscos e opções, sem "o correto é". Selos curtos nomeiam o que importa ("pouca gordura", "28 g de proteína", "prato pequeno", "5 mg", "hoje"). Cada sugestão de refeição traz um "Por quê" de uma linha. Marcar o dia nunca cobra.
 
-**Atenção:** os textos de saúde do protótipo são exemplos de tom. Antes de entrarem no app, cada afirmação nova precisa da fonte anotada (regra 9), sobretudo os "por quê" das refeições, a base comum dos caminhos e os prós e contras. A frase sobre perda rápida e vesícula vem da bula, já citada no briefing.
+**Atenção:** os textos de saúde do protótipo são exemplos de tom. Antes de entrarem no app, cada afirmação nova precisa da fonte anotada (regra 9). Isso vale para a dica do dia, os "por quê", o "vale em todos" e os prós e contras dos caminhos. A frase sobre perda rápida e vesícula vem da bula, já citada no briefing.
 
 ## As quatro telas
 
-- `hoje.html`: data, "Semana 6 do tratamento", anel do ciclo (dia 4 de 7, aplicação na terça, dose, próxima), "Como você está hoje?" com um toque, próxima refeição com o porquê e as quatro opções (tudo, metade, um pouco, nada) que já existem, resumo de proteína numa linha que abre o painel, água em copos, faixa fixa de sinais de alerta, atalhos de registro.
-- `painel.html`: Hoje até agora contra a faixa da meta (barra com a faixa marcada), 7 dias (média, dias na faixa, barras de proteína com linha de média, linha de calorias), 30 dias (calendário com os dias na faixa, abaixo dela ou sem registro, e média por semana). "Ver como tabela" é a saída acessível que o app vai ter.
-- `semana.html`: navegação entre semanas, peso no dia de cada aplicação com a mudança de dose marcada e a frase sobre o ritmo, linha do tempo dia a dia (aplicação, peso, enjoo em 3 níveis, refeições em 5 bolinhas, sintomas, movimento), resumo para a consulta.
-- `caminhos.html`: o que vale em todos os caminhos (vesícula e fígado), três cartões (mediterrâneo adaptado, prato dividido, menos açúcar e farinha) com para quem, a favor, atenção e um almoço de exemplo, o caminho atual marcado, "Converse com sua nutricionista".
+- `hoje.html`:
+  - topo com semana, dose, proteína de hoje em número grande, anel de 7 dias, próxima aplicação e água;
+  - grade de 8 atalhos;
+  - dica do dia;
+  - sinal de alerta da vesícula e do pâncreas;
+  - "Marcar o dia" (refeições 2/5, água 4/10, aplicação feita);
+  - próxima refeição com selos, o porquê e as quatro opções de um toque que o app já tem;
+  - duas colunas com "Como está hoje?" e caminhada, e outras duas com peso e um atalho para o painel;
+  - lista "Ainda hoje".
+- `painel.html`:
+  - topo com proteína e calorias de hoje contra a faixa;
+  - seletor Hoje / 7 dias / 30 dias;
+  - quatro números em grade (médias, dias na faixa, 30 dias);
+  - barras de proteína com faixa e média, e linha de calorias com faixa;
+  - nota neutra sobre o dia de enjoo e "Ver como tabela";
+  - calendário de 30 dias e média por semana.
+- `semana.html`:
+  - topo com navegação entre semanas e peso, enjoo e proteína da semana;
+  - faixa dos 7 dias com selo de dia marcado (sem sequência);
+  - peso no dia de cada aplicação, com a troca de dose marcada e a frase sobre o ritmo;
+  - cartões dia a dia, com ícones nas cores dos atalhos e bolinhas de refeição;
+  - dias que ainda não chegaram;
+  - atalho para o relatório da consulta.
+- `caminhos.html`:
+  - topo com o caminho atual;
+  - "Vale em todos" (vesícula e fígado) em grade;
+  - três cartões com capa colorida e prato desenhado: mediterrâneo adaptado, prato dividido (escolhido) e menos açúcar e farinha. Cada um tem selos, para quem, a favor (✓), atenção (!), um almoço de exemplo e os botões;
+  - faixa "Converse com sua nutricionista".
 
-Dados de exemplo inventados (pessoa fictícia de 97 kg na semana 6, dose de 5 mg). Não usam os dados reais dela.
+Os dados de exemplo são inventados (pessoa fictícia de 97 kg, semana 6, 5 mg). Não usam os dados reais dela.
 
 ## O que muda e o que não muda
 
-**Muda:** cores, fontes, ícones, topo sem faixa colorida, ordem da tela Hoje, barra de abas (Hoje, Semana, Comer, Mover, Guia), e telas novas: painel, semana e caminhos.
+**Muda:**
+- cores, fonte (sem serifa), ícones preenchidos, topo em gradiente com dados, grade de atalhos, cartões em duas colunas, selos, faixa de destaque, "marcar o dia";
+- abas: Hoje, Semana, Comer, Mover, Guia;
+- telas novas: painel, semana e caminhos.
 
-**Não muda:** o que já é registrado e como é guardado, as contas de nutrição, as quatro opções de um toque por refeição, alvos de toque de 44 px ou mais, o modo discreto (sem calorias em destaque; no app, o painel deve esconder calorias quando ele estiver ligado), avisos clínicos e os textos com fonte, funcionamento sem internet, WebView 113.
+**Não muda:**
+- o que é registrado e como é guardado, e as contas de nutrição;
+- as quatro opções por refeição;
+- alvos de toque de 44 px ou mais;
+- o modo discreto: no app, o topo e o painel devem esconder as calorias quando ele estiver ligado;
+- avisos clínicos com fonte, funcionamento sem internet, WebView 113 (CSS até 2022: nada de `:has()` nem `color-mix()`).
 
 ## Como abrir e regerar
 
-As páginas de `prototipo/*.html` abrem sozinhas no navegador. Cada uma traz o CSS e os ícones embutidos e não carrega nada de fora. Elas são geradas a partir de `prototipo/fonte/`:
+As páginas de `prototipo/*.html` abrem sozinhas. CSS e ícones vão embutidos, e nada é carregado de fora.
 
 ```
-node prototipo/fonte/montar.js     # monta as 4 páginas
+node prototipo/fonte/montar.js     # monta as 4 páginas a partir de prototipo/fonte/
 node prototipo/fonte/capturar.js   # gera prototipo/capturas/*-claro.png e *-escuro.png (390 px)
 ```
 
-O capturador também acusa rolagem horizontal, botão ou link com menos de 44 px e qualquer pedido para fora do arquivo. Na última rodada não acusou nada.
+O capturador acusa rolagem horizontal, botão ou link com menos de 44 px e qualquer pedido para fora do arquivo. Na última rodada não acusou nada.
 
-Limites: as páginas são estáticas e os toques não fazem nada. Os gráficos não têm toque para mostrar o valor (no app, tocar numa barra mostra o número). Elas não foram abertas num celular de verdade, só no navegador sem janela, em 390 px.
+**Limites:**
+- As páginas são estáticas: os toques não fazem nada e os gráficos não mostram o valor ao tocar.
+- Não abri as páginas num celular de verdade, só no navegador sem janela, em 390 px.
+- Ainda não testei em 320 px. Com a grade de 4 atalhos e as duas colunas, telas estreitas vão precisar de ajuste quando isso for para o app.

@@ -6,72 +6,66 @@
 <title>Painel · protótipo</title>
 <!--CSS-->
 <style>
-.seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; border-radius: 999px; background: var(--cor-clara); margin: 14px 0; }
-.seg a { display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 999px; color: var(--cor); text-decoration: none; font-weight: 600; font-size: 15px; }
-.seg a.on { background: var(--cartao); color: var(--texto); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
-.medida { margin-top: 14px; }
-.medida:first-of-type { margin-top: 10px; }
-.medida .val { font: 600 30px/1.1 var(--titulo); font-variant-numeric: tabular-nums; }
-.medida .val small { font: 500 15px var(--corpo); color: var(--suave); }
-.trilho { position: relative; height: 14px; border-radius: 999px; background: var(--vazio); margin-top: 8px; overflow: hidden; }
-.trilho .f { position: absolute; top: 0; bottom: 0; background: var(--dado-suave); border-left: 2px solid var(--suave); border-right: 2px solid var(--suave); }
-.trilho .v { position: absolute; top: 3px; bottom: 3px; left: 3px; border-radius: 999px; background: var(--dado); }
-.escala { position: relative; height: 16px; font-size: 12px; color: var(--suave); margin-top: 3px; font-variant-numeric: tabular-nums; }
-.escala span { position: absolute; transform: translateX(-50%); }
-.escala span:first-child { transform: none; }
-.escala span:last-child { transform: translateX(-100%); }
-.tres { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 4px; }
-.tres div { background: var(--fundo); border-radius: 14px; padding: 10px; }
-.tres b { display: block; font: 600 21px/1.15 var(--titulo); font-variant-numeric: tabular-nums; }
-.tres span { font-size: 12.5px; color: var(--suave); line-height: 1.25; display: block; margin-top: 2px; }
+.hoje2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.hoje2 .vidro { padding: 10px 12px; }
+.hoje2 .rot { font-size: 12.5px; font-weight: 600; opacity: .9; }
+.hoje2 .big { font-size: 30px; margin-top: 4px; }
+.hoje2 .trilho { background: var(--vidro); margin-top: 8px; position: relative; overflow: visible; }
+.hoje2 .trilho i { background: var(--sobre-topo); }
+.hoje2 .trilho .f { position: absolute; top: 0; bottom: 0; background: var(--sobre-topo); opacity: .3; }
+.hoje2 .esc { font-size: 11.5px; font-weight: 600; margin-top: 6px; opacity: .9; }
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; border-radius: 999px; background: var(--cinza); }
+.seg a { display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 999px; color: var(--suave); text-decoration: none; font-weight: 600; }
+.seg a.on { background: var(--pri); color: var(--sobre-pri); }
+.st { padding: 12px 14px; }
+.st .mini { display: block; }
+.st .med { margin-top: 6px; }
+svg.graf .parcial { fill: url(#hachura); stroke: var(--dado); stroke-width: 1.5; }
+svg.graf .linhad { fill: none; stroke: var(--dado2); stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+svg.graf .ponto { fill: var(--dado2); stroke: var(--cartao); stroke-width: 2; }
+svg.graf .faixa2 { fill: var(--laranja-clara); }
 svg.cal rect.fora { fill: none; }
-svg.cal rect.na { fill: var(--dado); }
+svg.cal rect.na { fill: var(--pri); }
 svg.cal rect.abaixo { fill: var(--dado-suave); }
-svg.cal rect.sem { fill: none; stroke: var(--vazio); stroke-width: 1.5; stroke-dasharray: 3 3; }
+svg.cal rect.sem { fill: var(--cinza); }
 svg.cal rect.hojec { fill: url(#hachura2); stroke: var(--dado); stroke-width: 1.5; }
-svg.cal text { font: 600 13px var(--corpo); fill: var(--texto); }
-svg.cal text.na { fill: var(--sobre-cor); }
+svg.cal text { font: 700 13px var(--fonte); fill: var(--pri-tinta); }
+svg.cal text.na { fill: var(--sobre-pri); }
 svg.cal text.sem { fill: var(--suave); font-weight: 400; }
-.cabcal { display: grid; grid-template-columns: repeat(7, 1fr); font-size: 12px; color: var(--suave); text-align: center; margin: 10px 0 4px; }
-details.tabela { margin-top: 10px; border-top: 1px solid var(--linha); }
-details.tabela summary { min-height: 44px; display: flex; align-items: center; font-weight: 600; color: var(--cor); cursor: pointer; }
-.nota { font-size: 14px; color: var(--suave); border-left: 3px solid var(--dado-suave); padding: 2px 0 2px 10px; margin: 12px 0 0; }
+svg.cal text.hojec { fill: var(--texto); }
+.cabcal { display: grid; grid-template-columns: repeat(7, 1fr); font-size: 12px; color: var(--suave); text-align: center; margin: 4px 0 4px; }
+.semanas li .trilho { flex: 1; }
 </style>
 </head>
 <body>
 <!--ICONES-->
-<header class="topo">
-  <a class="voltar" href="#"><svg class="ic p" aria-hidden="true"><use href="#i-volta"/></svg>Hoje</a>
-  <span class="mini">estimativa do que você marcou</span>
+<header class="topo" style="padding-bottom:62px">
+  <div class="barra">
+    <a class="botao-topo" href="#"><svg class="ic p" aria-hidden="true"><use href="#i-volta"/></svg>Hoje</a>
+    <span class="selo topo-s">estimativa do que você marcou</span>
+  </div>
+  <h1 style="font-size:22px;margin-top:6px">Calorias e proteína</h1>
+  <div class="hoje2">
+    <div class="vidro"><div class="rot">Proteína hoje</div><div class="big">52<small> g</small></div>
+      <div class="trilho" aria-hidden="true"><i style="width:40%"></i><span class="f" style="left:61.5%;width:23.1%"></span></div>
+      <div class="esc">faixa 80 a 110 g</div></div>
+    <div class="vidro"><div class="rot">Calorias hoje</div><div class="big">860<small> kcal</small></div>
+      <div class="trilho" aria-hidden="true"><i style="width:43%"></i><span class="f" style="left:65%;width:20%"></span></div>
+      <div class="esc">faixa 1.300 a 1.700</div></div>
+  </div>
 </header>
 <main>
-  <h1>Seu painel</h1>
-  <p class="sub" style="margin:4px 0 0">Calorias e proteína. A faixa sombreada é a meta combinada no Perfil.</p>
-  <nav class="seg" aria-label="Período"><a href="#hoje" class="on">Hoje</a><a href="#d7">7 dias</a><a href="#d30">30 dias</a></nav>
+  <nav class="cartao sobe" style="padding:8px" aria-label="Período"><div class="seg"><a href="#">Hoje</a><a href="#d7" class="on">7 dias</a><a href="#d30">30 dias</a></div></nav>
 
-  <section class="cartao" id="hoje" aria-labelledby="t-hoje">
-    <div class="linha"><h2 id="t-hoje" style="margin:0">Hoje, até agora</h2><span class="mini">15h</span></div>
-    <div class="medida">
-      <div class="linha"><span class="sub">Proteína</span><span class="val">52 <small>de 80 a 110 g</small></span></div>
-      <div class="trilho" role="img" aria-label="52 gramas; faixa de 80 a 110"><span class="f" style="left:61.5%;width:23.1%"></span><span class="v" style="width:40%"></span></div>
-      <div class="escala"><span style="left:0">0</span><span style="left:61.5%">80</span><span style="left:84.6%">110</span><span style="left:100%">g</span></div>
-    </div>
-    <div class="medida">
-      <div class="linha"><span class="sub">Calorias</span><span class="val">860 <small>de 1.300 a 1.700</small></span></div>
-      <div class="trilho" role="img" aria-label="860 quilocalorias; faixa de 1.300 a 1.700"><span class="f" style="left:65%;width:20%"></span><span class="v" style="width:43%"></span></div>
-      <div class="escala"><span style="left:0">0</span><span style="left:65%">1.300</span><span style="left:85%">1.700</span><span style="left:100%">kcal</span></div>
-    </div>
-    <p class="nota">Faltam o lanche e o jantar do plano: juntos, cerca de 30 g de proteína.</p>
-  </section>
+  <div class="duas">
+    <div class="cartao st"><span class="mini">Proteína · média 7 dias</span><div class="med">82<small> g</small></div><span class="selo" style="margin-top:6px">na faixa</span></div>
+    <div class="cartao st"><span class="mini">Calorias · média 7 dias</span><div class="med">1.398<small> kcal</small></div><span class="selo" style="margin-top:6px">na faixa</span></div>
+    <div class="cartao st"><span class="mini">Dias na faixa de proteína</span><div class="med">4<small> de 6</small></div><span class="selo cinza" style="margin-top:6px">esta semana</span></div>
+    <div class="cartao st"><span class="mini">Últimos 30 dias</span><div class="med">19<small> de 27</small></div><span class="selo cinza" style="margin-top:6px">dias com registro</span></div>
+  </div>
 
-  <section class="cartao" id="d7" aria-labelledby="t-7">
-    <h2 id="t-7">Últimos 7 dias</h2>
-    <div class="tres">
-      <div><b>82 g</b><span>proteína, média</span></div>
-      <div><b>1.398</b><span>calorias, média</span></div>
-      <div><b>4 de 6</b><span>dias na faixa de proteína</span></div>
-    </div>
-    <h3>Proteína por dia</h3>
+  <section class="cartao" id="d7" aria-labelledby="t-p7">
+    <div class="cab"><h2 id="t-p7">Proteína por dia</h2><span class="selo">meta 80 a 110 g</span></div>
     <svg class="graf" viewBox="0 30 320 146" role="img" aria-label="Proteína por dia, de sábado a hoje">
       <defs><pattern id="hachura" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="var(--cartao)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--dado)" stroke-width="2.5"/></pattern></defs>
       <rect class="faixa" x="34" y="40" width="282" height="30"/>
@@ -86,30 +80,33 @@ details.tabela summary { min-height: 44px; display: flex; align-items: center; f
       <path class="parcial" d="M283.9 150V102Q283.9 98 287.9 98H303.9Q307.9 98 307.9 102V150Z"/>
       <line class="media" x1="34" y1="68" x2="276" y2="68"/>
       <text x="54.1" y="168" text-anchor="middle">sáb</text><text x="94.4" y="168" text-anchor="middle">dom</text><text x="134.7" y="168" text-anchor="middle">seg</text><text x="175" y="168" text-anchor="middle">ter</text><text x="215.3" y="168" text-anchor="middle">qua</text><text x="255.6" y="168" text-anchor="middle">qui</text><text class="forte" x="295.9" y="168" text-anchor="middle">hoje</text>
-      <text class="forte" x="295.9" y="92" text-anchor="middle">52</text>
-      <text class="forte" x="215.3" y="80" text-anchor="middle">64</text>
+      <text class="forte" x="295.9" y="92" text-anchor="middle">52</text><text class="forte" x="215.3" y="80" text-anchor="middle">64</text>
     </svg>
-    <div class="legenda"><span><i style="background:var(--faixa);border:1px solid var(--suave)"></i>faixa da meta</span><span><i style="background:none;border-top:2px dashed var(--texto);border-radius:0;height:0;vertical-align:3px"></i>média 82 g</span><span><i style="background:repeating-linear-gradient(45deg,var(--dado) 0 2px,transparent 2px 5px);border:1px solid var(--dado)"></i>hoje, em andamento</span></div>
+    <div class="legenda"><span><i style="background:var(--faixa);border:1px solid var(--dado)"></i>faixa da meta</span><span><i style="border-top:2px dashed var(--texto);border-radius:0;height:0;vertical-align:3px"></i>média 82 g</span><span><i style="background:repeating-linear-gradient(45deg,var(--dado) 0 2px,transparent 2px 5px);border:1px solid var(--dado)"></i>hoje, em andamento</span></div>
+  </section>
 
-    <h3 style="margin-top:20px">Calorias por dia</h3>
+  <section class="cartao" aria-labelledby="t-k7">
+    <div class="cab"><h2 id="t-k7">Calorias por dia</h2><span class="selo laranja">meta 1.300 a 1.700</span></div>
     <svg class="graf" viewBox="0 42 320 134" role="img" aria-label="Calorias por dia, de sábado a hoje">
-      <rect class="faixa" x="34" y="52.5" width="282" height="43.3"/>
+      <rect class="faixa2" x="34" y="52.5" width="282" height="43.3"/>
       <text x="28" y="56.5" text-anchor="end">1.700</text><text x="28" y="99.8" text-anchor="end">1.300</text><text x="28" y="132.3" text-anchor="end">1.000</text>
       <line class="base" x1="34" y1="150.5" x2="316" y2="150.5"/>
       <polyline class="linhad" points="54.1,72.0 94.4,86.1 134.7,62.3 175.0,79.6 215.3,119.7 255.6,91.5"/>
       <polyline class="linhad" style="stroke-dasharray:3 4" points="255.6,91.5 295.9,143.5"/>
       <circle class="ponto" cx="54.1" cy="72" r="4.5"/><circle class="ponto" cx="94.4" cy="86.1" r="4.5"/><circle class="ponto" cx="134.7" cy="62.3" r="4.5"/><circle class="ponto" cx="175" cy="79.6" r="4.5"/><circle class="ponto" cx="215.3" cy="119.7" r="4.5"/><circle class="ponto" cx="255.6" cy="91.5" r="4.5"/>
-      <circle cx="295.9" cy="143.5" r="4.5" fill="var(--cartao)" stroke="var(--dado)" stroke-width="2"/>
+      <circle cx="295.9" cy="143.5" r="4.5" fill="var(--cartao)" stroke="var(--dado2)" stroke-width="2"/>
       <text class="forte" x="215.3" y="138" text-anchor="middle">1.080</text>
       <text x="54.1" y="168" text-anchor="middle">sáb</text><text x="94.4" y="168" text-anchor="middle">dom</text><text x="134.7" y="168" text-anchor="middle">seg</text><text x="175" y="168" text-anchor="middle">ter</text><text x="215.3" y="168" text-anchor="middle">qua</text><text x="255.6" y="168" text-anchor="middle">qui</text><text class="forte" x="295.9" y="168" text-anchor="middle">hoje</text>
     </svg>
-    <p class="nota">Quarta, dia seguinte à aplicação, teve menos comida e mais enjoo. Isso costuma acontecer; se virar vários dias seguidos, é assunto para o médico.</p>
-    <details class="tabela"><summary>Ver como tabela</summary><p class="sub">(No app: tabela com dia, proteína e calorias.)</p></details>
+    <div class="banner dica" style="margin:10px 0 0;padding:10px 12px">
+      <svg class="ic p" aria-hidden="true"><use href="#i-dica"/></svg>
+      <div class="t" style="font-size:13px">Quarta, dia seguinte à aplicação, teve menos comida e mais enjoo. Costuma acontecer; se virar vários dias seguidos, é assunto para o médico.</div>
+    </div>
+    <a class="link" href="#">Ver como tabela ›</a>
   </section>
 
   <section class="cartao" id="d30" aria-labelledby="t-30">
-    <h2 id="t-30">Últimos 30 dias</h2>
-    <p style="margin:0"><b class="num">19 de 27</b> dias com registro ficaram na faixa de proteína.</p>
+    <div class="cab"><h2 id="t-30">Últimos 30 dias · proteína</h2><span class="selo">19 de 27</span></div>
     <div class="cabcal" aria-hidden="true"><span>sáb</span><span>dom</span><span>seg</span><span>ter</span><span>qua</span><span>qui</span><span>sex</span></div>
     <svg class="cal graf" viewBox="0 0 308 200" role="img" aria-label="Calendário de 22 de outubro a 20 de novembro">
       <defs><pattern id="hachura2" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="var(--cartao)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--dado-suave)" stroke-width="3"/></pattern></defs>
@@ -145,12 +142,17 @@ details.tabela summary { min-height: 44px; display: flex; align-items: center; f
       <rect class="hojec" x="266" y="162" width="40" height="36" rx="8"><title>20/11: 52 g</title></rect><text class="hojec" x="286" y="185" text-anchor="middle">20</text>
       
     </svg>
-    <div class="legenda"><span><i style="background:var(--dado)"></i>na faixa</span><span><i style="background:var(--dado-suave)"></i>abaixo</span><span><i style="border:1.5px dashed var(--vazio)"></i>sem registro</span></div>
-    <h3 style="margin-top:18px">Média por semana</h3>
-    <div class="tres" style="grid-template-columns:1fr 1fr">
-      <div><b>80 → 82 g</b><span>proteína, da 1ª à 4ª semana</span></div>
-      <div><b>1.469 → 1.419</b><span>calorias, da 1ª à 4ª semana</span></div>
-    </div>
+    <div class="legenda"><span><i style="background:var(--pri)"></i>na faixa</span><span><i style="background:var(--dado-suave)"></i>abaixo</span><span><i style="background:var(--cinza);border:1px solid var(--linha)"></i>sem registro</span></div>
+  </section>
+
+  <section class="cartao" aria-labelledby="t-sem">
+    <h2 id="t-sem" style="margin-bottom:8px">Média por semana</h2>
+    <ul class="lista semanas">
+      <li><span class="hora">sem. 3</span><span class="num" style="width:44px">80 g</span><span class="trilho"><i style="width:73%"></i></span><span class="num mini" style="width:64px;text-align:right">1.469 kcal</span></li>
+      <li><span class="hora">sem. 4</span><span class="num" style="width:44px">80 g</span><span class="trilho"><i style="width:73%"></i></span><span class="num mini" style="width:64px;text-align:right">1.410 kcal</span></li>
+      <li><span class="hora">sem. 5</span><span class="num" style="width:44px">81 g</span><span class="trilho"><i style="width:74%"></i></span><span class="num mini" style="width:64px;text-align:right">1.434 kcal</span></li>
+      <li><span class="hora">sem. 6</span><span class="num" style="width:44px"><b>82 g</b></span><span class="trilho"><i style="width:75%"></i></span><span class="num mini" style="width:64px;text-align:right">1.398 kcal</span></li>
+    </ul>
   </section>
 </main>
 <!--ABAS:hoje-->

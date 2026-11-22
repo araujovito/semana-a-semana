@@ -6,230 +6,300 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Hoje · protótipo</title>
 <style>
-/* Protótipo da identidade "Ciclo de sete". Tudo local: fontes do sistema, ícones em SVG desenhados à mão, sem nada de fora.
+/* Protótipo da identidade "Hortelã" (revisão 2): linguagem de app de saúde do dia a dia. Topo colorido com o essencial,
+   grade de atalhos, cartões em duas colunas, selos e "marcar o dia". Tudo local: fonte do sistema, ícones próprios em SVG.
    CSS até 2022 (WebView 113): variáveis, grid, flex, gap, aspect-ratio. Sem :has(), sem nesting, sem color-mix(). */
 :root {
-  --fundo: #f6f1ea; --cartao: #fffdfa; --texto: #2b2230; --suave: #685d6b; --linha: #e6ddd4;
-  --cor: #6d3b5e; --sobre-cor: #ffffff; --cor-clara: #efe2ea;
-  --acento: #a8481f; --acento-clara: #f7e3d6;
-  --ok: #3d6f4f; --alerta: #b42318; --alerta-clara: #fbe9e7;
-  --dado: #6d3b5e; --dado-suave: #c9a9bf; --faixa: #e9dfe5; --vazio: #e6ddd4;
-  --titulo: "Noto Serif", "Droid Serif", Georgia, serif;
-  --corpo: system-ui, -apple-system, Roboto, "Segoe UI", sans-serif;
+  --fundo: #f5f6f8; --cartao: #ffffff; --texto: #1d2129; --suave: #646a73; --linha: #eceef1; --cinza: #f2f3f5;
+  --pri: #087f5b; --sobre-pri: #ffffff; --pri-clara: #e6fcf5; --pri-tinta: #0b3d2e;
+  --topo-a: #38d9a9; --topo-b: #96f2d7; --topo-c: #fff3bf; --sobre-topo: #0b3d2e; --vidro: rgba(255, 255, 255, .55);
+  --dado: #0ca678; --dado-suave: #96f2d7; --dado2: #e8590c; --faixa: #e6fcf5; --vazio: #eceef1;
+  --laranja: #b54708; --laranja-clara: #fff4e6;
+  --alerta: #c92a2a; --alerta-ic: #e03131; --alerta-clara: #fff0f0;
+  --c-comida: linear-gradient(135deg, #ffa94d, #f76707); --c-agua: linear-gradient(135deg, #74c0fc, #1c7ed6);
+  --c-peso: linear-gradient(135deg, #b197fc, #7048e8); --c-aplic: linear-gradient(135deg, #63e6be, #0ca678);
+  --c-sint: linear-gradient(135deg, #faa2c1, #d6336c); --c-mover: linear-gradient(135deg, #66d9e8, #0c8599);
+  --c-painel: linear-gradient(135deg, #ffe066, #f59f00); --c-guia: linear-gradient(135deg, #91a7ff, #4263eb);
+  --sombra: 0 1px 2px rgba(16, 24, 40, .04), 0 2px 8px rgba(16, 24, 40, .05);
+  --fonte: system-ui, -apple-system, Roboto, "Noto Sans", "Segoe UI", sans-serif;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --fundo: #16121a; --cartao: #211b25; --texto: #f2ebf0; --suave: #b4a8b6; --linha: #352c39;
-    --cor: #dcaacb; --sobre-cor: #2a1525; --cor-clara: #38243a;
-    --acento: #f0a57a; --acento-clara: #3d2a22;
-    --ok: #8fc8a2; --alerta: #f59a8e; --alerta-clara: #3a1f1d;
-    --dado: #dcaacb; --dado-suave: #6e4a64; --faixa: #2f2533; --vazio: #3a313e;
+    --fundo: #111214; --cartao: #1c1d21; --texto: #e9eaec; --suave: #9ea3ab; --linha: #2a2c31; --cinza: #25272c;
+    --pri: #38d9a9; --sobre-pri: #04241b; --pri-clara: #12342b; --pri-tinta: #b2f2e1;
+    --topo-a: #0e5a47; --topo-b: #134e4a; --topo-c: #2b2a1a; --sobre-topo: #e9fbf3; --vidro: rgba(255, 255, 255, .08);
+    --dado: #63e6be; --dado-suave: #1f5c4b; --dado2: #ffa94d; --faixa: #173a31; --vazio: #2a2c31;
+    --laranja: #ffb366; --laranja-clara: #2b2017;
+    --alerta: #ff8787; --alerta-ic: #ff8787; --alerta-clara: #2c1a1c;
+    --sombra: none;
   }
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
-body { margin: 0; background: var(--fundo); color: var(--texto); font: 16px/1.45 var(--corpo); }
-main { max-width: 520px; margin: 0 auto; padding: 4px 16px 104px; }
-h1, h2, h3 { font-family: var(--titulo); font-weight: 600; letter-spacing: -.01em; }
-h1 { font-size: 27px; line-height: 1.15; margin: 0; }
-h2 { font-size: 19px; line-height: 1.25; margin: 0 0 6px; }
-h3 { font-size: 16px; margin: 14px 0 4px; }
-p { margin: 0 0 8px; }
-.sub { color: var(--suave); font-size: 14px; }
-.mini { font-size: 13px; color: var(--suave); }
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 15px/1.45 var(--fonte); }
+main { max-width: 520px; margin: 0 auto; padding: 0 12px 96px; position: relative; }
+h1, h2, h3 { font-weight: 700; margin: 0; }
+h2 { font-size: 16px; line-height: 1.3; }
+h3 { font-size: 14px; }
+p { margin: 0; }
+.sub { color: var(--suave); font-size: 13px; }
+.mini { color: var(--suave); font-size: 12px; }
 .num { font-variant-numeric: tabular-nums; }
-.sobre { font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--suave); font-weight: 600; }
-svg.ic { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
-svg.ic.p { width: 20px; height: 20px; }
+.big { font-size: 34px; font-weight: 800; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.big small { font-size: 14px; font-weight: 600; letter-spacing: 0; }
+.med { font-size: 22px; font-weight: 800; line-height: 1.1; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.med small { font-size: 12px; font-weight: 600; color: var(--suave); letter-spacing: 0; }
+svg.ic { width: 24px; height: 24px; flex: none; }
+svg.ic.p { width: 18px; height: 18px; }
 
-/* Topo: papel, sem faixa colorida. */
-.topo { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 10px 16px; background: var(--fundo); border-bottom: 1px solid transparent; }
-.topo .marca { font-family: var(--titulo); font-size: 17px; font-weight: 600; color: var(--cor); }
-.topo .voltar { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; color: var(--cor); font-weight: 600; text-decoration: none; }
-.redondo { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%;
-  border: 1px solid var(--linha); background: var(--cartao); color: var(--texto); }
+/* Topo colorido: já mostra o essencial. */
+.topo { background: linear-gradient(180deg, transparent 72%, var(--fundo) 100%), linear-gradient(160deg, var(--topo-a) 0%, var(--topo-b) 55%, var(--topo-c) 100%); color: var(--sobre-topo);
+  padding: 10px 16px 64px; }
+.topo .barra { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; }
+.topo .barra b { font-size: 17px; }
+.topo a { color: inherit; }
+.botao-topo { display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-width: 44px; min-height: 44px; border-radius: 999px;
+  background: var(--vidro); color: var(--sobre-topo); text-decoration: none; font-weight: 600; padding: 0 10px; }
+.vidro { background: var(--vidro); border-radius: 14px; padding: 8px 10px; }
+.sobe { margin-top: -52px; }
 
-.cartao { background: var(--cartao); border: 1px solid var(--linha); border-radius: 20px; padding: 16px; margin-bottom: 14px; }
-.cartao.suave { background: var(--cor-clara); border-color: transparent; }
-.linha { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.pilha > * + * { margin-top: 10px; }
+.cartao { background: var(--cartao); border-radius: 16px; padding: 14px; margin-bottom: 10px; box-shadow: var(--sombra); }
+.cab { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.cab a, .link { color: var(--pri); font-size: 13px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; }
+.duas { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.duas .cartao { margin: 0; }
+.linha { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 
-button, .botao { font: inherit; font-weight: 600; min-height: 48px; min-width: 44px; padding: 10px 18px; border-radius: 999px; border: 0;
-  background: var(--cor); color: var(--sobre-cor); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
-button.sec, .botao.sec { background: transparent; color: var(--cor); border: 1.5px solid var(--cor); }
-button.leve, .botao.leve { background: var(--cor-clara); color: var(--cor); }
-.botoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+/* Selos e etiquetas. */
+.selo { display: inline-flex; align-items: center; gap: 3px; font-size: 11.5px; font-weight: 700; line-height: 1; padding: 4px 7px; border-radius: 6px;
+  background: var(--pri-clara); color: var(--pri); white-space: nowrap; }
+.selo.laranja { background: var(--laranja-clara); color: var(--laranja); }
+.selo.cinza { background: var(--cinza); color: var(--suave); }
+.selo.topo-s { background: var(--vidro); color: var(--sobre-topo); }
+.selos { display: flex; flex-wrap: wrap; gap: 5px; }
 
-/* Escolhas de um toque (como está, quanto comeu). */
-.escolhas { display: flex; flex-wrap: wrap; gap: 8px; }
-.escolhas span { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 14px; border-radius: 14px;
-  border: 1.5px solid var(--linha); background: var(--cartao); font-size: 15px; font-weight: 500; }
-.escolhas span.on { background: var(--cor); border-color: var(--cor); color: var(--sobre-cor); font-weight: 600; }
-.quatro { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 12px; }
-.quatro span { display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 14px; border: 1.5px solid var(--linha);
-  font-size: 14.5px; font-weight: 600; text-align: center; line-height: 1.15; padding: 4px; }
-.quatro span.on { background: var(--cor); border-color: var(--cor); color: var(--sobre-cor); }
+/* Grade de atalhos com ícones coloridos preenchidos. */
+.atalhos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px 0; }
+.atalhos a { display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 72px; padding: 4px 0; color: var(--texto);
+  text-decoration: none; font-size: 12.5px; font-weight: 500; text-align: center; line-height: 1.2; }
+.atalhos .q { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 14px; color: #fff; }
+.atalhos .q svg { width: 24px; height: 24px; }
 
-/* Faixa de sinais: sempre visível, sóbria. */
-.sinais { font-size: 15px; display: flex; gap: 12px; align-items: flex-start; border: 1.5px solid var(--alerta); background: var(--alerta-clara); }
-.sinais svg { color: var(--alerta); margin-top: 2px; }
-.sinais strong { color: var(--alerta); }
+/* Faixa de destaque. */
+.banner { display: flex; gap: 10px; align-items: center; border-radius: 16px; padding: 12px 14px; margin-bottom: 10px; }
+.banner.dica { background: var(--laranja-clara); }
+.banner.dica .ic { color: var(--laranja); }
+.banner .t { flex: 1; min-width: 0; font-size: 14px; }
+.banner .t b { display: block; font-size: 14px; }
+/* Alerta: forma própria (borda grossa à esquerda), ícone de triângulo e o rótulo "SINAL DE ALERTA". Nunca só a cor. */
+.alerta { background: var(--alerta-clara); border-left: 5px solid var(--alerta-ic); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; display: flex; gap: 10px; }
+.alerta .ic { color: var(--alerta-ic); }
+.alerta .rot { font-size: 11.5px; font-weight: 800; letter-spacing: .06em; color: var(--alerta); }
+.alerta p { font-size: 14px; margin-top: 2px; }
+.alerta a { color: var(--alerta); font-weight: 700; font-size: 13px; display: inline-flex; min-height: 44px; align-items: center; }
 
-/* Barra de abas com ícones próprios. */
+/* Botões. */
+button, .botao { font: inherit; font-weight: 700; min-height: 44px; min-width: 44px; padding: 8px 16px; border-radius: 999px; border: 0;
+  background: var(--pri); color: var(--sobre-pri); display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; }
+button.leve, .botao.leve { background: var(--pri-clara); color: var(--pri); }
+button.cinza { background: var(--cinza); color: var(--texto); font-weight: 600; }
+
+/* Escolhas de um toque. */
+.toques { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; }
+.toques span { display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 12px; background: var(--cinza); font-size: 13.5px; font-weight: 600; text-align: center; line-height: 1.15; }
+.toques span.on { background: var(--pri); color: var(--sobre-pri); }
+
+/* Barras simples. */
+.trilho { height: 8px; border-radius: 999px; background: var(--vazio); overflow: hidden; }
+.trilho i { display: block; height: 100%; border-radius: 999px; background: var(--dado); }
+
+/* Lista compacta. */
+.lista { list-style: none; margin: 0; padding: 0; }
+.lista li { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--linha); min-height: 44px; }
+.lista li:first-child { border-top: 0; padding-top: 0; }
+.lista .hora { width: 44px; flex: none; color: var(--suave); font-size: 13px; font-variant-numeric: tabular-nums; }
+.lista .txt { flex: 1; min-width: 0; }
+.ico-c { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 10px; color: #fff; flex: none; }
+.ico-c svg { width: 18px; height: 18px; }
+
+/* Barra de abas com ícones preenchidos. */
 .abas { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; display: flex; background: var(--cartao); border-top: 1px solid var(--linha);
-  padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); }
-.abas a { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 52px; color: var(--suave); text-decoration: none; font-size: 12px; font-weight: 500; }
-.abas a .pilula { display: flex; align-items: center; justify-content: center; width: 56px; height: 30px; border-radius: 999px; }
-.abas a.ativa { color: var(--cor); font-weight: 700; }
-.abas a.ativa .pilula { background: var(--cor-clara); }
+  padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); }
+.abas a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 52px; color: var(--suave);
+  text-decoration: none; font-size: 11.5px; font-weight: 500; }
+.abas a svg { width: 25px; height: 25px; }
+.abas a.ativa { color: var(--pri); font-weight: 700; }
 
-/* Gráficos */
+/* Gráficos. */
 svg.graf { display: block; width: 100%; height: auto; overflow: visible; }
-svg.graf text { fill: var(--suave); font: 11px var(--corpo); }
+svg.graf text { fill: var(--suave); font: 11px var(--fonte); }
 svg.graf .faixa { fill: var(--faixa); }
 svg.graf .barra { fill: var(--dado); }
-svg.graf .parcial { fill: url(#hachura); stroke: var(--dado); stroke-width: 1.5; }
 svg.graf .base { stroke: var(--linha); stroke-width: 1; }
-svg.graf .media { stroke: var(--texto); stroke-width: 1.5; stroke-dasharray: 4 4; }
-svg.graf .linhad { fill: none; stroke: var(--dado); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
-svg.graf .ponto { fill: var(--dado); stroke: var(--cartao); stroke-width: 2; }
-svg.graf .forte { fill: var(--texto); font-weight: 600; }
-.legenda { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; font-size: 13px; color: var(--suave); }
-.legenda i { display: inline-block; width: 14px; height: 10px; border-radius: 3px; vertical-align: -1px; margin-right: 5px; }
+svg.graf .media { stroke: var(--texto); stroke-width: 1.3; stroke-dasharray: 4 4; }
+svg.graf .forte { fill: var(--texto); font-weight: 700; }
+.legenda { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; font-size: 12px; color: var(--suave); }
+.legenda i { display: inline-block; width: 12px; height: 9px; border-radius: 3px; vertical-align: -1px; margin-right: 4px; }
 </style>
 <style>
-.ciclo { display: grid; grid-template-columns: 128px 1fr; gap: 14px; align-items: center; margin-top: 14px; }
-.ciclo svg { width: 128px; height: 128px; display: block; }
-.ciclo .feito { stroke: var(--dado-suave); }
-.ciclo .agora { stroke: var(--dado); }
-.ciclo .vem { stroke: var(--vazio); }
-.ciclo .meio1 { font: 600 30px var(--titulo); fill: var(--texto); }
-.ciclo .meio2 { font: 12.5px var(--corpo); fill: var(--suave); }
-.ciclo .ap { fill: var(--acento); stroke: var(--cartao); stroke-width: 3; }
-.ciclo dl { margin: 0; display: grid; gap: 8px; }
-.ciclo dt { font-size: 13px; color: var(--suave); }
-.ciclo dd { margin: 0; font-weight: 600; line-height: 1.3; font-size: 15.5px; }
-.ciclo .tag-ap { display: inline-flex; align-items: center; gap: 5px; color: var(--acento); }
-.porque { margin-top: 10px; padding: 10px 12px; border-radius: 14px; background: var(--cor-clara); font-size: 15px; }
-.porque b { color: var(--cor); }
-.depois { margin: 12px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--linha); }
-.depois li { display: flex; gap: 12px; padding: 10px 0 0; font-size: 15px; }
-.depois li span:first-child { width: 52px; flex: none; color: var(--suave); font-variant-numeric: tabular-nums; }
-.resumo { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; color: var(--texto); text-decoration: none; }
-.resumo .anel { width: 44px; height: 44px; flex: none; }
-.resumo .anel circle { fill: none; stroke-width: 5; }
-.resumo .txt { flex: 1; min-width: 0; }
-.resumo strong { font-weight: 600; }
-.agua { display: flex; align-items: center; gap: 10px; }
-.agua .copos { display: flex; gap: 5px; flex: 1; }
-.agua .copos i { flex: 1; height: 22px; border-radius: 5px; border: 1.5px solid var(--dado); }
-.agua .copos i.cheio { background: var(--dado); }
-.registro { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.registro a { display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 64px; justify-content: center; border-radius: 16px;
-  background: var(--cartao); border: 1px solid var(--linha); color: var(--texto); text-decoration: none; font-size: 14px; font-weight: 600; }
-.registro a svg { color: var(--cor); }
+.resumo { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; margin-top: 12px; }
+.resumo .rot { font-size: 13px; font-weight: 600; opacity: .9; }
+.resumo .big { margin-top: 4px; }
+.resumo .trilho { background: var(--vidro); margin-top: 8px; max-width: 200px; }
+.resumo .trilho i { background: var(--sobre-topo); }
+.anel { width: 84px; height: 84px; display: block; }
+.anel .feito { stroke: var(--sobre-topo); opacity: .4; }
+.anel .agora { stroke: var(--sobre-topo); }
+.anel .vem { stroke: var(--vidro); }
+.anel .ap { fill: #f76707; stroke: var(--topo-b); stroke-width: 3; }
+.anel text { fill: var(--sobre-topo); font-family: var(--fonte); text-anchor: middle; }
+.duas-topo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+.duas-topo .vidro b { display: block; font-size: 15px; }
+.duas-topo .vidro span { font-size: 12px; font-weight: 600; opacity: .85; }
+.marcar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.marcar a { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 10px; border-radius: 14px; background: var(--cinza); color: var(--texto); text-decoration: none; min-height: 92px; }
+.marcar a .ico-c { width: 28px; height: 28px; border-radius: 9px; }
+.marcar a .med { font-size: 18px; }
+.marcar a .ok { position: absolute; top: 8px; right: 8px; width: 22px; height: 22px; color: var(--dado); }
+.marcar a.feito { background: var(--pri-clara); }
+.porque { font-size: 13.5px; margin-top: 8px; color: var(--texto); }
+.porque b { color: var(--pri); }
+.chips2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.chips2 span { display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 12px; background: var(--cinza); font-size: 13px; font-weight: 600; text-align: center; line-height: 1.1; padding: 2px 4px; }
+.chips2 span.on { background: var(--pri); color: var(--sobre-pri); }
+.mini-barras { display: flex; align-items: flex-end; gap: 4px; height: 38px; margin-top: 8px; }
+.mini-barras i { flex: 1; border-radius: 3px 3px 0 0; background: var(--dado); }
+.mini-barras i.hoje { background: var(--dado-suave); }
 </style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="i-hoje" viewBox="0 0 24 24"><path d="M3 18.5h18M6.5 18.5a5.5 5.5 0 0 1 11 0M12 6v2.5M5.3 10.3l1.6 1.6M18.7 10.3l-1.6 1.6M3.5 15h1.5M19 15h1.5"/></symbol>
-  <symbol id="i-semana" viewBox="0 0 24 24"><circle cx="12" cy="4" r="1.7" fill="currentColor"/><circle cx="18.25" cy="7.01" r="1.5"/><circle cx="19.8" cy="13.78" r="1.5"/><circle cx="15.47" cy="19.21" r="1.5"/><circle cx="8.53" cy="19.21" r="1.5"/><circle cx="4.2" cy="13.78" r="1.5"/><circle cx="5.75" cy="7.01" r="1.5"/></symbol>
-  <symbol id="i-comer" viewBox="0 0 24 24"><path d="M3.5 12.5h17a8.5 8 0 0 1-17 0zM8 20.5h8M9.5 3.5c-1.2 1.2 1.2 2.3 0 3.5M14.5 3.5c-1.2 1.2 1.2 2.3 0 3.5"/></symbol>
-  <symbol id="i-mover" viewBox="0 0 24 24"><circle cx="13.5" cy="4.3" r="1.8"/><path d="M12.8 8.2 10.6 14l3.4 2.6V21M10.6 14 8.2 20.8M12.8 8.2l3.2 3 2.6-.4M12.8 8.2 9.2 9.8l-1.4 3"/></symbol>
-  <symbol id="i-guia" viewBox="0 0 24 24"><path d="M3 5.5c2.6-1 6-1 9 1 3-2 6.4-2 9-1V19c-2.6-1-6-1-9 1-3-2-6.4-2-9-1zM12 6.5V20"/></symbol>
-  <symbol id="i-perfil" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.2-3.6 4-5.3 7.5-5.3s6.3 1.7 7.5 5.3"/></symbol>
-  <symbol id="i-caneta" viewBox="0 0 24 24"><path d="M14.5 4.5l5 5M16 3l5 5M17 7 7.5 16.5l-3 1 1-3L15 5M4.5 19.5 3 21"/></symbol>
-  <symbol id="i-peso" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M8 9.5a5 5 0 0 1 8 0M12 9.5l1.4-2"/></symbol>
-  <symbol id="i-gota" viewBox="0 0 24 24"><path d="M12 3.5s-6 6.6-6 10.8a6 6 0 0 0 12 0C18 10.1 12 3.5 12 3.5z"/></symbol>
-  <symbol id="i-alerta" viewBox="0 0 24 24"><path d="M12 3.8 21.2 19.5H2.8zM12 10v4.2M12 16.9v.1"/></symbol>
-  <symbol id="i-seta" viewBox="0 0 24 24"><path d="M9 5.5 15.5 12 9 18.5"/></symbol>
-  <symbol id="i-volta" viewBox="0 0 24 24"><path d="M15 5.5 8.5 12l6.5 6.5"/></symbol>
-  <symbol id="i-relogio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
-  <symbol id="i-conversa" viewBox="0 0 24 24"><path d="M4 5.5h16v10H10l-4.5 3.5v-3.5H4z"/></symbol>
+  <!-- Ícones próprios, preenchidos, grade de 24 px, cor = currentColor. -->
+  <symbol id="i-hoje" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.8" fill="currentColor"/><path d="M12 2.6v2.3M12 19.1v2.3M2.6 12h2.3M19.1 12h2.3M5.4 5.4 7 7M17 17l1.6 1.6M5.4 18.6 7 17M17 7l1.6-1.6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></symbol>
+  <symbol id="i-semana" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M6.5 4.5h11A3.5 3.5 0 0 1 21 8v9.5a3.5 3.5 0 0 1-3.5 3.5h-11A3.5 3.5 0 0 1 3 17.5V8a3.5 3.5 0 0 1 3.5-3.5zM6.8 10.4h2.7v2.7H6.8zM10.65 10.4h2.7v2.7h-2.7zM14.5 10.4h2.7v2.7h-2.7zM6.8 14.5h2.7v2.7H6.8zM10.65 14.5h2.7v2.7h-2.7z"/><path d="M8 2.5v3.5M16 2.5v3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-comer" viewBox="0 0 24 24"><path fill="currentColor" d="M2.8 11.5h18.4a9.2 8.6 0 0 1-18.4 0zM8.5 20h7a1.2 1.2 0 0 1 0 2.4h-7a1.2 1.2 0 0 1 0-2.4z"/><path d="M13.5 2.8 10 10M19 3.6l-5.2 6.4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="i-mover" viewBox="0 0 24 24"><circle cx="14.6" cy="4.2" r="2.3" fill="currentColor"/><path d="M13.2 8.6 10.6 14l3.4 2.6v4.6M10.6 14l-2.8 6.6M13.2 8.6l3 3 2.8-.5M13.2 8.6 9.3 10.3l-1.5 3" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+  <symbol id="i-guia" viewBox="0 0 24 24"><path fill="currentColor" d="M2.8 5.2c3-1.3 6.3-1 8.4.8v14.3c-2.1-1.6-5.4-1.9-8.4-.8zM12.8 6c2.1-1.8 5.4-2.1 8.4-.8v14.3c-3-1.1-6.3-.8-8.4.8z"/></symbol>
+  <symbol id="i-perfil" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4.3" fill="currentColor"/><path fill="currentColor" d="M3.6 20.8c.9-4.1 4.3-6.5 8.4-6.5s7.5 2.4 8.4 6.5z"/></symbol>
+  <symbol id="i-agua" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.6s-6.6 7.2-6.6 11.8a6.6 6.6 0 0 0 13.2 0C18.6 9.8 12 2.6 12 2.6z"/></symbol>
+  <symbol id="i-peso" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zM7.2 10.6a4.8 4.8 0 0 1 9.6 0z"/><path fill="currentColor" d="m11.3 10.6 2.3-3.9 1 .5-1.8 3.4z"/></symbol>
+  <symbol id="i-caneta" viewBox="0 0 24 24"><g transform="rotate(40 12 12)" fill="currentColor"><rect x="10" y="1" width="4" height="3" rx="1"/><rect x="8.6" y="4.6" width="6.8" height="12.6" rx="2"/><rect x="11.1" y="17" width="1.8" height="5.5" rx=".9"/></g></symbol>
+  <symbol id="i-sintoma" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21s-8.6-5.1-8.6-11.2A4.6 4.6 0 0 1 12 7.1a4.6 4.6 0 0 1 8.6 2.7C20.6 15.9 12 21 12 21z"/></symbol>
+  <symbol id="i-painel" viewBox="0 0 24 24"><g fill="currentColor"><rect x="3.5" y="12" width="4.6" height="9" rx="1.6"/><rect x="9.7" y="7" width="4.6" height="14" rx="1.6"/><rect x="15.9" y="3" width="4.6" height="18" rx="1.6"/></g></symbol>
+  <symbol id="i-alerta" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M10.3 3.9a2 2 0 0 1 3.4 0l8.1 14a2 2 0 0 1-1.7 3H3.9a2 2 0 0 1-1.7-3zM10.9 8.6h2.2l-.3 6.4h-1.6zM12 16.2a1.3 1.3 0 1 1 0 2.6 1.3 1.3 0 0 1 0-2.6z"/></symbol>
+  <symbol id="i-feito" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="m7.4 12.3 3.1 3.1 6.1-6.3" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+  <symbol id="i-dica" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.5a6.8 6.8 0 0 0-4 12.3c.6.5 1 1.2 1 2V18h6v-1.2c0-.8.4-1.5 1-2A6.8 6.8 0 0 0 12 2.5zM9.2 19.6h5.6a2.2 2.2 0 0 1-2.2 2h-1.2a2.2 2.2 0 0 1-2.2-2z"/></symbol>
+  <symbol id="i-conversa" viewBox="0 0 24 24"><path fill="currentColor" d="M5 4h14a2.5 2.5 0 0 1 2.5 2.5v8A2.5 2.5 0 0 1 19 17h-8.5L6 20.6V17H5a2.5 2.5 0 0 1-2.5-2.5v-8A2.5 2.5 0 0 1 5 4z"/></symbol>
+  <symbol id="i-seta" viewBox="0 0 24 24"><path d="M9 5.5 15.5 12 9 18.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+  <symbol id="i-volta" viewBox="0 0 24 24"><path d="M15 5.5 8.5 12l6.5 6.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
 </svg>
 
 <header class="topo">
-  <span class="marca">Semana a Semana</span>
-  <a class="redondo" href="#" aria-label="Perfil e metas"><svg class="ic p" aria-hidden="true"><use href="#i-perfil"/></svg></a>
+  <div class="barra">
+    <b>Sexta, 20 de novembro</b>
+    <a class="botao-topo" href="#" aria-label="Perfil e metas"><svg class="ic p" aria-hidden="true"><use href="#i-perfil"/></svg></a>
+  </div>
+  <div class="selos" style="margin-top:4px"><span class="selo topo-s">Semana 6 do tratamento</span><span class="selo topo-s">5 mg · 2ª semana</span></div>
+  <div class="resumo">
+    <div>
+      <div class="rot">Proteína hoje</div>
+      <div class="big">52<small> g / meta 90 g</small></div>
+      <div class="trilho" aria-hidden="true"><i style="width:58%"></i></div>
+    </div>
+    <svg class="anel" viewBox="0 0 120 120" role="img" aria-label="Dia 4 de 7 desde a aplicação de terça">
+      <g fill="none" stroke-width="12">
+        <path class="feito" d="M62.8 14.1A46 46 0 0 1 94.1 29.2"/><path class="feito" d="M97.6 33.6A46 46 0 0 1 105.4 67.5"/><path class="feito" d="M104.1 73.0A46 46 0 0 1 82.5 100.1"/>
+        <path class="agora" d="M77.4 102.6A46 46 0 0 1 42.6 102.6"/>
+        <path class="vem" d="M37.5 100.1A46 46 0 0 1 15.9 73.0"/><path class="vem" d="M14.6 67.5A46 46 0 0 1 22.4 33.6"/><path class="vem" d="M25.9 29.2A46 46 0 0 1 57.2 14.1"/>
+      </g>
+      <circle class="ap" cx="62.8" cy="14.1" r="8"/>
+      <text x="60" y="66" style="font-size:30px;font-weight:800">4/7</text>
+      <text x="60" y="84" style="font-size:13px;font-weight:600">dia</text>
+    </svg>
+  </div>
+  <div class="duas-topo">
+    <div class="vidro"><span>Aplicação em 4 dias</span><b>terça, 24/11</b></div>
+    <div class="vidro"><span>Água hoje</span><b class="num">0,8 de 2 L</b></div>
+  </div>
 </header>
 <main>
-  <p class="sobre" style="margin:6px 0 4px">Sexta, 20 de novembro</p>
-  <h1>Semana 6 do tratamento</h1>
+  <nav class="cartao sobe atalhos" aria-label="Atalhos">
+    <a href="#"><span class="q" style="background:var(--c-comida)"><svg aria-hidden="true"><use href="#i-comer"/></svg></span>Comida</a>
+    <a href="#"><span class="q" style="background:var(--c-agua)"><svg aria-hidden="true"><use href="#i-agua"/></svg></span>Água</a>
+    <a href="#"><span class="q" style="background:var(--c-peso)"><svg aria-hidden="true"><use href="#i-peso"/></svg></span>Peso</a>
+    <a href="#"><span class="q" style="background:var(--c-aplic)"><svg aria-hidden="true"><use href="#i-caneta"/></svg></span>Aplicação</a>
+    <a href="#"><span class="q" style="background:var(--c-sint)"><svg aria-hidden="true"><use href="#i-sintoma"/></svg></span>Sintomas</a>
+    <a href="#"><span class="q" style="background:var(--c-mover)"><svg aria-hidden="true"><use href="#i-mover"/></svg></span>Caminhada</a>
+    <a href="#"><span class="q" style="background:var(--c-painel)"><svg aria-hidden="true"><use href="#i-painel"/></svg></span>Painel</a>
+    <a href="#"><span class="q" style="background:var(--c-guia)"><svg aria-hidden="true"><use href="#i-guia"/></svg></span>Guia</a>
+  </nav>
 
-  <section class="cartao" style="margin-top:14px" aria-label="Sua semana">
-    <div class="ciclo">
-      <svg viewBox="0 0 120 120" role="img" aria-label="Dia 4 de 7 desde a aplicação de terça">
-        <g fill="none" stroke-width="11">
-          <path class="feito" d="M62.8 14.1A46 46 0 0 1 94.1 29.2"/>
-          <path class="feito" d="M97.6 33.6A46 46 0 0 1 105.4 67.5"/>
-          <path class="feito" d="M104.1 73.0A46 46 0 0 1 82.5 100.1"/>
-          <path class="agora" d="M77.4 102.6A46 46 0 0 1 42.6 102.6"/>
-          <path class="vem" d="M37.5 100.1A46 46 0 0 1 15.9 73.0"/>
-          <path class="vem" d="M14.6 67.5A46 46 0 0 1 22.4 33.6"/>
-          <path class="vem" d="M25.9 29.2A46 46 0 0 1 57.2 14.1"/>
-        </g>
-        <circle class="ap" cx="62.8" cy="14.1" r="6.5"/>
-        <text class="meio1" x="60" y="64" text-anchor="middle">4</text>
-        <text class="meio2" x="60" y="81" text-anchor="middle">dia de 7</text>
-      </svg>
-      <dl>
-        <div><dt>Aplicação</dt><dd><span class="tag-ap"><svg class="ic p" aria-hidden="true"><use href="#i-caneta"/></svg>terça, 17/11</span></dd></div>
-        <div><dt>Dose</dt><dd>5 mg, 2ª semana</dd></div>
-        <div><dt>Próxima</dt><dd>terça, 24/11<span class="mini" style="display:block;font-weight:400">daqui a 4 dias</span></dd></div>
-      </dl>
-    </div>
+  <div class="banner dica">
+    <svg class="ic" aria-hidden="true"><use href="#i-dica"/></svg>
+    <div class="t"><b>Dica do dia</b>Comece o prato pela proteína: ajuda a manter os músculos enquanto o peso cai.</div>
+  </div>
+
+  <section class="alerta" role="note" aria-label="Sinal de alerta">
+    <svg class="ic" aria-hidden="true"><use href="#i-alerta"/></svg>
+    <div><div class="rot">SINAL DE ALERTA · VESÍCULA E PÂNCREAS</div>
+      <p>Dor forte no alto da barriga que não passa ou vai para as costas, febre, pele ou olhos amarelados: procure atendimento hoje.</p>
+      <a href="#">Ver todos os sinais ›</a></div>
   </section>
 
-  <section class="cartao" aria-labelledby="t-como">
-    <h2 id="t-como">Como você está hoje?</h2>
-    <p class="sub">Um toque. Fica na sua semana e no relatório da consulta.</p>
-    <div class="escolhas" style="margin-top:10px">
-      <span>Bem</span><span class="on">Enjoo leve</span><span>Enjoo forte</span><span>Sem fome</span><span>Outro sintoma</span>
+  <section class="cartao" aria-labelledby="t-marcar">
+    <div class="cab"><h2 id="t-marcar">Marcar o dia</h2><span class="mini">um toque em cada</span></div>
+    <div class="marcar">
+      <a href="#"><span class="ico-c" style="background:var(--c-comida)"><svg aria-hidden="true"><use href="#i-comer"/></svg></span><span class="med">2<small>/5</small></span><span class="mini">refeições</span></a>
+      <a href="#"><span class="ico-c" style="background:var(--c-agua)"><svg aria-hidden="true"><use href="#i-agua"/></svg></span><span class="med">4<small>/10</small></span><span class="mini">copos de água</span></a>
+      <a href="#" class="feito"><svg class="ok" aria-label="feito"><use href="#i-feito"/></svg><span class="ico-c" style="background:var(--c-aplic)"><svg aria-hidden="true"><use href="#i-caneta"/></svg></span><span class="med" style="font-size:15px;margin-top:3px">Feita</span><span class="mini">aplicação de terça</span></a>
     </div>
+    <p class="mini" style="margin-top:8px">O que você não marcar fica em branco, sem cobrança. Dá para marcar depois.</p>
   </section>
 
   <section class="cartao" aria-labelledby="t-ref">
-    <p class="sobre" style="margin:0;display:flex;align-items:center;gap:6px"><svg class="ic p" aria-hidden="true"><use href="#i-relogio"/></svg>Próxima · almoço, 12h30</p>
-    <h2 id="t-ref" style="margin-top:8px">Frango desfiado, arroz, feijão e salada de folhas</h2>
-    <p class="sub" style="margin:0">Prato pequeno. Comece pelo frango.</p>
-    <div class="porque"><b>Por que este prato:</b> pouca gordura de uma vez é mais leve para a vesícula, e a proteína no começo ajuda a não perder massa muscular enquanto o peso cai.</div>
-    <div class="quatro" role="group" aria-label="Quanto comeu"><span>comi tudo</span><span>metade</span><span>um pouco</span><span>nada</span></div>
-    <ul class="depois">
-      <li><span>16h</span><span>Iogurte natural com mamão</span></li>
-      <li><span>19h30</span><span>Sopa de legumes com ovo</span></li>
-    </ul>
-    <div class="botoes"><a class="botao leve" href="#">Trocar por outra opção</a></div>
+    <div class="cab" style="margin-bottom:6px"><span class="sub" style="font-weight:600">Próxima refeição · almoço, 12h30</span><a href="#">Trocar ›</a></div>
+    <h2 id="t-ref" style="font-size:17px">Frango desfiado, arroz, feijão e salada</h2>
+    <div class="selos" style="margin-top:8px"><span class="selo">pouca gordura</span><span class="selo">28 g de proteína</span><span class="selo laranja">prato pequeno</span></div>
+    <p class="porque"><b>Por quê:</b> pouca gordura de uma vez pesa menos na vesícula; a proteína primeiro segura a fome.</p>
+    <div class="toques" role="group" aria-label="Quanto comeu"><span>comi tudo</span><span>metade</span><span>um pouco</span><span>nada</span></div>
   </section>
 
-  <a class="cartao resumo" href="#" aria-label="Abrir o painel de calorias e proteína">
-    <svg class="anel" viewBox="0 0 44 44" aria-hidden="true">
-      <circle cx="22" cy="22" r="18" style="stroke:var(--faixa)"/>
-      <circle cx="22" cy="22" r="18" style="stroke:var(--dado)" stroke-dasharray="65.3 113.1" stroke-linecap="round" transform="rotate(-90 22 22)"/>
-    </svg>
-    <span class="txt"><strong class="num">52 de 90 g</strong> de proteína até agora<br><span class="sub">Calorias, 7 e 30 dias no painel</span></span>
-    <svg class="ic" aria-hidden="true" style="color:var(--suave)"><use href="#i-seta"/></svg>
-  </a>
-
-  <section class="cartao" aria-label="Água">
-    <div class="linha"><span><strong>Água</strong> <span class="sub num">0,8 de 2 L</span></span><button class="leve" style="min-height:44px;padding:8px 14px">+ 1 copo</button></div>
-    <div class="agua" style="margin-top:10px"><div class="copos" aria-hidden="true"><i class="cheio"></i><i class="cheio"></i><i class="cheio"></i><i class="cheio"></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
-  </section>
-
-  <section class="cartao sinais" aria-label="Sinais de alerta">
-    <svg class="ic" aria-hidden="true"><use href="#i-alerta"/></svg>
-    <div><strong>Dor forte no alto da barriga</strong>, que vai para as costas ou não passa, febre, ou pele e olhos amarelados: procure atendimento hoje.
-      <div><a href="#" style="color:var(--alerta);font-weight:600;display:inline-flex;min-height:44px;align-items:center">Ver todos os sinais</a></div></div>
-  </section>
-
-  <p class="sobre" style="margin:18px 0 8px">Registrar</p>
-  <div class="registro">
-    <a href="#"><svg class="ic" aria-hidden="true"><use href="#i-peso"/></svg>Peso</a>
-    <a href="#"><svg class="ic" aria-hidden="true"><use href="#i-caneta"/></svg>Aplicação</a>
-    <a href="#"><svg class="ic" aria-hidden="true"><use href="#i-mover"/></svg>Caminhada</a>
+  <div class="duas">
+    <section class="cartao" aria-labelledby="t-como">
+      <h2 id="t-como" style="margin-bottom:8px">Como está hoje?</h2>
+      <div class="chips2"><span>Bem</span><span class="on">Enjoo leve</span><span>Enjoo forte</span><span>Sem fome</span></div>
+    </section>
+    <section class="cartao" aria-labelledby="t-mov">
+      <h2 id="t-mov">Caminhada</h2>
+      <div class="med" style="margin-top:8px">20<small> / 30 min</small></div>
+      <div class="trilho" style="margin-top:8px"><i style="width:66%;background:#15aabf"></i></div>
+      <p class="mini" style="margin-top:8px">Treino de força: 1 de 3 na semana</p>
+    </section>
   </div>
+
+  <div class="duas">
+    <a class="cartao" href="#" style="color:inherit;text-decoration:none" aria-label="Peso: abrir">
+      <div class="linha"><h2>Peso</h2><span class="selo">hoje</span></div>
+      <div class="med" style="margin-top:8px">96,9<small> kg</small></div>
+      <p class="mini" style="margin-top:6px">−0,5 kg desde terça</p>
+    </a>
+    <a class="cartao" href="#" style="color:inherit;text-decoration:none" aria-label="Abrir o painel de calorias e proteína">
+      <div class="linha"><h2>Painel</h2><svg class="ic p" aria-hidden="true" style="color:var(--suave)"><use href="#i-seta"/></svg></div>
+      <div class="mini-barras" aria-hidden="true"><i style="height:94%"></i><i style="height:86%"></i><i style="height:100%"></i><i style="height:96%"></i><i style="height:70%"></i><i style="height:90%"></i><i class="hoje" style="height:57%"></i></div>
+      <p class="mini" style="margin-top:6px">calorias e proteína, 7 e 30 dias</p>
+    </a>
+  </div>
+
+  <section class="cartao" aria-labelledby="t-ainda">
+    <div class="cab" style="margin-bottom:6px"><h2 id="t-ainda">Ainda hoje</h2><a href="#">Cardápio ›</a></div>
+    <ul class="lista">
+      <li><span class="hora">16h</span><span class="txt">Iogurte natural com mamão</span><span class="selo">pouca gordura</span></li>
+      <li><span class="hora">19h30</span><span class="txt">Sopa de legumes com ovo</span><span class="selo">leve</span></li>
+      <li><span class="hora">20h</span><span class="txt">Caminhada de 10 min</span><span class="selo cinza">opcional</span></li>
+    </ul>
+  </section>
 </main>
-<nav class="abas" aria-label="Seções"><a href="#" class="ativa" aria-current="page"><span class="pilula"><svg class="ic" aria-hidden="true"><use href="#i-hoje"/></svg></span>Hoje</a><a href="#"><span class="pilula"><svg class="ic" aria-hidden="true"><use href="#i-semana"/></svg></span>Semana</a><a href="#"><span class="pilula"><svg class="ic" aria-hidden="true"><use href="#i-comer"/></svg></span>Comer</a><a href="#"><span class="pilula"><svg class="ic" aria-hidden="true"><use href="#i-mover"/></svg></span>Mover</a><a href="#"><span class="pilula"><svg class="ic" aria-hidden="true"><use href="#i-guia"/></svg></span>Guia</a></nav>
+<nav class="abas" aria-label="Seções"><a href="#" class="ativa" aria-current="page"><svg class="ic" aria-hidden="true"><use href="#i-hoje"/></svg>Hoje</a><a href="#"><svg class="ic" aria-hidden="true"><use href="#i-semana"/></svg>Semana</a><a href="#"><svg class="ic" aria-hidden="true"><use href="#i-comer"/></svg>Comer</a><a href="#"><svg class="ic" aria-hidden="true"><use href="#i-mover"/></svg>Mover</a><a href="#"><svg class="ic" aria-hidden="true"><use href="#i-guia"/></svg>Guia</a></nav>
 </body>
 </html>

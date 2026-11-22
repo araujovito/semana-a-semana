@@ -6,222 +6,276 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Caminhos · protótipo</title>
 <style>
-/* Protótipo da identidade "Ciclo de sete". Tudo local: fontes do sistema, ícones em SVG desenhados à mão, sem nada de fora.
+/* Protótipo da identidade "Hortelã" (revisão 2): linguagem de app de saúde do dia a dia. Topo colorido com o essencial,
+   grade de atalhos, cartões em duas colunas, selos e "marcar o dia". Tudo local: fonte do sistema, ícones próprios em SVG.
    CSS até 2022 (WebView 113): variáveis, grid, flex, gap, aspect-ratio. Sem :has(), sem nesting, sem color-mix(). */
 :root {
-  --fundo: #f6f1ea; --cartao: #fffdfa; --texto: #2b2230; --suave: #685d6b; --linha: #e6ddd4;
-  --cor: #6d3b5e; --sobre-cor: #ffffff; --cor-clara: #efe2ea;
-  --acento: #a8481f; --acento-clara: #f7e3d6;
-  --ok: #3d6f4f; --alerta: #b42318; --alerta-clara: #fbe9e7;
-  --dado: #6d3b5e; --dado-suave: #c9a9bf; --faixa: #e9dfe5; --vazio: #e6ddd4;
-  --titulo: "Noto Serif", "Droid Serif", Georgia, serif;
-  --corpo: system-ui, -apple-system, Roboto, "Segoe UI", sans-serif;
+  --fundo: #f5f6f8; --cartao: #ffffff; --texto: #1d2129; --suave: #646a73; --linha: #eceef1; --cinza: #f2f3f5;
+  --pri: #087f5b; --sobre-pri: #ffffff; --pri-clara: #e6fcf5; --pri-tinta: #0b3d2e;
+  --topo-a: #38d9a9; --topo-b: #96f2d7; --topo-c: #fff3bf; --sobre-topo: #0b3d2e; --vidro: rgba(255, 255, 255, .55);
+  --dado: #0ca678; --dado-suave: #96f2d7; --dado2: #e8590c; --faixa: #e6fcf5; --vazio: #eceef1;
+  --laranja: #b54708; --laranja-clara: #fff4e6;
+  --alerta: #c92a2a; --alerta-ic: #e03131; --alerta-clara: #fff0f0;
+  --c-comida: linear-gradient(135deg, #ffa94d, #f76707); --c-agua: linear-gradient(135deg, #74c0fc, #1c7ed6);
+  --c-peso: linear-gradient(135deg, #b197fc, #7048e8); --c-aplic: linear-gradient(135deg, #63e6be, #0ca678);
+  --c-sint: linear-gradient(135deg, #faa2c1, #d6336c); --c-mover: linear-gradient(135deg, #66d9e8, #0c8599);
+  --c-painel: linear-gradient(135deg, #ffe066, #f59f00); --c-guia: linear-gradient(135deg, #91a7ff, #4263eb);
+  --sombra: 0 1px 2px rgba(16, 24, 40, .04), 0 2px 8px rgba(16, 24, 40, .05);
+  --fonte: system-ui, -apple-system, Roboto, "Noto Sans", "Segoe UI", sans-serif;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --fundo: #16121a; --cartao: #211b25; --texto: #f2ebf0; --suave: #b4a8b6; --linha: #352c39;
-    --cor: #dcaacb; --sobre-cor: #2a1525; --cor-clara: #38243a;
-    --acento: #f0a57a; --acento-clara: #3d2a22;
-    --ok: #8fc8a2; --alerta: #f59a8e; --alerta-clara: #3a1f1d;
-    --dado: #dcaacb; --dado-suave: #6e4a64; --faixa: #2f2533; --vazio: #3a313e;
+    --fundo: #111214; --cartao: #1c1d21; --texto: #e9eaec; --suave: #9ea3ab; --linha: #2a2c31; --cinza: #25272c;
+    --pri: #38d9a9; --sobre-pri: #04241b; --pri-clara: #12342b; --pri-tinta: #b2f2e1;
+    --topo-a: #0e5a47; --topo-b: #134e4a; --topo-c: #2b2a1a; --sobre-topo: #e9fbf3; --vidro: rgba(255, 255, 255, .08);
+    --dado: #63e6be; --dado-suave: #1f5c4b; --dado2: #ffa94d; --faixa: #173a31; --vazio: #2a2c31;
+    --laranja: #ffb366; --laranja-clara: #2b2017;
+    --alerta: #ff8787; --alerta-ic: #ff8787; --alerta-clara: #2c1a1c;
+    --sombra: none;
   }
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
-body { margin: 0; background: var(--fundo); color: var(--texto); font: 16px/1.45 var(--corpo); }
-main { max-width: 520px; margin: 0 auto; padding: 4px 16px 104px; }
-h1, h2, h3 { font-family: var(--titulo); font-weight: 600; letter-spacing: -.01em; }
-h1 { font-size: 27px; line-height: 1.15; margin: 0; }
-h2 { font-size: 19px; line-height: 1.25; margin: 0 0 6px; }
-h3 { font-size: 16px; margin: 14px 0 4px; }
-p { margin: 0 0 8px; }
-.sub { color: var(--suave); font-size: 14px; }
-.mini { font-size: 13px; color: var(--suave); }
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 15px/1.45 var(--fonte); }
+main { max-width: 520px; margin: 0 auto; padding: 0 12px 96px; position: relative; }
+h1, h2, h3 { font-weight: 700; margin: 0; }
+h2 { font-size: 16px; line-height: 1.3; }
+h3 { font-size: 14px; }
+p { margin: 0; }
+.sub { color: var(--suave); font-size: 13px; }
+.mini { color: var(--suave); font-size: 12px; }
 .num { font-variant-numeric: tabular-nums; }
-.sobre { font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--suave); font-weight: 600; }
-svg.ic { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
-svg.ic.p { width: 20px; height: 20px; }
+.big { font-size: 34px; font-weight: 800; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.big small { font-size: 14px; font-weight: 600; letter-spacing: 0; }
+.med { font-size: 22px; font-weight: 800; line-height: 1.1; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.med small { font-size: 12px; font-weight: 600; color: var(--suave); letter-spacing: 0; }
+svg.ic { width: 24px; height: 24px; flex: none; }
+svg.ic.p { width: 18px; height: 18px; }
 
-/* Topo: papel, sem faixa colorida. */
-.topo { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 10px 16px; background: var(--fundo); border-bottom: 1px solid transparent; }
-.topo .marca { font-family: var(--titulo); font-size: 17px; font-weight: 600; color: var(--cor); }
-.topo .voltar { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; color: var(--cor); font-weight: 600; text-decoration: none; }
-.redondo { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%;
-  border: 1px solid var(--linha); background: var(--cartao); color: var(--texto); }
+/* Topo colorido: já mostra o essencial. */
+.topo { background: linear-gradient(180deg, transparent 72%, var(--fundo) 100%), linear-gradient(160deg, var(--topo-a) 0%, var(--topo-b) 55%, var(--topo-c) 100%); color: var(--sobre-topo);
+  padding: 10px 16px 64px; }
+.topo .barra { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; }
+.topo .barra b { font-size: 17px; }
+.topo a { color: inherit; }
+.botao-topo { display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-width: 44px; min-height: 44px; border-radius: 999px;
+  background: var(--vidro); color: var(--sobre-topo); text-decoration: none; font-weight: 600; padding: 0 10px; }
+.vidro { background: var(--vidro); border-radius: 14px; padding: 8px 10px; }
+.sobe { margin-top: -52px; }
 
-.cartao { background: var(--cartao); border: 1px solid var(--linha); border-radius: 20px; padding: 16px; margin-bottom: 14px; }
-.cartao.suave { background: var(--cor-clara); border-color: transparent; }
-.linha { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.pilha > * + * { margin-top: 10px; }
+.cartao { background: var(--cartao); border-radius: 16px; padding: 14px; margin-bottom: 10px; box-shadow: var(--sombra); }
+.cab { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.cab a, .link { color: var(--pri); font-size: 13px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; }
+.duas { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.duas .cartao { margin: 0; }
+.linha { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 
-button, .botao { font: inherit; font-weight: 600; min-height: 48px; min-width: 44px; padding: 10px 18px; border-radius: 999px; border: 0;
-  background: var(--cor); color: var(--sobre-cor); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
-button.sec, .botao.sec { background: transparent; color: var(--cor); border: 1.5px solid var(--cor); }
-button.leve, .botao.leve { background: var(--cor-clara); color: var(--cor); }
-.botoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+/* Selos e etiquetas. */
+.selo { display: inline-flex; align-items: center; gap: 3px; font-size: 11.5px; font-weight: 700; line-height: 1; padding: 4px 7px; border-radius: 6px;
+  background: var(--pri-clara); color: var(--pri); white-space: nowrap; }
+.selo.laranja { background: var(--laranja-clara); color: var(--laranja); }
+.selo.cinza { background: var(--cinza); color: var(--suave); }
+.selo.topo-s { background: var(--vidro); color: var(--sobre-topo); }
+.selos { display: flex; flex-wrap: wrap; gap: 5px; }
 
-/* Escolhas de um toque (como está, quanto comeu). */
-.escolhas { display: flex; flex-wrap: wrap; gap: 8px; }
-.escolhas span { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 14px; border-radius: 14px;
-  border: 1.5px solid var(--linha); background: var(--cartao); font-size: 15px; font-weight: 500; }
-.escolhas span.on { background: var(--cor); border-color: var(--cor); color: var(--sobre-cor); font-weight: 600; }
-.quatro { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 12px; }
-.quatro span { display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 14px; border: 1.5px solid var(--linha);
-  font-size: 14.5px; font-weight: 600; text-align: center; line-height: 1.15; padding: 4px; }
-.quatro span.on { background: var(--cor); border-color: var(--cor); color: var(--sobre-cor); }
+/* Grade de atalhos com ícones coloridos preenchidos. */
+.atalhos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px 0; }
+.atalhos a { display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 72px; padding: 4px 0; color: var(--texto);
+  text-decoration: none; font-size: 12.5px; font-weight: 500; text-align: center; line-height: 1.2; }
+.atalhos .q { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 14px; color: #fff; }
+.atalhos .q svg { width: 24px; height: 24px; }
 
-/* Faixa de sinais: sempre visível, sóbria. */
-.sinais { font-size: 15px; display: flex; gap: 12px; align-items: flex-start; border: 1.5px solid var(--alerta); background: var(--alerta-clara); }
-.sinais svg { color: var(--alerta); margin-top: 2px; }
-.sinais strong { color: var(--alerta); }
+/* Faixa de destaque. */
+.banner { display: flex; gap: 10px; align-items: center; border-radius: 16px; padding: 12px 14px; margin-bottom: 10px; }
+.banner.dica { background: var(--laranja-clara); }
+.banner.dica .ic { color: var(--laranja); }
+.banner .t { flex: 1; min-width: 0; font-size: 14px; }
+.banner .t b { display: block; font-size: 14px; }
+/* Alerta: forma própria (borda grossa à esquerda), ícone de triângulo e o rótulo "SINAL DE ALERTA". Nunca só a cor. */
+.alerta { background: var(--alerta-clara); border-left: 5px solid var(--alerta-ic); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; display: flex; gap: 10px; }
+.alerta .ic { color: var(--alerta-ic); }
+.alerta .rot { font-size: 11.5px; font-weight: 800; letter-spacing: .06em; color: var(--alerta); }
+.alerta p { font-size: 14px; margin-top: 2px; }
+.alerta a { color: var(--alerta); font-weight: 700; font-size: 13px; display: inline-flex; min-height: 44px; align-items: center; }
 
-/* Barra de abas com ícones próprios. */
+/* Botões. */
+button, .botao { font: inherit; font-weight: 700; min-height: 44px; min-width: 44px; padding: 8px 16px; border-radius: 999px; border: 0;
+  background: var(--pri); color: var(--sobre-pri); display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; }
+button.leve, .botao.leve { background: var(--pri-clara); color: var(--pri); }
+button.cinza { background: var(--cinza); color: var(--texto); font-weight: 600; }
+
+/* Escolhas de um toque. */
+.toques { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; }
+.toques span { display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 12px; background: var(--cinza); font-size: 13.5px; font-weight: 600; text-align: center; line-height: 1.15; }
+.toques span.on { background: var(--pri); color: var(--sobre-pri); }
+
+/* Barras simples. */
+.trilho { height: 8px; border-radius: 999px; background: var(--vazio); overflow: hidden; }
+.trilho i { display: block; height: 100%; border-radius: 999px; background: var(--dado); }
+
+/* Lista compacta. */
+.lista { list-style: none; margin: 0; padding: 0; }
+.lista li { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--linha); min-height: 44px; }
+.lista li:first-child { border-top: 0; padding-top: 0; }
+.lista .hora { width: 44px; flex: none; color: var(--suave); font-size: 13px; font-variant-numeric: tabular-nums; }
+.lista .txt { flex: 1; min-width: 0; }
+.ico-c { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 10px; color: #fff; flex: none; }
+.ico-c svg { width: 18px; height: 18px; }
+
+/* Barra de abas com ícones preenchidos. */
 .abas { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; display: flex; background: var(--cartao); border-top: 1px solid var(--linha);
-  padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); }
-.abas a { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 52px; color: var(--suave); text-decoration: none; font-size: 12px; font-weight: 500; }
-.abas a .pilula { display: flex; align-items: center; justify-content: center; width: 56px; height: 30px; border-radius: 999px; }
-.abas a.ativa { color: var(--cor); font-weight: 700; }
-.abas a.ativa .pilula { background: var(--cor-clara); }
+  padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); }
+.abas a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 52px; color: var(--suave);
+  text-decoration: none; font-size: 11.5px; font-weight: 500; }
+.abas a svg { width: 25px; height: 25px; }
+.abas a.ativa { color: var(--pri); font-weight: 700; }
 
-/* Gráficos */
+/* Gráficos. */
 svg.graf { display: block; width: 100%; height: auto; overflow: visible; }
-svg.graf text { fill: var(--suave); font: 11px var(--corpo); }
+svg.graf text { fill: var(--suave); font: 11px var(--fonte); }
 svg.graf .faixa { fill: var(--faixa); }
 svg.graf .barra { fill: var(--dado); }
-svg.graf .parcial { fill: url(#hachura); stroke: var(--dado); stroke-width: 1.5; }
 svg.graf .base { stroke: var(--linha); stroke-width: 1; }
-svg.graf .media { stroke: var(--texto); stroke-width: 1.5; stroke-dasharray: 4 4; }
-svg.graf .linhad { fill: none; stroke: var(--dado); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
-svg.graf .ponto { fill: var(--dado); stroke: var(--cartao); stroke-width: 2; }
-svg.graf .forte { fill: var(--texto); font-weight: 600; }
-.legenda { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; font-size: 13px; color: var(--suave); }
-.legenda i { display: inline-block; width: 14px; height: 10px; border-radius: 3px; vertical-align: -1px; margin-right: 5px; }
+svg.graf .media { stroke: var(--texto); stroke-width: 1.3; stroke-dasharray: 4 4; }
+svg.graf .forte { fill: var(--texto); font-weight: 700; }
+.legenda { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; font-size: 12px; color: var(--suave); }
+.legenda i { display: inline-block; width: 12px; height: 9px; border-radius: 3px; vertical-align: -1px; margin-right: 4px; }
 </style>
 <style>
-.base-comum { margin-top: 14px; }
-.base-comum ul { margin: 8px 0 0; padding: 0; list-style: none; }
-.base-comum li { display: flex; gap: 10px; padding: 5px 0; font-size: 15px; }
-.base-comum li::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--cor); margin-top: 8px; }
-.caminho { position: relative; padding: 0; overflow: hidden; }
-.caminho .cab { display: flex; gap: 14px; align-items: center; padding: 16px 16px 0; }
-.caminho .cab svg { width: 60px; height: 60px; flex: none; }
-.caminho .corpo { padding: 4px 16px 16px; }
-.caminho.escolhido { border: 2px solid var(--cor); }
-.selo { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: var(--sobre-cor); background: var(--cor);
-  border-radius: 999px; padding: 3px 10px; margin-bottom: 4px; }
-.serve { margin: 10px 0 0; font-size: 15px; }
-.pc { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 12px; }
-.pc div { background: var(--fundo); border-radius: 14px; padding: 10px 12px; }
-.pc h3 { margin: 0 0 4px; font: 700 12.5px var(--corpo); letter-spacing: .06em; text-transform: uppercase; color: var(--suave); }
-.pc ul { margin: 0; padding-left: 16px; font-size: 14px; }
-.pc li + li { margin-top: 4px; }
-.exemplo { margin-top: 12px; font-size: 14.5px; }
-.exemplo b { color: var(--cor); }
-.prato .p { fill: var(--cartao); stroke: var(--dado); stroke-width: 2; }
-.prato .a { fill: var(--dado); }
-.prato .b { fill: var(--dado-suave); }
-.prato .c { fill: var(--acento); }
-.fonte { font-size: 12.5px; color: var(--suave); margin-top: 10px; }
+.vale { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.vale div { display: flex; gap: 8px; align-items: flex-start; background: var(--cinza); border-radius: 12px; padding: 10px; font-size: 13px; line-height: 1.3; }
+.vale .ico-c { width: 26px; height: 26px; border-radius: 8px; }
+.vale .ico-c svg { width: 15px; height: 15px; }
+.caminho { padding: 0; overflow: hidden; }
+.capa { display: flex; align-items: center; gap: 12px; padding: 14px; color: #fff; }
+.capa svg.prato { width: 56px; height: 56px; flex: none; }
+.capa h2 { font-size: 18px; color: #fff; }
+.capa .sel { display: inline-block; margin-bottom: 4px; font-size: 11.5px; font-weight: 800; background: #fff; color: #087f5b; border-radius: 6px; padding: 3px 7px; }
+.capa p { font-size: 13px; opacity: .95; }
+.c1 { background: linear-gradient(120deg, #1864ab, #1971c2); }
+.c2 { background: linear-gradient(120deg, #0f6e52, #087f5b); }
+.c3 { background: linear-gradient(120deg, #a93a0c, #c2410c); }
+.corpo { padding: 12px 14px 14px; }
+.prc { list-style: none; margin: 8px 0 0; padding: 0; font-size: 13.5px; }
+.prc li { display: flex; gap: 8px; padding: 3px 0; }
+.prc li::before { flex: none; width: 18px; height: 18px; border-radius: 50%; font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+.prc li.a::before { content: "✓"; background: var(--pri-clara); color: var(--pri); }
+.prc li.t::before { content: "!"; background: var(--laranja-clara); color: var(--laranja); }
+.almoco { margin-top: 10px; background: var(--cinza); border-radius: 12px; padding: 9px 11px; font-size: 13px; }
+.almoco b { display: block; font-size: 12px; color: var(--suave); }
+.caminho.escolhido { box-shadow: 0 0 0 2px var(--pri); }
+.caminho .botoes { display: flex; gap: 8px; margin-top: 12px; }
+.caminho .botoes > * { flex: 1; }
 </style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="i-hoje" viewBox="0 0 24 24"><path d="M3 18.5h18M6.5 18.5a5.5 5.5 0 0 1 11 0M12 6v2.5M5.3 10.3l1.6 1.6M18.7 10.3l-1.6 1.6M3.5 15h1.5M19 15h1.5"/></symbol>
-  <symbol id="i-semana" viewBox="0 0 24 24"><circle cx="12" cy="4" r="1.7" fill="currentColor"/><circle cx="18.25" cy="7.01" r="1.5"/><circle cx="19.8" cy="13.78" r="1.5"/><circle cx="15.47" cy="19.21" r="1.5"/><circle cx="8.53" cy="19.21" r="1.5"/><circle cx="4.2" cy="13.78" r="1.5"/><circle cx="5.75" cy="7.01" r="1.5"/></symbol>
-  <symbol id="i-comer" viewBox="0 0 24 24"><path d="M3.5 12.5h17a8.5 8 0 0 1-17 0zM8 20.5h8M9.5 3.5c-1.2 1.2 1.2 2.3 0 3.5M14.5 3.5c-1.2 1.2 1.2 2.3 0 3.5"/></symbol>
-  <symbol id="i-mover" viewBox="0 0 24 24"><circle cx="13.5" cy="4.3" r="1.8"/><path d="M12.8 8.2 10.6 14l3.4 2.6V21M10.6 14 8.2 20.8M12.8 8.2l3.2 3 2.6-.4M12.8 8.2 9.2 9.8l-1.4 3"/></symbol>
-  <symbol id="i-guia" viewBox="0 0 24 24"><path d="M3 5.5c2.6-1 6-1 9 1 3-2 6.4-2 9-1V19c-2.6-1-6-1-9 1-3-2-6.4-2-9-1zM12 6.5V20"/></symbol>
-  <symbol id="i-perfil" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.2-3.6 4-5.3 7.5-5.3s6.3 1.7 7.5 5.3"/></symbol>
-  <symbol id="i-caneta" viewBox="0 0 24 24"><path d="M14.5 4.5l5 5M16 3l5 5M17 7 7.5 16.5l-3 1 1-3L15 5M4.5 19.5 3 21"/></symbol>
-  <symbol id="i-peso" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M8 9.5a5 5 0 0 1 8 0M12 9.5l1.4-2"/></symbol>
-  <symbol id="i-gota" viewBox="0 0 24 24"><path d="M12 3.5s-6 6.6-6 10.8a6 6 0 0 0 12 0C18 10.1 12 3.5 12 3.5z"/></symbol>
-  <symbol id="i-alerta" viewBox="0 0 24 24"><path d="M12 3.8 21.2 19.5H2.8zM12 10v4.2M12 16.9v.1"/></symbol>
-  <symbol id="i-seta" viewBox="0 0 24 24"><path d="M9 5.5 15.5 12 9 18.5"/></symbol>
-  <symbol id="i-volta" viewBox="0 0 24 24"><path d="M15 5.5 8.5 12l6.5 6.5"/></symbol>
-  <symbol id="i-relogio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
-  <symbol id="i-conversa" viewBox="0 0 24 24"><path d="M4 5.5h16v10H10l-4.5 3.5v-3.5H4z"/></symbol>
+  <!-- Ícones próprios, preenchidos, grade de 24 px, cor = currentColor. -->
+  <symbol id="i-hoje" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.8" fill="currentColor"/><path d="M12 2.6v2.3M12 19.1v2.3M2.6 12h2.3M19.1 12h2.3M5.4 5.4 7 7M17 17l1.6 1.6M5.4 18.6 7 17M17 7l1.6-1.6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></symbol>
+  <symbol id="i-semana" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M6.5 4.5h11A3.5 3.5 0 0 1 21 8v9.5a3.5 3.5 0 0 1-3.5 3.5h-11A3.5 3.5 0 0 1 3 17.5V8a3.5 3.5 0 0 1 3.5-3.5zM6.8 10.4h2.7v2.7H6.8zM10.65 10.4h2.7v2.7h-2.7zM14.5 10.4h2.7v2.7h-2.7zM6.8 14.5h2.7v2.7H6.8zM10.65 14.5h2.7v2.7h-2.7z"/><path d="M8 2.5v3.5M16 2.5v3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-comer" viewBox="0 0 24 24"><path fill="currentColor" d="M2.8 11.5h18.4a9.2 8.6 0 0 1-18.4 0zM8.5 20h7a1.2 1.2 0 0 1 0 2.4h-7a1.2 1.2 0 0 1 0-2.4z"/><path d="M13.5 2.8 10 10M19 3.6l-5.2 6.4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="i-mover" viewBox="0 0 24 24"><circle cx="14.6" cy="4.2" r="2.3" fill="currentColor"/><path d="M13.2 8.6 10.6 14l3.4 2.6v4.6M10.6 14l-2.8 6.6M13.2 8.6l3 3 2.8-.5M13.2 8.6 9.3 10.3l-1.5 3" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+  <symbol id="i-guia" viewBox="0 0 24 24"><path fill="currentColor" d="M2.8 5.2c3-1.3 6.3-1 8.4.8v14.3c-2.1-1.6-5.4-1.9-8.4-.8zM12.8 6c2.1-1.8 5.4-2.1 8.4-.8v14.3c-3-1.1-6.3-.8-8.4.8z"/></symbol>
+  <symbol id="i-perfil" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4.3" fill="currentColor"/><path fill="currentColor" d="M3.6 20.8c.9-4.1 4.3-6.5 8.4-6.5s7.5 2.4 8.4 6.5z"/></symbol>
+  <symbol id="i-agua" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.6s-6.6 7.2-6.6 11.8a6.6 6.6 0 0 0 13.2 0C18.6 9.8 12 2.6 12 2.6z"/></symbol>
+  <symbol id="i-peso" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zM7.2 10.6a4.8 4.8 0 0 1 9.6 0z"/><path fill="currentColor" d="m11.3 10.6 2.3-3.9 1 .5-1.8 3.4z"/></symbol>
+  <symbol id="i-caneta" viewBox="0 0 24 24"><g transform="rotate(40 12 12)" fill="currentColor"><rect x="10" y="1" width="4" height="3" rx="1"/><rect x="8.6" y="4.6" width="6.8" height="12.6" rx="2"/><rect x="11.1" y="17" width="1.8" height="5.5" rx=".9"/></g></symbol>
+  <symbol id="i-sintoma" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21s-8.6-5.1-8.6-11.2A4.6 4.6 0 0 1 12 7.1a4.6 4.6 0 0 1 8.6 2.7C20.6 15.9 12 21 12 21z"/></symbol>
+  <symbol id="i-painel" viewBox="0 0 24 24"><g fill="currentColor"><rect x="3.5" y="12" width="4.6" height="9" rx="1.6"/><rect x="9.7" y="7" width="4.6" height="14" rx="1.6"/><rect x="15.9" y="3" width="4.6" height="18" rx="1.6"/></g></symbol>
+  <symbol id="i-alerta" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M10.3 3.9a2 2 0 0 1 3.4 0l8.1 14a2 2 0 0 1-1.7 3H3.9a2 2 0 0 1-1.7-3zM10.9 8.6h2.2l-.3 6.4h-1.6zM12 16.2a1.3 1.3 0 1 1 0 2.6 1.3 1.3 0 0 1 0-2.6z"/></symbol>
+  <symbol id="i-feito" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="m7.4 12.3 3.1 3.1 6.1-6.3" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+  <symbol id="i-dica" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.5a6.8 6.8 0 0 0-4 12.3c.6.5 1 1.2 1 2V18h6v-1.2c0-.8.4-1.5 1-2A6.8 6.8 0 0 0 12 2.5zM9.2 19.6h5.6a2.2 2.2 0 0 1-2.2 2h-1.2a2.2 2.2 0 0 1-2.2-2z"/></symbol>
+  <symbol id="i-conversa" viewBox="0 0 24 24"><path fill="currentColor" d="M5 4h14a2.5 2.5 0 0 1 2.5 2.5v8A2.5 2.5 0 0 1 19 17h-8.5L6 20.6V17H5a2.5 2.5 0 0 1-2.5-2.5v-8A2.5 2.5 0 0 1 5 4z"/></symbol>
+  <symbol id="i-seta" viewBox="0 0 24 24"><path d="M9 5.5 15.5 12 9 18.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
+  <symbol id="i-volta" viewBox="0 0 24 24"><path d="M15 5.5 8.5 12l6.5 6.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></symbol>
 </svg>
 
 <header class="topo">
-  <span class="marca">Semana a Semana</span>
-  <a class="redondo" href="#" aria-label="Perfil e metas"><svg class="ic p" aria-hidden="true"><use href="#i-perfil"/></svg></a>
+  <div class="barra">
+    <b>Comer</b>
+    <a class="botao-topo" href="#" aria-label="Perfil e metas"><svg class="ic p" aria-hidden="true"><use href="#i-perfil"/></svg></a>
+  </div>
+  <h1 style="font-size:24px;margin-top:4px">Caminhos para comer</h1>
+  <p style="font-size:13.5px;font-weight:500;margin-top:4px">Três jeitos de montar a semana. Você escolhe um e troca quando quiser; o cardápio segue o caminho escolhido.</p>
+  <div class="vidro" style="margin-top:10px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+    <span style="font-size:13px;font-weight:600">Seu caminho agora</span><b>Prato dividido</b>
+  </div>
 </header>
 <main>
-  <p class="sobre" style="margin:6px 0 4px">Comer</p>
-  <h1>Caminhos para comer</h1>
-  <p class="sub" style="margin:6px 0 0">Três jeitos de montar a semana. Nenhum é obrigatório: você escolhe um para começar e pode trocar quando quiser. O cardápio do app segue o caminho escolhido.</p>
-
-  <section class="cartao suave base-comum" aria-labelledby="t-base">
-    <h2 id="t-base">O que vale em todos</h2>
-    <p class="sub" style="margin:0">Pensado para a vesícula e o fígado.</p>
-    <ul>
-      <li>Refeições menores, sem muita gordura de uma vez.</li>
-      <li>Proteína em todas as refeições.</li>
-      <li>Pouco açúcar, refrigerante e álcool.</li>
-      <li>Perda de peso sem pressa: o ritmo é combinado com o médico.</li>
-    </ul>
-    <p class="fonte">Fontes: anotadas no app, item por item.</p>
+  <section class="cartao sobe" aria-labelledby="t-vale">
+    <div class="cab"><h2 id="t-vale">Vale em todos</h2><span class="selo">vesícula e fígado</span></div>
+    <div class="vale">
+      <div><span class="ico-c" style="background:var(--c-comida)"><svg aria-hidden="true"><use href="#i-comer"/></svg></span>Refeições menores, pouca gordura de uma vez</div>
+      <div><span class="ico-c" style="background:var(--c-peso)"><svg aria-hidden="true"><use href="#i-peso"/></svg></span>Proteína em todas as refeições</div>
+      <div><span class="ico-c" style="background:var(--c-agua)"><svg aria-hidden="true"><use href="#i-agua"/></svg></span>Pouco açúcar, refrigerante e álcool</div>
+      <div><span class="ico-c" style="background:var(--c-aplic)"><svg aria-hidden="true"><use href="#i-semana"/></svg></span>Perder peso sem pressa, no ritmo do médico</div>
+    </div>
+    <p class="mini" style="margin-top:8px">Cada item tem a fonte anotada no app.</p>
   </section>
 
   <article class="cartao caminho" aria-labelledby="c1">
-    <div class="cab">
-      <svg class="prato" viewBox="0 0 60 60" aria-hidden="true"><circle class="p" cx="30" cy="30" r="26"/><path class="a" d="M14 32c6-8 18-9 26-3l5-4v12l-5-4c-8 6-20 5-26-1z"/><circle class="b" cx="22" cy="18" r="4"/><circle class="b" cx="30" cy="15" r="3.5"/><circle class="c" cx="38" cy="44" r="3"/><circle class="b" cx="28" cy="45" r="4"/></svg>
-      <div><h2 id="c1" style="margin:0">Mediterrâneo adaptado</h2><div class="sub">peixe, legumes, grãos, azeite em fio</div></div>
+    <div class="capa c1">
+      <svg class="prato" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="27" fill="rgba(255,255,255,.22)"/><circle cx="30" cy="30" r="21" fill="#fff"/><path d="M15 31c6-7 17-8 24-3l5-4v11l-5-4c-7 6-18 5-24 0z" fill="#1c7ed6"/><circle cx="23" cy="20" r="3.5" fill="#94d82d"/><circle cx="31" cy="18" r="3" fill="#94d82d"/><circle cx="29" cy="42" r="3.5" fill="#fab005"/></svg>
+      <div><h2 id="c1">Mediterrâneo adaptado</h2><p>peixe, legumes, grãos, azeite em fio</p></div>
     </div>
     <div class="corpo">
-      <p class="serve"><b>Para quem:</b> gosta de variedade e de cozinhar um pouco, e quer um jeito de comer para a vida toda.</p>
-      <div class="pc">
-        <div><h3>A favor</h3><ul><li>Um dos mais estudados para gordura no fígado</li><li>Comida de verdade, sem cortar grupos</li></ul></div>
-        <div><h3>Atenção</h3><ul><li>Azeite e castanhas em porções pequenas, por causa da vesícula</li><li>Peixe pesa no orçamento</li></ul></div>
-      </div>
-      <p class="exemplo"><b>Um almoço assim:</b> sardinha assada, grão-de-bico, salada de tomate e pepino.</p>
-      <div class="botoes"><button class="sec">Escolher este caminho</button></div>
+      <div class="selos"><span class="selo">comida de verdade</span><span class="selo laranja">cozinhar um pouco</span><span class="selo cinza">para a vida toda</span></div>
+      <p style="margin-top:8px;font-size:14px"><b>Para quem:</b> gosta de variedade e de cozinhar.</p>
+      <ul class="prc">
+        <li class="a">Um dos mais estudados para gordura no fígado</li>
+        <li class="a">Não corta nenhum grupo de alimento</li>
+        <li class="t">Azeite e castanhas em porções pequenas, por causa da vesícula</li>
+        <li class="t">Peixe pesa no orçamento</li>
+      </ul>
+      <div class="almoco"><b>Um almoço assim</b>Sardinha assada, grão-de-bico, salada de tomate e pepino</div>
+      <div class="botoes"><button class="leve">Ver a semana</button><button>Escolher</button></div>
     </div>
   </article>
 
   <article class="cartao caminho escolhido" aria-labelledby="c2">
-    <div class="cab">
-      <svg class="prato" viewBox="0 0 60 60" aria-hidden="true"><circle class="p" cx="30" cy="30" r="26"/><path class="b" d="M30 6a24 24 0 0 0 0 48z"/><path class="a" d="M31.5 6a24 24 0 0 1 22.5 22.5H31.5z"/><path class="c" d="M31.5 31.5H54A24 24 0 0 1 31.5 54z"/></svg>
-      <div><span class="selo">Seu caminho atual</span><h2 id="c2" style="margin:0">Prato dividido</h2><div class="sub">metade legumes, ¼ proteína, ¼ arroz, feijão ou raiz</div></div>
+    <div class="capa c2">
+      <svg class="prato" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="27" fill="rgba(255,255,255,.22)"/><circle cx="30" cy="30" r="21" fill="#fff"/><path d="M30 11a19 19 0 0 0 0 38z" fill="#94d82d"/><path d="M31.5 11A19 19 0 0 1 49 28.5H31.5z" fill="#ff922b"/><path d="M31.5 31.5H49A19 19 0 0 1 31.5 49z" fill="#fcc419"/></svg>
+      <div><span class="sel">✓ seu caminho</span><h2 id="c2">Prato dividido</h2><p>½ legumes · ¼ proteína · ¼ arroz, feijão ou raiz</p></div>
     </div>
     <div class="corpo">
-      <p class="serve"><b>Para quem:</b> não quer contar nem pesar nada e come muitas vezes fora de casa.</p>
-      <div class="pc">
-        <div><h3>A favor</h3><ul><li>Fácil de lembrar e de usar no restaurante</li><li>Prato menor combina com o apetite do tratamento</li></ul></div>
-        <div><h3>Atenção</h3><ul><li>Números menos precisos</li><li>O preparo conta: fritura e molho gorduroso pesam na vesícula</li></ul></div>
-      </div>
-      <p class="exemplo"><b>Um almoço assim:</b> frango grelhado, arroz e feijão, abobrinha e salada.</p>
+      <div class="selos"><span class="selo">sem contar nada</span><span class="selo">serve fora de casa</span><span class="selo cinza">prato pequeno</span></div>
+      <p style="margin-top:8px;font-size:14px"><b>Para quem:</b> não quer pesar nem contar e come muito fora.</p>
+      <ul class="prc">
+        <li class="a">Fácil de lembrar e de usar no restaurante</li>
+        <li class="a">Prato menor combina com o apetite do tratamento</li>
+        <li class="t">Números menos precisos</li>
+        <li class="t">O preparo conta: fritura e molho gorduroso pesam na vesícula</li>
+      </ul>
+      <div class="almoco"><b>Um almoço assim</b>Frango grelhado, arroz e feijão, abobrinha e salada</div>
       <div class="botoes"><button>Ver a semana deste caminho</button></div>
     </div>
   </article>
 
   <article class="cartao caminho" aria-labelledby="c3">
-    <div class="cab">
-      <svg class="prato" viewBox="0 0 60 60" aria-hidden="true"><circle class="p" cx="30" cy="30" r="26"/><rect class="b" x="17" y="22" width="14" height="14" rx="2"/><path d="M14 44 46 16" stroke="var(--acento)" stroke-width="3" stroke-linecap="round"/><circle class="a" cx="38" cy="38" r="7"/></svg>
-      <div><h2 id="c3" style="margin:0">Menos açúcar e farinha</h2><div class="sub">doce, pão branco e massa ficam para às vezes</div></div>
+    <div class="capa c3">
+      <svg class="prato" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="27" fill="rgba(255,255,255,.22)"/><circle cx="30" cy="30" r="21" fill="#fff"/><rect x="18" y="21" width="12" height="12" rx="2" fill="#ffd8a8"/><circle cx="37" cy="37" r="6.5" fill="#e8590c"/><path d="M16 44 44 16" stroke="#c2410c" stroke-width="3" stroke-linecap="round"/></svg>
+      <div><h2 id="c3">Menos açúcar e farinha</h2><p>doce, pão branco e massa ficam para às vezes</p></div>
     </div>
     <div class="corpo">
-      <p class="serve"><b>Para quem:</b> sente que doce e pão são o ponto fraco, ou tem glicose alta no exame.</p>
-      <div class="pc">
-        <div><h3>A favor</h3><ul><li>Açúcar em excesso alimenta a gordura no fígado</li><li>Menos picos de fome</li></ul></div>
-        <div><h3>Atenção</h3><ul><li>Dá mais trabalho no começo</li><li>Não é cortar todo carboidrato: em dia de enjoo, pão e arroz ajudam</li></ul></div>
-      </div>
-      <p class="exemplo"><b>Um almoço assim:</b> carne moída com legumes, feijão e meia concha de arroz integral.</p>
-      <div class="botoes"><button class="sec">Escolher este caminho</button></div>
+      <div class="selos"><span class="selo">bom para o fígado</span><span class="selo laranja">mais trabalho no começo</span></div>
+      <p style="margin-top:8px;font-size:14px"><b>Para quem:</b> sente que doce e pão são o ponto fraco, ou tem glicose alta.</p>
+      <ul class="prc">
+        <li class="a">Açúcar em excesso alimenta a gordura no fígado</li>
+        <li class="a">Menos picos de fome</li>
+        <li class="t">Não é cortar todo carboidrato: em dia de enjoo, pão e arroz ajudam</li>
+      </ul>
+      <div class="almoco"><b>Um almoço assim</b>Carne moída com legumes, feijão e meia concha de arroz integral</div>
+      <div class="botoes"><button class="leve">Ver a semana</button><button>Escolher</button></div>
     </div>
   </article>
 
-  <section class="cartao" style="display:flex;gap:12px;align-items:flex-start" aria-labelledby="t-nutri">
-    <svg class="ic" aria-hidden="true" style="color:var(--cor);margin-top:2px"><use href="#i-conversa"/></svg>
-    <div>
-      <h2 id="t-nutri">Converse com sua nutricionista</h2>
-      <p style="margin:0">Leve esta comparação para a consulta. Ela pode ajustar qualquer caminho ao que você come, aos exames e à data da cirurgia.</p>
-      <div class="botoes"><a class="botao leve" href="#">Mostrar na consulta</a></div>
-    </div>
+  <section class="banner" style="background:var(--pri-clara)" aria-labelledby="t-nutri">
+    <span class="ico-c" style="background:var(--c-guia);width:40px;height:40px;border-radius:12px"><svg aria-hidden="true" style="width:22px;height:22px"><use href="#i-conversa"/></svg></span>
+    <div class="t"><b id="t-nutri">Converse com sua nutricionista</b>Ela ajusta qualquer caminho ao que você come, aos exames e à data da cirurgia.</div>
   </section>
+  <a class="botao" href="#" style="width:100%">Mostrar esta comparação na consulta</a>
 </main>
-<nav class="abas" aria-label="Seções"><a href="#"><span class="pilula"><svg class="ic" aria-hidden="true"><use href="#i-hoje"/></svg></span>Hoje</a><a href="#"><span class="pilula"><svg class="ic" aria-hidden="true"><use href="#i-semana"/></svg></span>Semana</a><a href="#" class="ativa" aria-current="page"><span class="pilula"><svg class="ic" aria-hidden="true"><use href="#i-comer"/></svg></span>Comer</a><a href="#"><span class="pilula"><svg class="ic" aria-hidden="true"><use href="#i-mover"/></svg></span>Mover</a><a href="#"><span class="pilula"><svg class="ic" aria-hidden="true"><use href="#i-guia"/></svg></span>Guia</a></nav>
+<nav class="abas" aria-label="Seções"><a href="#"><svg class="ic" aria-hidden="true"><use href="#i-hoje"/></svg>Hoje</a><a href="#"><svg class="ic" aria-hidden="true"><use href="#i-semana"/></svg>Semana</a><a href="#" class="ativa" aria-current="page"><svg class="ic" aria-hidden="true"><use href="#i-comer"/></svg>Comer</a><a href="#"><svg class="ic" aria-hidden="true"><use href="#i-mover"/></svg>Mover</a><a href="#"><svg class="ic" aria-hidden="true"><use href="#i-guia"/></svg>Guia</a></nav>
 </body>
 </html>

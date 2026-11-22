@@ -1,92 +1,135 @@
-/* Protótipo da identidade "Ciclo de sete". Tudo local: fontes do sistema, ícones em SVG desenhados à mão, sem nada de fora.
+/* Protótipo da identidade "Hortelã" (revisão 2): linguagem de app de saúde do dia a dia. Topo colorido com o essencial,
+   grade de atalhos, cartões em duas colunas, selos e "marcar o dia". Tudo local: fonte do sistema, ícones próprios em SVG.
    CSS até 2022 (WebView 113): variáveis, grid, flex, gap, aspect-ratio. Sem :has(), sem nesting, sem color-mix(). */
 :root {
-  --fundo: #f6f1ea; --cartao: #fffdfa; --texto: #2b2230; --suave: #685d6b; --linha: #e6ddd4;
-  --cor: #6d3b5e; --sobre-cor: #ffffff; --cor-clara: #efe2ea;
-  --acento: #a8481f; --acento-clara: #f7e3d6;
-  --ok: #3d6f4f; --alerta: #b42318; --alerta-clara: #fbe9e7;
-  --dado: #6d3b5e; --dado-suave: #c9a9bf; --faixa: #e9dfe5; --vazio: #e6ddd4;
-  --titulo: "Noto Serif", "Droid Serif", Georgia, serif;
-  --corpo: system-ui, -apple-system, Roboto, "Segoe UI", sans-serif;
+  --fundo: #f5f6f8; --cartao: #ffffff; --texto: #1d2129; --suave: #646a73; --linha: #eceef1; --cinza: #f2f3f5;
+  --pri: #087f5b; --sobre-pri: #ffffff; --pri-clara: #e6fcf5; --pri-tinta: #0b3d2e;
+  --topo-a: #38d9a9; --topo-b: #96f2d7; --topo-c: #fff3bf; --sobre-topo: #0b3d2e; --vidro: rgba(255, 255, 255, .55);
+  --dado: #0ca678; --dado-suave: #96f2d7; --dado2: #e8590c; --faixa: #e6fcf5; --vazio: #eceef1;
+  --laranja: #b54708; --laranja-clara: #fff4e6;
+  --alerta: #c92a2a; --alerta-ic: #e03131; --alerta-clara: #fff0f0;
+  --c-comida: linear-gradient(135deg, #ffa94d, #f76707); --c-agua: linear-gradient(135deg, #74c0fc, #1c7ed6);
+  --c-peso: linear-gradient(135deg, #b197fc, #7048e8); --c-aplic: linear-gradient(135deg, #63e6be, #0ca678);
+  --c-sint: linear-gradient(135deg, #faa2c1, #d6336c); --c-mover: linear-gradient(135deg, #66d9e8, #0c8599);
+  --c-painel: linear-gradient(135deg, #ffe066, #f59f00); --c-guia: linear-gradient(135deg, #91a7ff, #4263eb);
+  --sombra: 0 1px 2px rgba(16, 24, 40, .04), 0 2px 8px rgba(16, 24, 40, .05);
+  --fonte: system-ui, -apple-system, Roboto, "Noto Sans", "Segoe UI", sans-serif;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --fundo: #16121a; --cartao: #211b25; --texto: #f2ebf0; --suave: #b4a8b6; --linha: #352c39;
-    --cor: #dcaacb; --sobre-cor: #2a1525; --cor-clara: #38243a;
-    --acento: #f0a57a; --acento-clara: #3d2a22;
-    --ok: #8fc8a2; --alerta: #f59a8e; --alerta-clara: #3a1f1d;
-    --dado: #dcaacb; --dado-suave: #6e4a64; --faixa: #2f2533; --vazio: #3a313e;
+    --fundo: #111214; --cartao: #1c1d21; --texto: #e9eaec; --suave: #9ea3ab; --linha: #2a2c31; --cinza: #25272c;
+    --pri: #38d9a9; --sobre-pri: #04241b; --pri-clara: #12342b; --pri-tinta: #b2f2e1;
+    --topo-a: #0e5a47; --topo-b: #134e4a; --topo-c: #2b2a1a; --sobre-topo: #e9fbf3; --vidro: rgba(255, 255, 255, .08);
+    --dado: #63e6be; --dado-suave: #1f5c4b; --dado2: #ffa94d; --faixa: #173a31; --vazio: #2a2c31;
+    --laranja: #ffb366; --laranja-clara: #2b2017;
+    --alerta: #ff8787; --alerta-ic: #ff8787; --alerta-clara: #2c1a1c;
+    --sombra: none;
   }
 }
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
-body { margin: 0; background: var(--fundo); color: var(--texto); font: 16px/1.45 var(--corpo); }
-main { max-width: 520px; margin: 0 auto; padding: 4px 16px 104px; }
-h1, h2, h3 { font-family: var(--titulo); font-weight: 600; letter-spacing: -.01em; }
-h1 { font-size: 27px; line-height: 1.15; margin: 0; }
-h2 { font-size: 19px; line-height: 1.25; margin: 0 0 6px; }
-h3 { font-size: 16px; margin: 14px 0 4px; }
-p { margin: 0 0 8px; }
-.sub { color: var(--suave); font-size: 14px; }
-.mini { font-size: 13px; color: var(--suave); }
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 15px/1.45 var(--fonte); }
+main { max-width: 520px; margin: 0 auto; padding: 0 12px 96px; position: relative; }
+h1, h2, h3 { font-weight: 700; margin: 0; }
+h2 { font-size: 16px; line-height: 1.3; }
+h3 { font-size: 14px; }
+p { margin: 0; }
+.sub { color: var(--suave); font-size: 13px; }
+.mini { color: var(--suave); font-size: 12px; }
 .num { font-variant-numeric: tabular-nums; }
-.sobre { font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--suave); font-weight: 600; }
-svg.ic { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
-svg.ic.p { width: 20px; height: 20px; }
+.big { font-size: 34px; font-weight: 800; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.big small { font-size: 14px; font-weight: 600; letter-spacing: 0; }
+.med { font-size: 22px; font-weight: 800; line-height: 1.1; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.med small { font-size: 12px; font-weight: 600; color: var(--suave); letter-spacing: 0; }
+svg.ic { width: 24px; height: 24px; flex: none; }
+svg.ic.p { width: 18px; height: 18px; }
 
-/* Topo: papel, sem faixa colorida. */
-.topo { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 10px 16px; background: var(--fundo); border-bottom: 1px solid transparent; }
-.topo .marca { font-family: var(--titulo); font-size: 17px; font-weight: 600; color: var(--cor); }
-.topo .voltar { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; color: var(--cor); font-weight: 600; text-decoration: none; }
-.redondo { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%;
-  border: 1px solid var(--linha); background: var(--cartao); color: var(--texto); }
+/* Topo colorido: já mostra o essencial. */
+.topo { background: linear-gradient(180deg, transparent 72%, var(--fundo) 100%), linear-gradient(160deg, var(--topo-a) 0%, var(--topo-b) 55%, var(--topo-c) 100%); color: var(--sobre-topo);
+  padding: 10px 16px 64px; }
+.topo .barra { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 44px; }
+.topo .barra b { font-size: 17px; }
+.topo a { color: inherit; }
+.botao-topo { display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-width: 44px; min-height: 44px; border-radius: 999px;
+  background: var(--vidro); color: var(--sobre-topo); text-decoration: none; font-weight: 600; padding: 0 10px; }
+.vidro { background: var(--vidro); border-radius: 14px; padding: 8px 10px; }
+.sobe { margin-top: -52px; }
 
-.cartao { background: var(--cartao); border: 1px solid var(--linha); border-radius: 20px; padding: 16px; margin-bottom: 14px; }
-.cartao.suave { background: var(--cor-clara); border-color: transparent; }
-.linha { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.pilha > * + * { margin-top: 10px; }
+.cartao { background: var(--cartao); border-radius: 16px; padding: 14px; margin-bottom: 10px; box-shadow: var(--sombra); }
+.cab { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.cab a, .link { color: var(--pri); font-size: 13px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; min-height: 44px; }
+.duas { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.duas .cartao { margin: 0; }
+.linha { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 
-button, .botao { font: inherit; font-weight: 600; min-height: 48px; min-width: 44px; padding: 10px 18px; border-radius: 999px; border: 0;
-  background: var(--cor); color: var(--sobre-cor); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
-button.sec, .botao.sec { background: transparent; color: var(--cor); border: 1.5px solid var(--cor); }
-button.leve, .botao.leve { background: var(--cor-clara); color: var(--cor); }
-.botoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+/* Selos e etiquetas. */
+.selo { display: inline-flex; align-items: center; gap: 3px; font-size: 11.5px; font-weight: 700; line-height: 1; padding: 4px 7px; border-radius: 6px;
+  background: var(--pri-clara); color: var(--pri); white-space: nowrap; }
+.selo.laranja { background: var(--laranja-clara); color: var(--laranja); }
+.selo.cinza { background: var(--cinza); color: var(--suave); }
+.selo.topo-s { background: var(--vidro); color: var(--sobre-topo); }
+.selos { display: flex; flex-wrap: wrap; gap: 5px; }
 
-/* Escolhas de um toque (como está, quanto comeu). */
-.escolhas { display: flex; flex-wrap: wrap; gap: 8px; }
-.escolhas span { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 14px; border-radius: 14px;
-  border: 1.5px solid var(--linha); background: var(--cartao); font-size: 15px; font-weight: 500; }
-.escolhas span.on { background: var(--cor); border-color: var(--cor); color: var(--sobre-cor); font-weight: 600; }
-.quatro { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 12px; }
-.quatro span { display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 14px; border: 1.5px solid var(--linha);
-  font-size: 14.5px; font-weight: 600; text-align: center; line-height: 1.15; padding: 4px; }
-.quatro span.on { background: var(--cor); border-color: var(--cor); color: var(--sobre-cor); }
+/* Grade de atalhos com ícones coloridos preenchidos. */
+.atalhos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px 0; }
+.atalhos a { display: flex; flex-direction: column; align-items: center; gap: 6px; min-height: 72px; padding: 4px 0; color: var(--texto);
+  text-decoration: none; font-size: 12.5px; font-weight: 500; text-align: center; line-height: 1.2; }
+.atalhos .q { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 14px; color: #fff; }
+.atalhos .q svg { width: 24px; height: 24px; }
 
-/* Faixa de sinais: sempre visível, sóbria. */
-.sinais { font-size: 15px; display: flex; gap: 12px; align-items: flex-start; border: 1.5px solid var(--alerta); background: var(--alerta-clara); }
-.sinais svg { color: var(--alerta); margin-top: 2px; }
-.sinais strong { color: var(--alerta); }
+/* Faixa de destaque. */
+.banner { display: flex; gap: 10px; align-items: center; border-radius: 16px; padding: 12px 14px; margin-bottom: 10px; }
+.banner.dica { background: var(--laranja-clara); }
+.banner.dica .ic { color: var(--laranja); }
+.banner .t { flex: 1; min-width: 0; font-size: 14px; }
+.banner .t b { display: block; font-size: 14px; }
+/* Alerta: forma própria (borda grossa à esquerda), ícone de triângulo e o rótulo "SINAL DE ALERTA". Nunca só a cor. */
+.alerta { background: var(--alerta-clara); border-left: 5px solid var(--alerta-ic); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; display: flex; gap: 10px; }
+.alerta .ic { color: var(--alerta-ic); }
+.alerta .rot { font-size: 11.5px; font-weight: 800; letter-spacing: .06em; color: var(--alerta); }
+.alerta p { font-size: 14px; margin-top: 2px; }
+.alerta a { color: var(--alerta); font-weight: 700; font-size: 13px; display: inline-flex; min-height: 44px; align-items: center; }
 
-/* Barra de abas com ícones próprios. */
+/* Botões. */
+button, .botao { font: inherit; font-weight: 700; min-height: 44px; min-width: 44px; padding: 8px 16px; border-radius: 999px; border: 0;
+  background: var(--pri); color: var(--sobre-pri); display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; }
+button.leve, .botao.leve { background: var(--pri-clara); color: var(--pri); }
+button.cinza { background: var(--cinza); color: var(--texto); font-weight: 600; }
+
+/* Escolhas de um toque. */
+.toques { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; }
+.toques span { display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 12px; background: var(--cinza); font-size: 13.5px; font-weight: 600; text-align: center; line-height: 1.15; }
+.toques span.on { background: var(--pri); color: var(--sobre-pri); }
+
+/* Barras simples. */
+.trilho { height: 8px; border-radius: 999px; background: var(--vazio); overflow: hidden; }
+.trilho i { display: block; height: 100%; border-radius: 999px; background: var(--dado); }
+
+/* Lista compacta. */
+.lista { list-style: none; margin: 0; padding: 0; }
+.lista li { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--linha); min-height: 44px; }
+.lista li:first-child { border-top: 0; padding-top: 0; }
+.lista .hora { width: 44px; flex: none; color: var(--suave); font-size: 13px; font-variant-numeric: tabular-nums; }
+.lista .txt { flex: 1; min-width: 0; }
+.ico-c { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 10px; color: #fff; flex: none; }
+.ico-c svg { width: 18px; height: 18px; }
+
+/* Barra de abas com ícones preenchidos. */
 .abas { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; display: flex; background: var(--cartao); border-top: 1px solid var(--linha);
-  padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); }
-.abas a { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 52px; color: var(--suave); text-decoration: none; font-size: 12px; font-weight: 500; }
-.abas a .pilula { display: flex; align-items: center; justify-content: center; width: 56px; height: 30px; border-radius: 999px; }
-.abas a.ativa { color: var(--cor); font-weight: 700; }
-.abas a.ativa .pilula { background: var(--cor-clara); }
+  padding: 4px 4px calc(4px + env(safe-area-inset-bottom)); }
+.abas a { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 52px; color: var(--suave);
+  text-decoration: none; font-size: 11.5px; font-weight: 500; }
+.abas a svg { width: 25px; height: 25px; }
+.abas a.ativa { color: var(--pri); font-weight: 700; }
 
-/* Gráficos */
+/* Gráficos. */
 svg.graf { display: block; width: 100%; height: auto; overflow: visible; }
-svg.graf text { fill: var(--suave); font: 11px var(--corpo); }
+svg.graf text { fill: var(--suave); font: 11px var(--fonte); }
 svg.graf .faixa { fill: var(--faixa); }
 svg.graf .barra { fill: var(--dado); }
-svg.graf .parcial { fill: url(#hachura); stroke: var(--dado); stroke-width: 1.5; }
 svg.graf .base { stroke: var(--linha); stroke-width: 1; }
-svg.graf .media { stroke: var(--texto); stroke-width: 1.5; stroke-dasharray: 4 4; }
-svg.graf .linhad { fill: none; stroke: var(--dado); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
-svg.graf .ponto { fill: var(--dado); stroke: var(--cartao); stroke-width: 2; }
-svg.graf .forte { fill: var(--texto); font-weight: 600; }
-.legenda { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; font-size: 13px; color: var(--suave); }
-.legenda i { display: inline-block; width: 14px; height: 10px; border-radius: 3px; vertical-align: -1px; margin-right: 5px; }
+svg.graf .media { stroke: var(--texto); stroke-width: 1.3; stroke-dasharray: 4 4; }
+svg.graf .forte { fill: var(--texto); font-weight: 700; }
+.legenda { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-top: 6px; font-size: 12px; color: var(--suave); }
+.legenda i { display: inline-block; width: 12px; height: 9px; border-radius: 3px; vertical-align: -1px; margin-right: 4px; }
