@@ -15,7 +15,8 @@ const { abrir, ok, d, CHAVE } = require("./apoio");
   await p.fill("[name=nome]", "Teste"); await p.fill("[name=nascimento]", "1990"); await p.fill("[name=altura]", "163"); await p.fill("[name=peso]", "95,4");
   await p.click("form[data-form=perfil] button");
   await p.waitForSelector("text=Proteína hoje");
-  ok(await p.locator("#abas").isVisible(), "barra de abas aparece depois do perfil");
+  // A barra volta 100 ms depois de o campo perder o foco (teclado em inicio.js): espera até 2 s em vez de olhar no mesmo instante.
+  ok(await p.locator("#abas").waitFor({ state: "visible", timeout: 2000 }).then(() => true, () => false), "barra de abas aparece depois do perfil");
   ok(true, "perfil salvo leva para Hoje"); await t.foto("1-hoje-vazio");
   ok((await t.ler()).perfil.peso === 95.4, "peso com vírgula é lido como 95,4");
   await p.click("#btn-perfil"); await p.waitForSelector("text=Como as metas são calculadas"); await t.foto("8-perfil");
