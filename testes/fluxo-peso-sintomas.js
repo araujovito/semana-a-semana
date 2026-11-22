@@ -139,6 +139,11 @@ const noPeso = extra => Object.assign({ ui: { diario: "peso" } }, extra);
   await p.reload(); await p.waitForSelector("form[data-form=sintoma]");
   await p.selectOption("[name=enjoo]", "3"); await p.click("form[data-form=sintoma] button:not([data-ac])");
   ok((await t.ler()).sintomas.length === 3, "registro novo de sintoma continua funcionando");
+  // Dor forte: o aviso de sinal de alerta aparece no diálogo da página (não no alert do navegador), e o registro já está salvo
+  await p.check("[name=dor]"); await p.click("form[data-form=sintoma] button:not([data-ac])");
+  ok(/sinais de alerta do Guia/.test(await t.textoDialogo() || "") && (await t.ler()).sintomas.filter(x => x.dor).length === 1, "dor forte: aviso de sinal de alerta no diálogo da página, registro salvo");
+  await t.nao();
+  ok(await t.textoDialogo() === null && await p.locator("form[data-form=sintoma] h2").innerText() === "Como você está hoje", "tocar em Entendi fecha o aviso e volta ao formulário");
   await t.semRolagem("sintomas"); await t.alvosDeToque("sintomas"); await t.foto("sintomas-2");
   await t.fechar();
   t = await abrir({ estado: estadoBase({ ui: { diario: "sintomas" }, sintomas: [{ id: "s1", data: d(2), enjoo: 3, intestino: "Solto", vomito: true, refluxo: true, tontura: true, cansaco: true, dor: true, nota: "anotação comprida para ver a quebra de linha em tela estreita, semespaçonenhumnofinaldafraseparatestar" }] }), aba: "diario", largura: 320, escuro: true }); p = t.p;

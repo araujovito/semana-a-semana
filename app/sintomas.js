@@ -54,7 +54,7 @@ FORM.sintoma = function (f) {
   if (ed) E.sintomas = E.sintomas.map(x => (x.id === ed.id ? s : x)); else E.sintomas.push(s);
   sintomaEmEdicao = null;
   salvar(); render();
-  if (s.dor || (s.vomito && s.enjoo >= 3)) alert("Dor forte e contínua na barriga, ou vômito que não para, estão na lista de sinais de alerta do Guia. A orientação é procurar atendimento médico sem esperar a consulta.");
+  if (s.dor || (s.vomito && s.enjoo >= 3)) alerta("Dor forte e contínua na barriga, ou vômito que não para, estão na lista de sinais de alerta do Guia. A orientação é procurar atendimento médico sem esperar a consulta.");
   else aviso(ed ? "Registro corrigido." : "Registrado.");
 };
 
