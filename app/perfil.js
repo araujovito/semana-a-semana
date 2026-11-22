@@ -29,20 +29,22 @@ function avisosDoPerfil() { return avisoGestante() + avisoPesoBaixo() + avisoVes
 /* ---------- vesícula e fígado ---------- */
 /* TEXTO DE SAÚDE: pedra na vesícula marcada no Perfil. Cartão fixo nas telas Hoje, Plano e Perfil.
    Fontes:
-   - bula americana do Mounjaro (tirzepatida), seção 5.7, doença aguda da vesícula biliar: colelitíase e colecistite foram
-     relatadas nos estudos; perda de peso substancial ou rápida pode aumentar o risco; https://pi.lilly.com/us/mounjaro-uspi.pdf
-   - sinais da crise e quando procurar atendimento: NIDDK (National Institutes of Health), "Symptoms & Causes of Gallstones":
-     dor no alto da barriga à direita, às vezes por várias horas, muitas vezes depois de refeição pesada, à noite; procurar
-     atendimento já se a dor dura várias horas, ou com febre ou calafrio, pele ou olhos amarelados, urina cor de chá ou fezes claras;
-     https://www.niddk.nih.gov/health-information/digestive-diseases/gallstones/symptoms-causes
-   - a divisão 192 / pronto-socorro / médico repete a de "Sinais de alerta" do Guia (conteudo.js), sem orientação nova.
+   - bula americana do Mounjaro (tirzepatida), seção 5.8, doença aguda da vesícula biliar (pedra, inflamação, retirada da vesícula
+     nos estudos); https://pi.lilly.com/us/mounjaro-uspi.pdf
+   - perder peso rápido aumenta o risco: bula do Zepbound (tirzepatida para obesidade), eventos de vesícula associados à redução de
+     peso, https://pi.lilly.com/us/zepbound-uspi.pdf; Weinsier 1995 (ver LIMITE_RITMO em peso.js).
+   - sinais da crise e quando procurar atendimento: os mesmos itens de "Sinais de alerta" do Guia (conteudo.js), propostos em
+     empresa/relatorios/pesquisa-vesicula-figado.md, seção 6 (Manual MSD; NIDDK, "Symptoms & Causes of Gallstones",
+     https://www.niddk.nih.gov/health-information/digestive-diseases/gallstones/symptoms-causes). O limite de "cerca de 6 horas"
+     é escolha conservadora da equipe e PRECISA DE AVAL MÉDICO; a divisão 192 / pronto-socorro / médico também.
    onde: "hoje", "plano" ou "perfil". */
 function avisoVesicula(onde) {
   const m = metas(); if (!m || !m.vesicula) return "";
   let t = '<div class="cartao alerta" data-aviso="vesicula"><h2>Pedra na vesícula</h2>' +
     '<p style="margin:0">A bula da tirzepatida lista problemas de vesícula (pedra e inflamação) entre os efeitos do remédio, e perder peso rápido aumenta esse risco. O seu médico sabe que você tem pedra na vesícula? Confirme com ele antes de começar.</p>' +
-    '<p style="margin:6px 0 0"><strong>Crise de vesícula:</strong> dor no alto da barriga, do lado direito, que pode durar horas, muitas vezes depois de uma refeição pesada ou à noite.</p>' +
-    '<p style="margin:6px 0 0">Vá ao pronto-socorro hoje se a dor durar várias horas, ou vier com febre ou calafrio, pele ou olhos amarelados, urina cor de chá ou fezes claras. Dor forte e contínua que vai para as costas também é pronto-socorro (pode ser pâncreas). Desmaio ou confusão: ligue 192. Se teve uma dor assim que passou sozinha, conte ao médico.</p>';
+    '<p style="margin:6px 0 0"><strong>Crise de vesícula:</strong> dor forte no alto da barriga, do lado direito ou na boca do estômago, muitas vezes depois de comer.</p>' +
+    '<p style="margin:6px 0 0"><strong>Pronto-socorro hoje</strong> se a dor não passar em cerca de 6 horas ou voltar várias vezes no mesmo dia, se vier com febre ou calafrio, ou se aparecer pele ou olhos amarelados, urina escura e fezes claras. Dor forte e contínua que vai para as costas também (pode ser pâncreas).</p>' +
+    '<p style="margin:6px 0 0"><strong>Ligue 192</strong> se a dor vier com febre e pele amarela e houver confusão, desmaio ou muita fraqueza. <strong>Avise o médico</strong> nos próximos dias se teve uma crise que passou sozinha, sem febre e sem pele amarela.</p>';
   if (onde === "hoje") t += '<div class="botoes"><button class="sec" data-ac="ir" data-para="guia">Ver todos os sinais de alerta</button></div>';
   return t + "</div>";
 }

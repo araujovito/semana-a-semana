@@ -38,11 +38,12 @@ const comPerfil = (extra, resto) => estadoBase(Object.assign({ perfil: Object.as
     const nome = discreto ? " (sem calorias)" : "";
     t = await abrir({ estado: comPerfil({ vesicula: true, discreto }) }); p = t.p;
     await p.waitForSelector("text=Proteína hoje");
-    ok(/Pedra na vesícula.*bula da tirzepatida.*Confirme com ele antes de começar.*pronto-socorro hoje/.test(await texto(p, "[data-aviso=vesicula]")), "vesícula marcada: cartão na tela Hoje" + nome);
+    ok(/Pedra na vesícula.*bula da tirzepatida.*Confirme com ele antes de começar.*Pronto-socorro hoje se a dor não passar em cerca de 6 horas.*Ligue 192.*Avise o médico/.test(await texto(p, "[data-aviso=vesicula]")), "vesícula marcada: cartão na tela Hoje" + nome);
     ok(await p.locator("[data-v=kcal]").count() === (discreto ? 0 : 1), "modo sem calorias continua valendo com o cartão" + nome);
     await t.foto("vesicula-hoje" + (discreto ? "-discreto" : "")); await t.alvosDeToque("hoje com vesícula" + nome); await t.semRolagem("hoje com vesícula" + nome);
     await p.click("[data-aviso=vesicula] [data-ac=ir]");
-    ok(await p.waitForSelector("#tela summary:has-text('Sinais de alerta')", { timeout: 3000 }).then(() => true, () => false), "botão do cartão abre o Guia com os sinais de alerta" + nome);
+    ok(await p.waitForSelector("#tela summary:has-text('Sinais de alerta')", { timeout: 3000 }).then(() => true, () => false) &&
+      /não passa em cerca de 6 horas.*passou sozinha/.test(await tela(p)), "botão do cartão abre o Guia com os sinais de alerta" + nome);
     await p.click("#abas [data-aba=plano]");
     await p.waitForSelector("text=Metas diárias");
     ok(await p.locator("[data-aviso=vesicula]").count() === 1, "vesícula marcada: cartão no Plano" + nome);
