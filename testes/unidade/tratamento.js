@@ -242,3 +242,19 @@ test("auditoria 2, resíduo 4: 'Já são 4 semanas nesta dose' só com 28 dias d
   assert.doesNotMatch(c("2026-11-19"), /4 semanas nesta dose/, "27 dias");
   assert.match(c("2026-11-20"), /Já são 4 semanas nesta dose: subir ou manter é assunto para a consulta\./, "28 dias");
 });
+test("auditoria 2, resíduo 2: o app conta datas, não horas, e diz isso quando a data não garante 72 ou 96 horas", () => {
+  // habitual segunda, aplicou atrasada na sexta 13/11; na segunda 16/11 a data diz 3 dias, mas podem ser menos de 72 horas
+  const ds = [dose("2026-11-02"), dose("2026-11-13")];
+  const c = h => em(h, base({ doses: ds })).v("cartaoTratamentoHoje()").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+  assert.match(c("2026-11-16"), /Próxima aplicação: hoje\. A última foi em Sex, 13\/11, há 3 dias\. O app conta as datas, não as horas: confira se já passaram 72 horas desde aquela aplicação\./);
+  assert.doesNotMatch(c("2026-11-23"), /72 horas/, "uma semana depois, sem a frase");
+  // atrasada 4 dias: lembra das 96 horas; com 1 dia, não
+  const seg = [dose("2026-11-02"), dose("2026-11-09")];
+  assert.match(cartao(seg), /há 4 dias\..*O app conta as datas, não as horas: se já passaram mais de 96 horas do horário em que você costuma aplicar, a orientação da bula é pular essa dose\./);
+  assert.doesNotMatch(cartao([dose("2026-11-05"), dose("2026-11-12")]), /96 horas/);
+  // a pergunta do registro fala em datas
+  const a = em(HOJE, base({ doses: [dose("2026-11-18")] }));
+  a.v("var perguntas = []; confirmar = t => { perguntas.push(t); }");
+  a.v("FORM.dose({ data: '2026-11-20', mg: '2.5', local: 'Coxa direita', obs: '' })");
+  assert.strictEqual(a.v("perguntas[0]"), "Já existe uma aplicação em 18/11/2026: menos de 3 dias entre as datas. O intervalo mínimo entre doses é de 72 horas, e o app considera só as datas, não as horas. Salvar mesmo assim?");
+});

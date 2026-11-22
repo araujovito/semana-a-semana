@@ -112,10 +112,16 @@ function cartaoTratamentoHoje() {
       '<p class="sub" style="margin:8px 0 0">Se você aplicou e não anotou, registre a aplicação com a data certa.</p>' + botao("sec") + "</div>";
   }
   let quando;
+  /* O registro só tem a data, não a hora: 72 e 96 horas viram "3 e 4 dias entre as datas" (auditoria 2, A1, resíduo 2). Quando a data
+     sozinha não garante o intervalo, o cartão diz isso. Fonte: guia (conteudo.js), "Aplicação" e "Esqueci a dose", que seguem a bula:
+     pelo menos 3 dias (72 horas) entre duas aplicações; até 4 dias (96 horas) depois do horário previsto, aplicar; depois, pular. */
+  const horas72 = s.diasSemRegistro <= DIAS_ENTRE_DOSES
+    ? " A última foi em " + diaCurto(s.ult.data) + ", há " + nDias(s.diasSemRegistro) + ". O app conta as datas, não as horas: confira se já passaram 72 horas desde aquela aplicação." : "";
   if (s.estado === "emDia") quando = "<strong>Próxima aplicação:</strong> em " + nDias(s.falta) + " (" + diaCurto(s.prox) + ")";
-  else if (s.estado === "hoje") quando = "<strong>Próxima aplicação:</strong> hoje";
+  else if (s.estado === "hoje") quando = "<strong>Próxima aplicação:</strong> hoje." + horas72;
   /* Guia, "Esqueci a dose": "Até 4 dias (96 horas) depois do horário previsto: aplicar assim que lembrar e seguir o dia habitual na semana seguinte." */
-  else if (s.estado === "atrasada") quando = "<strong>Próxima aplicação:</strong> estava prevista para " + diaCurto(s.prevista) + ", há " + nDias(s.atraso) + ". Até 4 dias depois do dia previsto, a orientação da bula é aplicar assim que lembrar e seguir o dia habitual na semana seguinte (" + diaCurto(s.seguinte) + ").";
+  else if (s.estado === "atrasada") quando = "<strong>Próxima aplicação:</strong> estava prevista para " + diaCurto(s.prevista) + ", há " + nDias(s.atraso) + ". Até 4 dias depois do dia previsto, a orientação da bula é aplicar assim que lembrar e seguir o dia habitual na semana seguinte (" + diaCurto(s.seguinte) + ")." +
+    (s.atraso === DIAS_TOLERANCIA ? " O app conta as datas, não as horas: se já passaram mais de 96 horas do horário em que você costuma aplicar, a orientação da bula é pular essa dose." : "") + horas72;
   /* Guia, "Esqueci a dose": "Mais de 4 dias: pular a dose esquecida e aplicar a próxima no dia habitual. Não aplicar duas doses para compensar." */
   else quando = "<strong>Próxima aplicação:</strong> " + diaCurto(s.prox) + ". A que estava prevista para " + diaCurto(s.prevista) + " passou de 4 dias: a orientação da bula é pular essa dose e aplicar a próxima no dia habitual. Não aplicar duas doses para compensar.";
   return '<div class="cartao destaque" data-dose="' + s.estado + '"><div class="linha"><div><div class="sub">Semana ' + s.semana + ' do tratamento</div><div class="grande">' + fmt(s.ult.mg, 1) + ' mg</div></div><div style="text-align:right"><div class="sub">Nesta dose</div><div><strong>' + ordinalF(s.semanaNaDose) + " semana</strong></div></div></div>" +
@@ -186,7 +192,7 @@ FORM.dose = function (f) {
   const conferirSalto = () => saltoDeDose(E.doses, f.data, mg)
     ? confirmar("A aplicação anterior foi de " + fmt(doseAnterior(E.doses, f.data).mg, 1) + " mg e esta é de " + fmt(mg, 1) + " mg. As doses costumam subir de 2,5 em 2,5 mg. Salvar " + fmt(mg, 1) + " mg mesmo assim?", gravar, "Salvar")
     : gravar();
-  if (outra) confirmar("Já existe uma aplicação em " + brAno(outra.data) + ", a menos de 3 dias desta data. O intervalo mínimo entre doses é de 72 horas. Salvar mesmo assim?", conferirSalto, "Salvar");
+  if (outra) confirmar("Já existe uma aplicação em " + brAno(outra.data) + ": menos de 3 dias entre as datas. O intervalo mínimo entre doses é de 72 horas, e o app considera só as datas, não as horas. Salvar mesmo assim?", conferirSalto, "Salvar");
   else conferirSalto();
 };
 
