@@ -60,3 +60,30 @@ window.CARDAPIO = {
    { tipo: "Jantar", titulo: "Ovos mexidos com purê de batata e abobrinha", preparo: "Purê só com a batata e um pouco de leite, sem manteiga.", itens: [["ovo",100],["batata",120],["abobrinha",60]] },
  ]},
 };
+
+/* Regras do cardápio para quem tem pedra na vesícula (colelitíase) e gordura no fígado (esteatose). Um lugar só: a escala das
+   porções (app/nutricao.js) e a conferência automática (dados/conferir_cardapio.js e testes/unidade/regras-cardapio.js) leem daqui.
+   Base: empresa/relatorios/pesquisa-vesicula-figado.md, item 5 (R3 a R12). Força da evidência, como no relatório:
+   F = diretriz com recomendação forte ou meta-análise consistente; M = estudos pequenos ou extrapolados; P = prática ou proposta
+   da equipe, sem número com evidência. aval: o número precisa do médico ou nutricionista dela antes de virar texto definitivo.
+   Os números valem para o cardápio planejado; o que ela come de fato fica no diário. */
+window.REGRAS_CARDAPIO = {
+  principais: ["Café da manhã", "Almoço", "Jantar"],
+  gordMinPrincipal: { valor: 7, forca: "M", aval: true, regra: "R3", fonte: "Gebhard 1996 (Hepatology 24:544): refeição com 10 g de gordura esvaziou a vesícula ao máximo; Festi 1998 (Int J Obes 22:592); Stokes 2014 (meta-análise)" },
+  gordMinUmaRefeicao: { valor: 10, forca: "M", aval: true, regra: "R3", fonte: "Gebhard 1996: 10 g numa refeição esvazia a vesícula ao máximo" },
+  gordMinDia: { valor: 30, forca: "M", aval: true, regra: "R3", fonte: "Gebhard 1996 (30 g/dia: 0 de 7 com pedra; menos de 2 g/dia: 4 de 6); Festi 1998" },
+  gordAlvoRefeicao: { valor: 15, forca: "P", aval: true, regra: "R4", fonte: "Proposta da equipe: refeição pesada pode disparar cólica (Manual MSD); tirzepatida atrasa o esvaziamento do estômago (bula)" },
+  gordTetoRefeicao: { valor: 20, forca: "P", aval: true, regra: "R4", fonte: "Proposta da equipe, mesmo motivo do alvo; não há estudo com teto por refeição" },
+  azeiteMaxRefeicao: { valor: 10, forca: "P", aval: true, regra: "R4", fonte: "Proposta da equipe: até 1 colher de sopa (8 a 10 g) de azeite ou óleo por refeição" },
+  pctGordDia: { min: 25, max: 35, forca: "P", aval: true, regra: "R4", fonte: "Faixa de 20 a 35% da energia (DRIs, IOM 2005), estreitada para 25% embaixo por causa da vesícula" },
+  kcalMaxRefeicao: { valor: 500, forca: "P", aval: true, regra: "R5", fonte: "Proposta da equipe: refeição grande dispara cólica (Manual MSD); apetite baixo com o remédio" },
+  fibraMinDia: { valor: 25, forca: "M", aval: false, regra: "R12", fonte: "Resumo AASLD 2023 (dieta rica em fibra); NIDDK (vesícula); DRIs (25 g para mulher até 50 anos)" },
+  peixeMinSemana: { valor: 2, forca: "F", aval: false, regra: "R11", fonte: "EASL-EASD-EASO 2024 (padrão mediterrâneo, recomendação forte)" },
+  semFritura: { forca: "P", aval: false, regra: "R6", fonte: "NIDDK (evitar frituras e gorduras de sobremesa); prática" },
+  semAcucarAdicionado: { forca: "F", aval: false, regra: "R8", fonte: "EASL-EASD-EASO 2024 (evitar bebida açucarada, forte); Diretriz brasileira SBEM/SBH/Abeso 2023 rec. 31; OMS 2015" },
+  /* Dia de enjoo (caminho E): leve de propósito, mas sem deixar a vesícula parada. */
+  enjooGordUmaRefeicao: { valor: 9, forca: "M", aval: true, regra: "R3", fonte: "Gebhard 1996: cerca de 10 g numa refeição" },
+  enjooGordMinDia: { valor: 15, forca: "M", aval: true, regra: "R3", fonte: "Relatório, R3: dia de enjoo com pelo menos 15 a 20 g de gordura" },
+  /* Alimentos que são gordura de adição (azeite e óleo): contam para azeiteMaxRefeicao. */
+  gordurasDeAdicao: ["azeite", "oleo_girassol"],
+};
