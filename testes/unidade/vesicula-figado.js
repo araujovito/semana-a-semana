@@ -61,3 +61,23 @@ test("fígado no modo sem calorias e peso em destaque: só percentuais, nenhum q
   assert.match(t, /Marcas: 5% \(alcançada\), 7% \(alcançada\), 10%\./);
   assert.doesNotMatch(t, /kg/);
 });
+test("aguardando cirurgia: frase no cartão da vesícula e progresso até 7 a 10%; sem cirurgia, nada disso", () => {
+  const sem = carregar(estado({ vesicula: true, aguardaCirurgia: false })).v('avisoVesicula("hoje")');
+  assert.doesNotMatch(sem, /cirurgi|data-progresso/);
+  const app = carregar(estado({ vesicula: true, aguardaCirurgia: true, peso: 120 }));
+  const t = app.v('avisoVesicula("hoje")');
+  assert.match(t, /A sua cirurgia depende de o fígado diminuir\. Perder de 7 a 10% do peso.*o app mostra o seu progresso até essas marcas\. Quem decide a data é o cirurgião\./);
+  assert.match(t, /data-progresso="figado"/); assert.match(t, /Peso dos 7%: 111,6 kg/);
+  assert.match(app.v('avisoVesicula("perfil")'), /data-progresso/);
+  // No Plano com fígado marcado, o progresso aparece uma vez só (no cartão do fígado).
+  const ambos = carregar(estado({ vesicula: true, aguardaCirurgia: true, figado: true, peso: 120 })).v('avisosDoPerfil("plano")');
+  assert.strictEqual(ambos.split('data-progresso="figado"').length - 1, 1);
+  // Cirurgia marcada sem vesícula (dado antigo ou estranho) não aparece.
+  assert.strictEqual(carregar(estado({ vesicula: null, aguardaCirurgia: true })).v('avisoVesicula("hoje")'), "");
+});
+test("vesícula: em Hoje os sinais ficam num bloco que abre; no Plano e no Perfil ficam à vista", () => {
+  const app = carregar(estado({ vesicula: true }));
+  assert.match(app.v('avisoVesicula("hoje")'), /<details[^>]*><summary>Sinais de crise e o que fazer<\/summary><p[^>]*><strong>Crise de vesícula/);
+  assert.doesNotMatch(app.v('avisoVesicula("plano")'), /<details/);
+  assert.doesNotMatch(app.v('avisoVesicula("perfil")'), /<details/);
+});

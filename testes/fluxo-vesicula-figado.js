@@ -38,6 +38,8 @@ const comPerfil = (extra, resto) => estadoBase(Object.assign({ perfil: Object.as
     const nome = discreto ? " (sem calorias)" : "";
     t = await abrir({ estado: comPerfil({ vesicula: true, discreto }) }); p = t.p;
     await p.waitForSelector("text=Proteína hoje");
+    ok(await p.locator("[data-aviso=vesicula] details:not([open])").count() === 1, "em Hoje o cartão fica curto: sinais da crise fechados num bloco" + nome);
+    await p.click("[data-aviso=vesicula] summary");
     ok(/Pedra na vesícula.*bula da tirzepatida.*Confirme com ele antes de começar.*Pronto-socorro hoje se a dor não passar em cerca de 6 horas.*Ligue 192.*Avise o médico/.test(await texto(p, "[data-aviso=vesicula]")), "vesícula marcada: cartão na tela Hoje" + nome);
     ok(await p.locator("[data-v=kcal]").count() === (discreto ? 0 : 1), "modo sem calorias continua valendo com o cartão" + nome);
     await t.foto("vesicula-hoje" + (discreto ? "-discreto" : "")); await t.alvosDeToque("hoje com vesícula" + nome); await t.semRolagem("hoje com vesícula" + nome);
@@ -104,4 +106,21 @@ const comPerfil = (extra, resto) => estadoBase(Object.assign({ perfil: Object.as
     ok(await p.locator("[data-aviso=figado]").count() === 0, "cartão do fígado não aparece em Hoje" + nome);
     await t.fechar();
   }
+
+  /* ---------- aguardando cirurgia: frase e progresso no cartão da vesícula ---------- */
+  for (const discreto of [false, true]) {
+    const nome = discreto ? " (sem calorias)" : "";
+    t = await abrir({ estado: comPerfil({ peso: 120, vesicula: true, aguardaCirurgia: true, discreto }, { pesos: [{ id: "c", data: d(3), kg: 114 }] }) }); p = t.p;
+    await p.waitForSelector("text=Proteína hoje");
+    const v = await texto(p, "[data-aviso=vesicula]");
+    ok(/A sua cirurgia depende de o fígado diminuir.*Quem decide a data é o cirurgião/.test(v) && await p.locator("[data-aviso=vesicula] [data-progresso]").count() === 1, "aguardando cirurgia: frase e progresso no cartão em Hoje" + nome);
+    if (discreto) ok(!/kg/.test(v) && /Marcas: 5% \(alcançada\), 7%, 10%\./.test(v), "progresso da cirurgia sem quilos no modo sem peso em destaque");
+    else ok(/Peso dos 5%: 114,0 kg \(alcançado\)\. Peso dos 7%: 111,6 kg, faltam 2,4 kg/.test(v), "progresso da cirurgia em kg: " + v);
+    await t.foto("vesicula-cirurgia" + (discreto ? "-discreto" : "")); await t.semRolagem("hoje com cirurgia" + nome); await t.alvosDeToque("hoje com cirurgia" + nome);
+    await t.fechar();
+  }
+  t = await abrir({ estado: comPerfil({ vesicula: true, aguardaCirurgia: false }) }); p = t.p;
+  await p.waitForSelector("text=Proteína hoje");
+  ok(!/cirurgi/.test(await texto(p, "[data-aviso=vesicula]")), "sem cirurgia marcada: cartão da vesícula sem a frase da cirurgia");
+  await t.fechar();
 })();

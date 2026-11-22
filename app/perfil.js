@@ -74,14 +74,23 @@ function avisoFigado() {
      empresa/relatorios/pesquisa-vesicula-figado.md, seção 6 (Manual MSD; NIDDK, "Symptoms & Causes of Gallstones",
      https://www.niddk.nih.gov/health-information/digestive-diseases/gallstones/symptoms-causes). O limite de "cerca de 6 horas"
      é escolha conservadora da equipe e PRECISA DE AVAL MÉDICO; a divisão 192 / pronto-socorro / médico também.
-   onde: "hoje", "plano" ou "perfil". */
+   - aguardando cirurgia: que a cirurgia depende de o fígado diminuir é informação do caso dela (briefing da onda 2); fígado grande e
+     gorduroso atrapalha a videolaparoscopia (pesquisa-vesicula-figado.md, seção 3, "Ligação com a cirurgia"); as marcas de 5, 7 e 10%
+     são da diretriz EASL-EASD-EASO 2024 (ver avisoFigado). Quem decide a data e o critério é o cirurgião.
+   onde: "hoje", "plano" ou "perfil". No Plano, com fígado marcado, o progresso fica no cartão do fígado (não repete). */
 function avisoVesicula(onde) {
   const m = metas(); if (!m || !m.vesicula) return "";
   let t = '<div class="cartao alerta" data-aviso="vesicula"><h2>Pedra na vesícula</h2>' +
-    '<p style="margin:0">A bula da tirzepatida lista problemas de vesícula (pedra e inflamação) entre os efeitos do remédio, e perder peso rápido aumenta esse risco. O seu médico sabe que você tem pedra na vesícula? Confirme com ele antes de começar.</p>' +
-    '<p style="margin:6px 0 0"><strong>Crise de vesícula:</strong> dor forte no alto da barriga, do lado direito ou na boca do estômago, muitas vezes depois de comer.</p>' +
+    '<p style="margin:0">A bula da tirzepatida lista problemas de vesícula (pedra e inflamação) entre os efeitos do remédio, e perder peso rápido aumenta esse risco. O seu médico sabe que você tem pedra na vesícula? Confirme com ele antes de começar.</p>';
+  /* Na tela Hoje o cartão fica curto: os sinais ficam num bloco que abre com um toque (os mesmos itens do Guia). */
+  const sinais = '<p style="margin:6px 0 0"><strong>Crise de vesícula:</strong> dor forte no alto da barriga, do lado direito ou na boca do estômago, muitas vezes depois de comer.</p>' +
     '<p style="margin:6px 0 0"><strong>Pronto-socorro hoje</strong> se a dor não passar em cerca de 6 horas ou voltar várias vezes no mesmo dia, se vier com febre ou calafrio, ou se aparecer pele ou olhos amarelados, urina escura e fezes claras. Dor forte e contínua que vai para as costas também (pode ser pâncreas).</p>' +
     '<p style="margin:6px 0 0"><strong>Ligue 192</strong> se a dor vier com febre e pele amarela e houver confusão, desmaio ou muita fraqueza. <strong>Avise o médico</strong> nos próximos dias se teve uma crise que passou sozinha, sem febre e sem pele amarela.</p>';
+  t += onde === "hoje" ? '<details style="margin-top:6px"><summary>Sinais de crise e o que fazer</summary>' + sinais + "</details>" : sinais;
+  if (m.aguardaCirurgia) {
+    t += '<p style="margin:6px 0 0" data-cirurgia>A sua cirurgia depende de o fígado diminuir. Perder de 7 a 10% do peso reduz a gordura e a inflamação do fígado; o app mostra o seu progresso até essas marcas. Quem decide a data é o cirurgião.</p>';
+    if (!(onde === "plano" && m.figado)) t += blocoProgressoPerda(m);
+  }
   if (onde === "hoje") t += '<div class="botoes"><button class="sec" data-ac="ir" data-para="guia">Ver todos os sinais de alerta</button></div>';
   return t + "</div>";
 }
