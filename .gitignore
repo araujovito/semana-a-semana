@@ -3,3 +3,6 @@ build/
 *.idsig
 android/chave.keystore
 .copias/
+
+# Documentos pessoais da usuária (saúde): nunca versionar
+*.pdf

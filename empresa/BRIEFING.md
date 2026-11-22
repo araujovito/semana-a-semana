@@ -15,6 +15,10 @@ Leia `LEIAME.md` e os arquivos de `app/` antes de opinar ou mexer.
 Mulher, [dados pessoais removidos da versÃ£o pÃºblica]. Tem pedra na vesícula (colelitíase) e gordura no fígado (esteatose);
 a cirurgia da vesícula só será feita depois que a gordura do fígado diminuir. Começa tirzepatida (Mounjaro).
 Ainda não sabemos: se tem diabetes, o que não come, se usa pílula. O app continua perguntando a ela.
+Ela TEM nutricionista, com plano alimentar prescrito em 04/11/2026 (5 refeições com opções) e bioimpedância de 03/11/2026
+(valores removidos da versÃ£o pÃºblica). Os PDFs ficam na raiz do projeto, fora do
+git (.gitignore): nunca versionar, nunca copiar nomes, endereços ou telefones para o código ou relatórios. Decisão de 22/11:
+o cardápio do app passa a ser o plano da nutricionista; o cardápio gerado pelo app fica só como reserva (dia de enjoo).
 O que o dono pediu (onda 2): um app só para ela, que leve em conta vesícula e fígado, que INDIQUE caminhos de alimentação
 (explique o porquê e dê opções para ela escolher), não só prescreva um cardápio, e que tenha um painel para ela acompanhar
 calorias e proteína. Também: identidade visual própria, a tela Hoje organizada pelo tratamento (números a um toque) e uma visão semanal.
