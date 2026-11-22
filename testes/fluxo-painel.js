@@ -49,6 +49,9 @@ function semear() {
   ok(await p.locator("svg[data-graf=prot] g.dia").count() === 30, "30 dias no gráfico");
   ok(await p.locator("svg[data-graf=prot] g.dia.lacuna").count() === SEM.length, "todas as lacunas dos 30 dias");
   ok(/Nos 30 dias antes de hoje/.test(await p.locator(".painel-resumo h2").textContent()), "resumo passa para 30 dias");
+  ok((await t.ler()).ui.painelPeriodo === 30, "a escolha de 30 dias fica gravada em E.ui");
+  await p.reload(); await p.waitForSelector(".painel-hoje");
+  ok(await p.locator("svg[data-graf=prot] g.dia").count() === 30 && await p.locator("[data-ac=painelPeriodo][data-n='30'][aria-pressed=true]").count() === 1, "ao abrir de novo, o painel volta em 30 dias");
   const textos = await p.locator("#tela").textContent();
   ok(!/parab|falhou|fracass|deveria/i.test(textos), "texto sem elogio nem cobrança");
   for (const w of [320, 430]) { await p.setViewportSize({ width: w, height: 800 }); await t.semRolagem("painel 30 dias " + w + " px"); await t.alvosDeToque("painel " + w + " px"); }

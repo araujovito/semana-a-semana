@@ -6,10 +6,13 @@
      porque hoje ainda está sendo registrado e puxaria a média para baixo.
    - Dia sem registro (consumoDoDia().registrou falso) é lacuna, não zero: fica fora das médias e aparece no gráfico como traço vazio.
    - Modo discreto do perfil (perfil.discreto): some tudo de calorias; fica a proteína.
-   - A aba "painel" é registrada em TELAS sem botão na barra; a navegação fica para o redesenho. */
+   - A aba "painel" é registrada em TELAS sem botão na barra; a navegação fica para o redesenho.
+   - "Abaixo de X kcal" usa o piso por dia do cardápio (metas().pisoDia: PISO_DIA de nutricao.js, ou a meta do médico se for menor),
+     para o painel e o cardápio falarem do mesmo número.
+   - A escolha 7 ou 30 dias fica em E.ui.painelPeriodo e vale ao abrir o app de novo. */
 
-const PAINEL_KCAL_BAIXO = 1200;   // mesmo valor do piso por dia do cardápio (PISO_DIA em nutricao.js)
-let painelPeriodo = 7;            // 7 ou 30 dias no gráfico e no resumo; volta a 7 ao abrir o app
+/* Período escolhido: 7 ou 30 (qualquer outro valor gravado vira 7). */
+function painelPeriodo() { return E.ui && E.ui.painelPeriodo === 30 ? 30 : 7; }
 
 /* Série de n dias terminando em fim (inclusive), do mais antigo ao mais novo:
    [{ data, registrou, kcal, prot }] com kcal e prot null nos dias sem registro. */
@@ -23,15 +26,15 @@ function painelSerie(fim, n) {
 }
 /* Resumo de uma série (só dias com registro contam):
    dias (com registro), total (dias na série), mediaKcal e mediaProt (null sem registro),
-   naFaixa: dias com proteína entre m.protMin e m.protMax (inclusive); abaixoKcal: dias com menos de PAINEL_KCAL_BAIXO kcal. */
+   naFaixa: dias com proteína entre m.protMin e m.protMax (inclusive); abaixoKcal: dias com menos de m.pisoDia kcal (PISO_DIA se faltar). */
 function painelResumo(serie, m) {
-  const com = serie.filter(x => x.registrou), soma = k => com.reduce((t, x) => t + x[k], 0);
+  const piso = m.pisoDia == null ? PISO_DIA : m.pisoDia, com = serie.filter(x => x.registrou), soma = k => com.reduce((t, x) => t + x[k], 0);
   return {
     dias: com.length, total: serie.length,
     mediaKcal: com.length ? soma("kcal") / com.length : null,
     mediaProt: com.length ? soma("prot") / com.length : null,
     naFaixa: com.filter(x => x.prot >= m.protMin && x.prot <= m.protMax).length,
-    abaixoKcal: com.filter(x => x.kcal < PAINEL_KCAL_BAIXO).length,
+    abaixoKcal: com.filter(x => x.kcal < piso).length,
   };
 }
 /* Quanto falta de proteína para a meta (g, nunca negativo). */
@@ -85,7 +88,7 @@ function telaPainel() {
     (c.registrou ? "" : " Nada registrado hoje ainda.") + "</p>" +
     '<p class="sub">Faixa de proteína: ' + fmt(m.protMin) + " a " + fmt(m.protMax) + ' g por dia. Os números vêm do que você marca na tela Hoje.</p></div>';
 
-  const n = painelPeriodo, serie = painelSerie(h, n), r = painelResumo(painelSerie(mais(h, -1), n), m);
+  const n = painelPeriodo(), serie = painelSerie(h, n), r = painelResumo(painelSerie(mais(h, -1), n), m);
   const chip = (v, t) => '<button class="' + (n === v ? "ativa" : "") + '" data-ac="painelPeriodo" data-n="' + v + '" aria-pressed="' + (n === v) + '">' + t + "</button>";
   out += '<div class="cartao painel-periodo"><div class="linha"><h2>Por dia</h2><div class="chips painel-chips">' + chip(7, "7 dias") + chip(30, "30 dias") + "</div></div>" +
     '<h3>Proteína (g)</h3>' + painelGrafico(serie, "prot", m.prot, "g", [m.protMin, m.protMax], h) +
@@ -101,15 +104,15 @@ function telaPainel() {
       '<div><div class="sub">Média de proteína</div><div class="painel-num" data-v="mediaProt">' + fmt(r.mediaProt) + " <small>g</small></div></div>" +
       (disc ? "" : '<div><div class="sub">Média de calorias</div><div class="painel-num" data-v="mediaKcal">' + fmt(r.mediaKcal) + " <small>kcal</small></div></div>") +
       '<div><div class="sub">Proteína na faixa</div><div class="painel-num" data-v="naFaixa">' + r.naFaixa + " <small>de " + r.dias + "</small></div></div>" +
-      (disc ? "" : '<div><div class="sub">Abaixo de ' + fmt(PAINEL_KCAL_BAIXO) + ' kcal</div><div class="painel-num" data-v="abaixoKcal">' + r.abaixoKcal + " <small>de " + r.dias + "</small></div></div>") +
+      (disc ? "" : '<div><div class="sub">Abaixo de ' + fmt(m.pisoDia) + ' kcal</div><div class="painel-num" data-v="abaixoKcal">' + r.abaixoKcal + " <small>de " + r.dias + "</small></div></div>") +
       "</div>";
   }
   out += '<p class="sub" data-v="diasRegistro">Dias com registro: ' + r.dias + " de " + r.total + ". Médias e contagens usam só os dias com registro; hoje fica de fora porque ainda não acabou." +
-    (disc ? "" : " " + fmt(PAINEL_KCAL_BAIXO) + " kcal é o mínimo por dia que o cardápio do app usa. Se isso se repetir, vale levar ao médico ou ao nutricionista.") + "</p></div>";
+    (disc ? "" : " " + fmt(m.pisoDia) + " kcal é o mínimo por dia que o cardápio do app usa. Se isso se repetir, vale levar ao médico ou ao nutricionista.") + "</p></div>";
   return out;
 }
 
-AC.painelPeriodo = function (d) { painelPeriodo = d.n === "30" ? 30 : 7; render(); };
+AC.painelPeriodo = function (d) { E.ui.painelPeriodo = d.n === "30" ? 30 : 7; salvar(); render(); };
 /* Mostra o valor do dia tocado (ou com o ponteiro em cima) na linha de leitura e destaca a coluna. */
 AC.painelDia = function (d, el) {
   const l = document.querySelector("[data-painel=leitura]"); if (l) l.textContent = d.ler;

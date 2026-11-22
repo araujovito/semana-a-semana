@@ -26,7 +26,7 @@ test("série: dias sem registro ficam null (lacuna), dia com 'nada' marcado é z
 
 test("resumo: média só dos dias com registro; faixa inclusiva; abaixo de 1.200 kcal", () => {
   const a = abrir();
-  const m = { protMin: 80, protMax: 110 };
+  const m = { protMin: 80, protMax: 110, pisoDia: 1200 };
   const serie = [
     { registrou: true, kcal: 1500, prot: 80 },     // na faixa (limite de baixo)
     { registrou: false, kcal: null, prot: null },  // lacuna: fora de tudo
@@ -68,7 +68,30 @@ test("tela: resumo usa os dias antes de hoje; lacunas no gráfico; discreto esco
 
 test("texto neutro: sem parabéns nem falhou", () => {
   const a = abrir({ "2026-11-19": so(200), "2026-11-18": so(5) });
-  const html = a.v("telaPainel()") + a.v("painelPeriodo = 30, telaPainel()");
+  const html = a.v("telaPainel()") + a.v("E.ui.painelPeriodo = 30, telaPainel()");
   assert.ok(!/parab|falhou|fracass|deveria|o correto/i.test(html));
   assert.ok(/Nos 30 dias antes de hoje/.test(html));
+});
+
+test("corte de calorias vem de metas().pisoDia: meta do médico abaixo de 1.200 vira o corte", () => {
+  const serie = [{ registrou: true, kcal: 1100, prot: 90 }, { registrou: true, kcal: 950, prot: 90 }];
+  const padrao = abrir();
+  assert.strictEqual(padrao.v("metas().pisoDia"), 1200);
+  assert.strictEqual(padrao.j("painelResumo(" + JSON.stringify(serie) + ", metas())").abaixoKcal, 2);
+  assert.ok(/Abaixo de 1\.200 kcal/.test(padrao.v("E.dias['2026-11-19'] = { enjoo: false, comido: [], agua: 0, protExtra: 50, caminhada: 0 }, telaPainel()")));
+  const medico = abrir({ "2026-11-19": so(50) }, { metaKcal: 1000 });
+  assert.strictEqual(medico.v("metas().pisoDia"), 1000);
+  assert.strictEqual(medico.j("painelResumo(" + JSON.stringify(serie) + ", metas())").abaixoKcal, 1, "só 950 fica abaixo de 1.000");
+  const html = medico.v("telaPainel()");
+  assert.ok(/Abaixo de 1\.000 kcal/.test(html) && /1\.000 kcal é o mínimo por dia/.test(html) && !/1\.200/.test(html));
+});
+
+test("período 7/30 lembrado em E.ui.painelPeriodo; valor estranho vira 7", () => {
+  const a = abrir();
+  assert.strictEqual(a.v("painelPeriodo()"), 7);
+  a.v("E.ui.painelPeriodo = 30");
+  assert.strictEqual(a.v("painelPeriodo()"), 30);
+  assert.ok(/Nos 30 dias antes de hoje/.test(a.v("telaPainel()")));
+  a.v("E.ui.painelPeriodo = 12");
+  assert.strictEqual(a.v("painelPeriodo()"), 7);
 });
