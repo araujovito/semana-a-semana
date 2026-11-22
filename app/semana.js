@@ -184,8 +184,12 @@ function telaSemana() {
   const alvoProt = alvoProteina(), padroes = semanaPadroesGerais(semanas);
   const marcas = s => { const m = semanaMarcas(s); return m.length ? '<p class="semana-marcas">' + m.map(t => '<span class="semana-marca">' + t + "</span>").join("") + "</p>" : ""; };
   const atual = semanas[semanas.length - 1];
+  /* Com pedra na vesícula, o aviso de ritmo de Diário > Peso também entra na semana atual (o mesmo texto, de textoRitmo em peso.js;
+     no modo discreto, sem números). Sem vesícula, o aviso fica só no Peso. A conta é ritmoDaVesicula (hoje.js). */
+  const ritmo = ritmoDaVesicula();
   out += '<div class="cartao destaque semana-atual" data-semana="' + atual.n + '"><div class="linha"><h2 style="margin:0">' + semanaTitulo(atual) + '</h2><span class="sub">' + semanaPeriodo(atual) + "</span></div>" +
-    marcas(atual) + semanaCorpo(atual, discreto, alvoProt) + "</div>";
+    marcas(atual) + semanaCorpo(atual, discreto, alvoProt) +
+    (ritmo ? '<div class="semana-guia" data-semana-ritmo><p class="sub"><strong>Ritmo de perda:</strong> ' + esc(textoRitmo(ritmo, true, discreto)) + "</p></div>" : "") + "</div>";
   if (padroes.length) out += '<div class="cartao" id="semana-padroes"><h2>O que se repetiu</h2><ul class="semana-lista">' + padroes.map(p => '<li data-padrao="' + p.id + '">' + p.texto + "</li>").join("") + "</ul></div>";
   if (semanas.length > 1) {
     out += '<div class="cartao" id="semana-anteriores"><h2>Semanas anteriores</h2>' + semanas.slice(0, -1).reverse().map(s =>

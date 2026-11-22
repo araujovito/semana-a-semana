@@ -120,6 +120,26 @@ function vesiculaCurta() {
     '<div class="botoes"><button class="sec" data-ac="sinaisDor">Dor na barriga: o que fazer</button></div></div>';
 }
 
+/* Ritmo de perda em Hoje, só para quem marcou pedra na vesícula: uma linha e "ver", que abre o aviso inteiro numa folha.
+   É o mesmo aviso de Diário > Peso (ritmoPerda e textoRitmo em peso.js, com as fontes lá): perder mais de 1% do peso por semana
+   aumenta o risco de crise de vesícula, e Hoje é a tela que ela abre todo dia (teste Android da onda 2, I2). Modo discreto: a linha
+   e a folha não trazem número de peso nem percentual de perda (só o limite de 1%). Sem vesícula, nada muda: o aviso fica só no Peso. */
+function ritmoDaVesicula() {
+  const m = metas(); if (!m || !m.vesicula) return null;
+  const r = ritmoPerda(E.pesos);
+  return r && r.rapida ? r : null;
+}
+function ritmoCurto() {
+  const r = ritmoDaVesicula(); if (!r) return "";
+  const linha = semCalorias() ? "O peso caiu mais de 1% por semana nas últimas semanas." : "Perda média de " + pctRitmo(r) + "% do peso por semana, acima de 1%.";
+  return '<div class="cartao ritmo-curto" data-aviso="ritmo"><div class="linha"><p style="margin:0"><strong>Ritmo de perda:</strong> ' + linha + '</p><button class="mini sec" data-ac="verRitmo">ver</button></div></div>';
+}
+function abrirRitmo() {
+  const r = ritmoDaVesicula(); if (!r) return;
+  abrirFolha("Ritmo de perda", '<p>' + esc(textoRitmo(r, true, semCalorias())) + "</p>" +
+    '<div class="botoes"><button class="sec" data-ac="sinaisDor">Dor na barriga: o que fazer</button><button class="sec" data-ac="ritmoPeso">Ver o peso</button></div>');
+}
+
 /* ---------- atalhos: na ordem do uso e do risco (usabilidade, item 8) ---------- */
 const ATALHOS = [
   ["comida", "Comida", "i-comer", "plano"], ["agua", "Água", "i-agua", ""], ["como", "Como estou", "i-sintoma", "diario:sintomas"], ["aplic", "Aplicação", "i-caneta", "diario:doses"],
@@ -174,7 +194,7 @@ function telaHoje() {
     '<div class="cartao">' + blocoProteina(c, ref, quando, 0, r.enjoo) + "</div>";
 
   if (eHoje) {
-    out += avisoGestante() + avisoPesoBaixo();
+    out += avisoGestante() + avisoPesoBaixo() + ritmoCurto();
     if (riscoHipoHoje(h, new Date().getHours())) out += avisoHipoglicemia("hoje");
     const motivo = avisoComerPoucoHoje(h);
     if (motivo) out += cartaoComerPouco(motivo);
@@ -251,6 +271,8 @@ Object.assign(AC, {
   sinaisDor() { const s = sintomaDeHoje(); abrirSinaisDor(!!(s && s.dor)); },
   registrarDor() { AC.como({ k: "dor" }); },
   sinaisGuia() { fecharFolha(); irPara("guia"); },
+  verRitmo() { abrirRitmo(); },
+  ritmoPeso() { fecharFolha(); irPara("diario", "peso"); },
   atalho(d) { const x = String(d.para).split(":"); irPara(x[0], x[1]); },
   /* Troca o cardápio do dia selecionado (normal ou de enjoo). Nada é apagado: cada cardápio tem as suas marcas (comido e comidoEnjoo). */
   enjoo(d) { const h = diaDoToque(d); if (!h) return; const r = arrumarDia(dia(h)); r.enjoo = !r.enjoo; gravarDia(h, r); render(); },
