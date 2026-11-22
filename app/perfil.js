@@ -146,7 +146,12 @@ function puFaixaHoje() {
     '<div class="botoes"><button data-ac="puResponder">Responder agora</button><button class="sec" data-ac="puDepois">Agora não</button></div></div>';
 }
 const puTelaHoje = telaHoje;
-telaHoje = function () { return puFaixaHoje() + puTelaHoje(); };
+/* Entra logo depois do topo colorido da Hoje (antes da navegação de dias), para não quebrar o topo; se a navegação mudar de
+   nome, a faixa vai para o começo da tela. */
+telaHoje = function () {
+  const t = puTelaHoje(), f = puFaixaHoje(), i = f ? t.indexOf('<div class="dias-nav"') : -1;
+  return !f ? t : i >= 0 ? t.slice(0, i) + f + t.slice(i) : f + t;
+};
 
 /* Primeiro uso: ano, altura, peso e as três perguntas. O resto do perfil começa com valores neutros (sexo feminino, atividade
    sedentária, sem metas do médico, sem restrições, diabetes, pílula e gravidez sem resposta) e fica para "Completar depois". */

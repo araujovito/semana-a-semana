@@ -76,6 +76,8 @@ const { abrir, ok, d, CHAVE } = require("./apoio");
   // Auditoria 3, I7: quem já tinha perfil e nunca respondeu vesícula, fígado e plano da nutricionista vê uma faixa em Hoje.
   ok(await p.locator("[data-cartao=pu-novas]").count() === 1 && /três perguntas/.test(await p.locator("[data-cartao=pu-novas]").innerText()), "perfil antigo: faixa das perguntas novas em Hoje");
   await t.alvosDeToque("hoje com a faixa das perguntas novas");
+  ok(await p.evaluate(() => { const f = document.querySelector("[data-cartao=pu-novas]"), topo = document.querySelector(".hoje-topo"); return !!f && (!topo || !!(topo.compareDocumentPosition(f) & Node.DOCUMENT_POSITION_FOLLOWING)); }),
+    "a faixa fica depois do topo da Hoje, sem quebrá-lo");
   await p.click("[data-ac=puResponder]"); await p.waitForSelector("form[data-form=perfil]");
   ok(await p.locator("[data-pu=pendente]").count() === 1 && await p.locator(resp("vesicula", "sim")).isVisible(), "responder agora: abre o Perfil com as perguntas no topo");
   ok(typeof (await t.ler()).ui.puAviso === "string", "responder agora: a faixa não volta mais");
