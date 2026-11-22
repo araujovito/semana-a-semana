@@ -1,24 +1,25 @@
 /* Tela Painel (painel.js): anéis de hoje, barras por dia em SVG e números do período. Só usa as cores de estilo.css. */
-.painel-aneis { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+/* Tamanhos de letra em rem: acompanham o tamanho de fonte do sistema. Grades com auto-fit: com letra grande, viram uma coluna. */
+.painel-aneis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr)); gap: 10px; }
 .painel-aneis.so-um { grid-template-columns: 1fr; }
 .painel-anel { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; min-width: 0; }
-.painel-anel svg { width: 72px; height: 72px; flex: none; }
+.painel-anel svg { width: 4.5rem; height: 4.5rem; flex: none; }
 .painel-anel circle { fill: none; stroke-width: 9; }
 .painel-anel circle.fundo { stroke: var(--linha); }
 .painel-anel circle.feito { stroke: var(--cor); }
 .painel-anel text { fill: var(--texto); font-size: 15px; font-weight: 600; }
-.painel-num { font-size: 22px; font-weight: 700; line-height: 1.15; }
-.painel-num small { font-size: 13px; font-weight: 500; color: var(--suave); }
+.painel-num { font-size: 1.375rem; font-weight: 700; line-height: 1.15; }
+.painel-num small { font-size: 0.8125rem; font-weight: 500; color: var(--suave); }
 .painel-falta { margin: 12px 0 4px; font-weight: 600; }
 
 .painel-periodo .linha { flex-wrap: wrap; }
 .painel-periodo .linha h2 { margin: 0; }
-.painel-chips { display: flex; gap: 6px; }
-.painel-chips button { min-height: 44px; }
+.painel-chips { display: flex; flex-wrap: wrap; gap: 6px; overflow-x: visible; }
+.painel-chips button { min-height: 44px; font-size: 0.875rem; }
 svg.painel-graf { width: 100%; height: auto; aspect-ratio: 320 / 150; display: block; margin-top: 4px; touch-action: pan-y; }
 svg.painel-graf:focus { outline: none; }
 svg.painel-graf:focus-visible { outline: 2px solid var(--cor); outline-offset: 2px; border-radius: 4px; }
-svg.painel-graf text { fill: var(--suave); font-size: 10px; }
+svg.painel-graf text { fill: var(--suave); font-size: 0.625rem; }
 svg.painel-graf line.eixo { stroke: var(--linha); }
 svg.painel-graf line.meta { stroke: var(--texto); stroke-width: 1.5; stroke-dasharray: 5 4; }
 svg.painel-graf rect.faixa { fill: var(--cor-clara); }
@@ -36,12 +37,12 @@ svg.painel-graf:focus-visible g.dia.sel rect.alvo { fill: var(--cor-clara); opac
 .painel-legenda .leg.meta { height: 0; border-top: 2px dashed var(--texto); border-radius: 0; }
 .painel-legenda .leg.faixa { background: var(--cor-clara); }
 
-.painel-numeros { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px; }
+.painel-numeros { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.5rem), 1fr)); gap: 12px; margin-bottom: 8px; }
 
 /* "Ver como tabela": os números do gráfico em tabela, para leitor de tela e para quem prefere ler. */
 .painel-tabela { margin: 2px 0 6px; }
 .painel-tabela summary { min-height: 44px; display: flex; align-items: center; color: var(--cor); font-weight: 600; cursor: pointer; }
 .painel-tabela table { margin-top: 4px; }
-.painel-tabela caption { text-align: left; color: var(--suave); font-size: 13px; padding-bottom: 4px; }
+.painel-tabela caption { text-align: left; color: var(--suave); font-size: 0.8125rem; padding-bottom: 4px; }
 .painel-tabela th[scope=row] { color: var(--texto); font-weight: 400; font-size: inherit; text-align: left; border-top: 1px solid var(--linha); }
 .painel-tabela td { text-align: right; }

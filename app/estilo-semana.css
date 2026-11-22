@@ -1,12 +1,14 @@
 /* Visão semanal (app/semana.js). Só usa as cores de estilo.css, então claro e escuro saem juntos. */
-.semana-topo { margin: 4px 2px 12px; font-size: 18px; }
+/* Letra em rem: acompanha o tamanho de fonte do sistema. Rótulo e texto de cada item lado a lado; sem espaço, o texto desce. */
+.semana-topo { margin: 4px 2px 12px; font-size: 1.125rem; }
 .semana-itens { list-style: none; margin: 10px 0 0; padding: 0; }
-.semana-itens li { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 8px; padding: 6px 0; border-top: 1px solid var(--linha); font-size: 15px; overflow-wrap: anywhere; }
+.semana-itens li { display: flex; flex-wrap: wrap; gap: 2px 8px; padding: 6px 0; border-top: 1px solid var(--linha); font-size: 0.9375rem; overflow-wrap: anywhere; }
+.semana-itens li > span:last-child { flex: 1 1 10em; min-width: 0; }
 .semana-itens li:first-child { border-top: 0; }
-.semana-rot { color: var(--suave); font-size: 13px; padding-top: 2px; }
+.semana-rot { flex: 0 0 6.4rem; color: var(--suave); font-size: 0.8125rem; padding-top: 2px; }
 .semana-marcas { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0; }
-.semana-marca { background: var(--cartao); border: 1px solid var(--linha); color: var(--texto); border-radius: 999px; padding: 2px 10px; font-size: 13px; }
-.semana-atual .semana-itens li { border-top-color: rgba(127, 127, 127, .25); }
+.semana-marca { background: var(--cartao); border: 1px solid var(--linha); color: var(--texto); border-radius: 999px; padding: 2px 10px; font-size: 0.8125rem; max-width: 100%; overflow-wrap: anywhere; }
+.semana-atual .semana-itens li { border-top-color: var(--cartao); }   /* sobre o fundo de destaque, a linha comum some */
 .semana-lista { margin: 0; padding-left: 18px; }
 .semana-lista li { margin: 4px 0; overflow-wrap: anywhere; }
 #semana-anteriores details { padding: 4px 0; }
@@ -15,6 +17,6 @@
 .semana-quando { display: block; }
 .semana-peso { border-top: 1px solid var(--linha); margin-top: 6px; }
 .semana-nota { margin: 4px 4px 16px; }
-@media (max-width: 360px) { .semana-itens li { grid-template-columns: 80px minmax(0, 1fr); } }
+@media (max-width: 360px) { .semana-rot { flex-basis: 5.3rem; } }
 .semana-guia { margin-top: 8px; }
 .semana-guia p { margin: 0; }
