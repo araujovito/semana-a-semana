@@ -16,6 +16,8 @@ const SEMANA = ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
 /* Formato dos dados, versão 2 (a chave do localStorage continua "semana-a-semana.v1" para quem já usa não perder nada).
    perfil     { nome, sexo, nascimento, altura, peso, atividade, metaKcal, metaProt, metaAgua,
                 gestante (grávida ou amamentando), diabetes, insulinaSulf, pilula: null (não respondeu) | true | false,
+                vesicula (tem pedra na vesícula), figado (tem gordura no fígado, esteatose),
+                aguardaCirurgia (aguarda cirurgia da vesícula; só vale com vesicula true): null (não respondeu ou prefere não responder) | true | false,
                 discreto: true = não mostrar calorias nem peso em destaque,
                 naoCome: [ids de RESTRICOES], naoGosta: [chaves de alimento] }
    diaDose    dia habitual da aplicação, 0-6 = segunda a domingo; null = o dia da semana da primeira aplicação
@@ -32,7 +34,9 @@ const SEMANA = ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
    ui         preferências de tela (aba aberta, local de treino) */
 const VERSAO = 2;
 function vazio() { return { v: VERSAO, perfil: null, diaDose: null, doses: [], pesos: [], sintomas: [], treinos: [], dias: {}, trocas: {}, caneta: null, suplementos: [], exames: [], lembretes: {}, ui: {} }; }
-const PERFIL_NOVO = { gestante: null, diabetes: null, insulinaSulf: null, pilula: null, discreto: false, naoCome: [], naoGosta: [] };
+const PERFIL_NOVO = { gestante: null, diabetes: null, insulinaSulf: null, pilula: null, vesicula: null, figado: null, aguardaCirurgia: null, discreto: false, naoCome: [], naoGosta: [] };
+/* Perguntas de sim/não do perfil: qualquer valor que não seja true ou false vira null (sem resposta). */
+const PERGUNTAS_SIM_NAO = ["gestante", "diabetes", "insulinaSulf", "pilula", "vesicula", "figado", "aguardaCirurgia"];
 /* Recebe dados de qualquer versão (do aparelho ou de uma cópia de segurança) e devolve na versão atual, sem perder nada.
    Devolve null se não for um dado do app. Também confere os tipos: registro sem data válida sai, lista que não é lista vira lista vazia,
    perfil sem altura, peso e nascimento válidos volta a ser pedido. Assim uma cópia estragada não deixa telas em branco nem "NaN". */
@@ -51,6 +55,9 @@ function migrar(j) {
     e.perfil = Object.assign({}, PERFIL_NOVO, p, { sexo: p.sexo === "M" ? "M" : "F", nome: String(p.nome == null ? "" : p.nome).slice(0, 40) });
     if (!Array.isArray(e.perfil.naoCome)) e.perfil.naoCome = [];
     if (!Array.isArray(e.perfil.naoGosta)) e.perfil.naoGosta = [];
+    // Quem já tinha perfil antes das perguntas de vesícula e fígado fica com elas sem resposta (null).
+    PERGUNTAS_SIM_NAO.forEach(k => { if (e.perfil[k] !== true && e.perfil[k] !== false) e.perfil[k] = null; });
+    if (e.perfil.vesicula !== true) e.perfil.aguardaCirurgia = null;
   } else e.perfil = null;
   e.doses = registros(e.doses).filter(d => numero(d.mg, 0.1, 50));
   e.pesos = registros(e.pesos).filter(x => numero(x.kg, 30, 400));

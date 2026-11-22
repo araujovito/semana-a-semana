@@ -75,3 +75,12 @@ test("quando a gravação falha, salvar devolve false e o aviso de sucesso não 
   app.v('aviso("Peso registrado.")');
   assert.deepStrictEqual(app.avisos, []);
 });
+test("perguntas de vesícula e fígado: perfil antigo fica sem resposta; respostas válidas são mantidas", () => {
+  const app = carregar(V1), p = JSON.parse(app.v("JSON.stringify(E.perfil)"));
+  assert.deepStrictEqual([p.vesicula, p.figado, p.aguardaCirurgia], [null, null, null]);
+  const base = "{ v: 2, perfil: { nome: 'B', nascimento: 1981, altura: 160, peso: 100, ";
+  const b = JSON.parse(app.v("JSON.stringify(migrar(" + base + "vesicula: true, figado: false, aguardaCirurgia: true } }).perfil)"));
+  assert.deepStrictEqual([b.vesicula, b.figado, b.aguardaCirurgia], [true, false, true]);
+  const r = JSON.parse(app.v("JSON.stringify(migrar(" + base + "vesicula: 'sim', figado: 1, aguardaCirurgia: true } }).perfil)"));
+  assert.deepStrictEqual([r.vesicula, r.figado, r.aguardaCirurgia], [null, null, null], "valor que não é sim/não vira sem resposta; cirurgia sem vesícula marcada some");
+});
