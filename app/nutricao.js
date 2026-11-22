@@ -73,7 +73,8 @@ function gramasEquivalentes(de, g, para, campo) {
   return g * A[de][c] / A[para][c];
 }
 function candidatos(grupo, menos, R) {
-  return Object.keys(A).filter(c => c !== menos && A[c].grupo === grupo && FORA_DAS_TROCAS.indexOf(c) < 0 && podeComer(c, R));
+  // soPlanoNutri: alimento acrescentado só para o plano da nutricionista; fica fora das trocas para não mudar o cardápio do app.
+  return Object.keys(A).filter(c => c !== menos && A[c].grupo === grupo && FORA_DAS_TROCAS.indexOf(c) < 0 && !A[c].soPlanoNutri && podeComer(c, R));
 }
 /* Troca automática de um item que você não come. Critério: alimento permitido do mesmo grupo, de preferência um que não esteja
    em outra refeição do mesmo dia (para não repetir), e entre esses o que fica mais parecido em energia e proteína na quantidade

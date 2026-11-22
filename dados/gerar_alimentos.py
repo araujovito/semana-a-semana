@@ -107,7 +107,26 @@ ALIMENTOS = [
  ("soja_cozida","Soja em grão cozida",None,174271,"colher de sopa cheia",25,"proteina"),
  ("ervilha","Ervilha em conserva, escorrida",560,170013,"colher de sopa cheia",25,"leguminosa"),
  ("tapioca","Tapioca com manteiga",551,None,"unidade pequena",50,"carboidrato"),
+ # Acrescentados para o plano da nutricionista (app/planonutri.js). Ficam fora das trocas automaticas do cardapio do app
+ # (lista SO_PLANO_NUTRI abaixo), para nao mudar as trocas que ja existiam.
+ # Iogurte proteico: ESTIMATIVA. O rotulo muda muito de marca para marca; os brasileiros naturais ficam por volta de
+ # 55 a 70 kcal, 8 a 10 g de proteina, 0 a 2 g de gordura e 3 a 6 g de carboidrato por 100 g. O iogurte grego natural
+ # desnatado do USDA (59 kcal, 10 g de proteina, 0,4 g de gordura, 3,6 g de carboidrato) cai dentro dessa faixa e e o usado.
+ ("iogurte_proteico","Iogurte natural proteico (estimativa)",None,170894,"pote",170,"laticinio"),
+ # Creme de ricota: ESTIMATIVA. E ricota batida, com ou sem creme de leite; usa a ricota da TACO. Versao light tem menos gordura.
+ ("creme_ricota","Creme de ricota (estimativa)",469,171248,"colher de sopa",15,"laticinio"),
+ ("leite_semi","Leite semidesnatado",None,172205,"copo",200,"laticinio"),
+ ("clara","Clara de ovo cozida",486,172183,"unidade",33,"proteina"),
+ ("pao_sirio_integral","Pão sírio integral",None,174916,"unidade pequena",40,"carboidrato"),
+ ("wrap_integral","Wrap (tortilha) integral",None,174081,"unidade pequena",35,"carboidrato"),
+ # Goma de tapioca: a conta usa a fecula seca. A goma hidratada vendida pronta tem cerca de 27% de agua (rotulos de cerca de
+ # 240 kcal por 100 g contra 331 kcal da fecula da TACO): o plano converte 30 g de goma em 22 g de fecula (app/planonutri.js).
+ ("fecula_mandioca","Fécula de mandioca (goma de tapioca)",124,169717,"colher de sopa",10,"carboidrato"),
+ ("chia","Semente de chia",None,170554,"colher de chá",5,"gordura"),
 ]
+# Alimentos que so o plano da nutricionista usa: o gerador marca "soPlanoNutri": true e as trocas automaticas
+# (candidatos, em app/nutricao.js) nao os escolhem.
+SO_PLANO_NUTRI = ["iogurte_proteico","creme_ricota","leite_semi","clara","pao_sirio_integral","wrap_integral","fecula_mandioca","chia"]
 
 # O que cada alimento contem, para as restricoes do perfil. Marcas usadas pelo app:
 #   leite (lactose/leite), ovo, peixe, carne_vermelha, porco, gluten, carne (qualquer carne, ave ou peixe: e o que a vegetariana nao come).
@@ -122,6 +141,8 @@ CONTEM = {
  "queijo_minas": ["leite"], "ricota": ["leite"], "mozarela": ["leite"],
  "aveia": ["gluten"], "pao_integral": ["gluten"], "pao_frances": ["gluten"],
  "tapioca": ["leite"],  # a da TACO leva manteiga
+ "iogurte_proteico": ["leite"], "creme_ricota": ["leite"], "leite_semi": ["leite"], "clara": ["ovo"],
+ "pao_sirio_integral": ["gluten"], "wrap_integral": ["gluten"],
 }
 # Setor do mercado, para a lista de compras. Quem nao esta em SETOR_DA_CHAVE usa o setor do grupo.
 SETORES = ["Hortifrúti", "Carnes e peixes", "Frios e laticínios", "Padaria", "Mercearia", "Bebidas"]
@@ -129,7 +150,8 @@ SETOR_DO_GRUPO = {"proteina": "Carnes e peixes", "laticinio": "Frios e laticíni
                   "vegetal": "Hortifrúti", "fruta": "Hortifrúti", "gordura": "Mercearia", "bebida": "Bebidas"}
 SETOR_DA_CHAVE = {"ovo": "Frios e laticínios", "atum": "Mercearia", "sardinha": "Mercearia", "tofu": "Frios e laticínios", "whey": "Mercearia",
                   "leite_po_desn": "Mercearia", "pao_integral": "Padaria", "pao_frances": "Padaria", "batata_doce": "Hortifrúti", "batata": "Hortifrúti",
-                  "mandioca": "Hortifrúti", "abacate": "Hortifrúti", "bebida_soja": "Bebidas", "soja_cozida": "Mercearia"}
+                  "mandioca": "Hortifrúti", "abacate": "Hortifrúti", "bebida_soja": "Bebidas", "soja_cozida": "Mercearia",
+                  "clara": "Frios e laticínios", "pao_sirio_integral": "Padaria", "wrap_integral": "Padaria"}
 
 # EXCECOES. Nada de remendo solto no codigo: toda excecao entra numa destas duas tabelas, com o motivo.
 #
@@ -196,6 +218,7 @@ def main():
         assert setor in SETORES, chave
         item = {"nome": nome, "medida": medida, "gMedida": g_medida, "grupo": grupo, "setor": setor, "contem": CONTEM.get(chave, []),
                 "fonte": ("TACO %d" % tid if tid else "") + (" + " if tid and uid else "") + ("USDA %s" % uid if uid else "")}
+        if chave in SO_PLANO_NUTRI: item["soPlanoNutri"] = True
         u = usda.get(uid, {}) if uid else {}
         escala = 1
         if chave in ESCALAR_USDA:
@@ -217,6 +240,7 @@ def main():
         kt, ku = t.get("energy_kcal"), u.get("1008")
         if isinstance(kt, (int, float)) and ku and abs(kt - ku) / ku > 0.25 and chave not in ESCALAR_USDA:
             avisos.append("%s: energia TACO %.0f x USDA %.0f kcal; o par pode nao ser o mesmo alimento ou preparo" % (chave, kt, ku))
+    for chave in SO_PLANO_NUTRI: assert chave in saida, "SO_PLANO_NUTRI cita alimento inexistente: " + chave
     for chave in CONTEM: assert chave in saida, "CONTEM cita alimento inexistente: " + chave
     with open(os.path.join(RAIZ, "app", "alimentos.js"), "w", encoding="utf-8") as f:
         f.write("// Gerado por dados/gerar_alimentos.py. Valores por 100 g. Nao editar a mao.\n")
