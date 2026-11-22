@@ -123,10 +123,43 @@ test("dor forte na barriga: caminho para os sinais de alerta do Guia; sem dor, s
   assert.doesNotMatch(com.v("telaSemana()") + sem.v("telaSemana()"), /sem sinal de alerta|urgente|perigo/i);
 });
 
-test("dia habitual mudou: sem histórico, as aplicações antigas são classificadas pelo dia de agora (limite documentado)", () => {
-  // aplicava às segundas (02/11 e 09/11) e passou para quarta (E.diaDose = 2): 18/11 é quarta
+test("dia habitual mudou, dado antigo sem histórico: as aplicações são classificadas pelo dia de agora", () => {
+  // aplicava às segundas (02/11 e 09/11) e passou para quarta (E.diaDose = 2) numa versão sem histórico: 18/11 é quarta
   const a = base({ diaDose: 2, doses: [dose("2026-11-02", 2.5), dose("2026-11-09", 2.5), dose("2026-11-18", 2.5)] });
   const ds = semanas(a).reduce((t, s) => t.concat(s.doses), []);
   assert.deepStrictEqual(ds.map(d => [d.data, d.atraso]), [["2026-11-02", -2], ["2026-11-09", -2], ["2026-11-18", 0]]);
-  assert.strictEqual(a.v("typeof E.diaDoseHistorico"), "undefined", "se um histórico for criado, este teste e semanasDoTratamento mudam juntos");
+  assert.strictEqual(a.v("JSON.stringify(E.diaDoseHist)"), "[]", "migração: quem não tem histórico fica com a lista vazia");
+});
+
+// Auditoria 3, I2: seis aplicações às segundas (12/10 a 16/11) e, na sexta 20/11, "Mudei o dia da aplicação" para quinta.
+const seisSegundas = () => base({ diaDose: 0, doses: ["2026-10-12", "2026-10-19", "2026-10-26", "2026-11-02", "2026-11-09", "2026-11-16"].map(x => dose(x, 2.5)) });
+test("dia habitual mudou com histórico: as segundas antigas continuam no dia e a semana 6 tem a aplicação", () => {
+  const a = seisSegundas();
+  a.v('registrarTrocaDia(E, 3, "' + H + '")');
+  assert.strictEqual(a.v("E.diaDose"), 3);
+  assert.deepStrictEqual(JSON.parse(a.v("JSON.stringify(E.diaDoseHist)")), [{ desde: "2026-10-12", dia: 0 }, { desde: H, dia: 3 }]);
+  const s = semanas(a);
+  assert.strictEqual(s.length, 6);
+  assert.deepStrictEqual(s.map(x => x.doses.map(d => [d.data, d.atraso])), [[["2026-10-12", 0]], [["2026-10-19", 0]], [["2026-10-26", 0]], [["2026-11-02", 0]], [["2026-11-09", 0]], [["2026-11-16", 0]]]);
+  assert.doesNotMatch(a.v("JSON.stringify(semanaMarcas(semanasDoTratamento(\"" + H + "\")[5]))"), /sem aplicação/);
+  assert.ok(!a.v("JSON.stringify(semanaPadroesGerais(semanasDoTratamento(\"" + H + "\")))").includes("fora do dia habitual"), "o padrão não acusa atraso nas semanas antigas");
+  // a próxima aplicação já segue a quinta
+  assert.strictEqual(a.v('situacaoDoseEm(E.doses, E.diaDose, "' + H + '").habitual'), 3);
+  // depois da troca, uma aplicação na quinta 26/11 conta no dia; uma na segunda 30/11 conta 4 dias depois do previsto
+  a.v('E.doses.push({ id: "q", data: "2026-11-26", mg: 2.5, local: "Coxa direita" }, { id: "r", data: "2026-11-30", mg: 2.5, local: "Coxa direita" })');
+  const depois = JSON.parse(a.v('JSON.stringify(semanasDoTratamento("2026-11-30"))')).reduce((t, x) => t.concat(x.doses), []);
+  assert.deepStrictEqual(depois.slice(-3).map(d => [d.data, d.atraso]), [["2026-11-16", 0], ["2026-11-26", 0], ["2026-11-30", 4]]);
+});
+test("histórico do dia habitual: trocar duas vezes no mesmo dia vale a última; voltar ao mesmo dia não duplica", () => {
+  const a = seisSegundas();
+  a.v('registrarTrocaDia(E, 3, "' + H + '"); registrarTrocaDia(E, 4, "' + H + '")');
+  assert.deepStrictEqual(JSON.parse(a.v("JSON.stringify(E.diaDoseHist)")), [{ desde: "2026-10-12", dia: 0 }, { desde: H, dia: 4 }]);
+  a.v('registrarTrocaDia(E, 0, "' + H + '")');
+  assert.deepStrictEqual(JSON.parse(a.v("JSON.stringify(E.diaDoseHist)")), [{ desde: "2026-10-12", dia: 0 }]);
+  assert.strictEqual(a.v("E.diaDose"), 0);
+});
+test("histórico do dia habitual: a migração limpa entradas inválidas e põe em ordem", () => {
+  const a = base({ diaDose: 3, diaDoseHist: [{ desde: H, dia: 3 }, { desde: "2026-02-30", dia: 1 }, { desde: "2026-10-12", dia: 0 }, { desde: "2026-11-01", dia: 9 }, "x"] });
+  assert.deepStrictEqual(JSON.parse(a.v("JSON.stringify(E.diaDoseHist)")), [{ desde: "2026-10-12", dia: 0 }, { desde: H, dia: 3 }]);
+  assert.strictEqual(carregar({ v: 2, perfil, diaDoseHist: "lixo" }).v("JSON.stringify(E.diaDoseHist)"), "[]");
 });

@@ -170,10 +170,32 @@ function cartaoDiaHabitual(s) {
     '<label>Mudei o dia da aplicação para<select data-mud="diaDose">' + SEMANA_LONGA.map((n, i) => '<option value="' + i + '"' + (i === s.habitual ? " selected" : "") + ">" + n + "</option>").join("") + "</select></label>" +
     '<p class="sub" style="margin:8px 0 0">Dá para mudar o dia da semana, desde que haja pelo menos 3 dias (72 horas) entre duas aplicações.</p></div>';
 }
+/* Dia habitual em vigor na data de uma aplicação, lido do histórico de trocas (E.diaDoseHist, formato em nucleo.js).
+   Sem histórico, vale o dia de agora (diaHabitual). Conta pura: usada pela visão semanal (semana.js) para classificar
+   cada aplicação pelo dia que valia na época dela (auditoria 3, I2). */
+function diaHabitualEm(hist, doses, diaDose, data, h) {
+  const l = (hist || []).filter(x => x && dataValida(x.desde) && Number.isInteger(x.dia));
+  if (!l.length) return diaHabitual(doses, diaDose, h);
+  let dia = l[0].dia;
+  l.forEach(x => { if (x.desde <= data) dia = x.dia; });
+  return dia;
+}
+/* Grava a troca no histórico, valendo de `h` (o dia em que ela mudou) em diante. Na primeira troca, guarda antes o dia antigo
+   desde a primeira aplicação, para as aplicações de antes continuarem medidas por ele. Duas trocas no mesmo dia: vale a última. */
+function registrarTrocaDia(e, novo, h) {
+  const l = (e.diaDoseHist || []).slice();
+  if (!l.length && Number.isInteger(e.diaDose) && e.diaDose !== novo) {
+    const ds = dosesAte(e.doses, h);
+    l.push({ desde: ds.length && ds[0].data < h ? ds[0].data : mais(h, -1), dia: e.diaDose });
+  }
+  while (l.length && l[l.length - 1].desde >= h) l.pop();
+  if (!l.length || l[l.length - 1].dia !== novo) l.push({ desde: h, dia: novo });
+  e.diaDoseHist = l; e.diaDose = novo;
+}
 MUD.diaDose = function (c) {
   const v = Number(c.value);
   if (!(v >= 0 && v <= 6)) return;
-  E.diaDose = v; salvar();
+  registrarTrocaDia(E, v, hoje()); salvar();
   aviso("Dia habitual: " + SEMANA_LONGA[v] + "."); render();
 };
 

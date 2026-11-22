@@ -4,15 +4,13 @@
 
    Semana de tratamento: a mesma conta de situacaoDoseEm (tratamento.js): a semana 1 começa no dia da primeira aplicação e
    cada semana tem 7 dias seguidos a partir daí. Assim "Semana N" aqui é a mesma "Semana N do tratamento" da tela Hoje.
-   Cada aplicação entra na semana do dia em que estava PREVISTA (previstaDe, com o dia habitual de hoje): uma aplicação
-   adiantada 2 dias continua sendo "a da semana seguinte", e uma atrasada continua na sua semana.
+   Cada aplicação entra na semana do dia em que estava PREVISTA (previstaDe): uma aplicação adiantada 2 dias continua sendo
+   "a da semana seguinte", e uma atrasada continua na sua semana.
 
-   Limite conhecido (dia habitual por época): o app guarda só o dia habitual de agora (E.diaDose, trocado em "Mudei o dia da
-   aplicação", tratamento.js), sem histórico de quando mudou. Por isso todas as aplicações, inclusive as de antes da mudança, são
-   classificadas ("no dia previsto", "depois", "antes") pelo dia de agora. Exemplo: aplicava às segundas e passou para quarta;
-   as segundas antigas aparecem como "2 dias antes do previsto". Classificar pelo dia vigente em cada época exige gravar o
-   histórico das mudanças (formato de E em nucleo.js e MUD.diaDose em tratamento.js, fora deste arquivo); enquanto não houver,
-   fica assim. O teste "dia habitual mudou" em testes/unidade/semana.js prende este comportamento para a mudança ser consciente.
+   Dia habitual por época (auditoria 3, I2): cada aplicação é medida ("no dia previsto", "depois", "antes") pelo dia habitual que
+   valia na data dela, lido de E.diaDoseHist (diaHabitualEm, tratamento.js). Quem aplicava às segundas e passou para quinta
+   continua com as segundas antigas "no dia previsto". Dado de antes desta versão não tem histórico: aí vale o dia de agora
+   para todas, como antes. O teste "dia habitual mudou" em testes/unidade/semana.js prende os dois casos.
 
    A tela é registrada em TELAS (inicio.js) quando a página termina de carregar, sem botão na barra de abas: abre por #semana. */
 
@@ -57,7 +55,7 @@ function semanaEnjooMaior(j, minDentro, minFora) {
 function semanasDoTratamento(h) {
   const ds = dosesAte(E.doses, h);
   if (!ds.length) return [];
-  const d0 = ds[0].data, habitual = diaHabitual(ds, E.diaDose, h), total = Math.floor(entre(d0, h) / 7) + 1;
+  const d0 = ds[0].data, total = Math.floor(entre(d0, h) / 7) + 1;
   const porDia = semanaEnjooPorDia(E.sintomas), out = [];
   for (let n = 1; n <= total; n++) {
     const de = mais(d0, 7 * (n - 1)), fimCheio = mais(de, 6), ate = fimCheio < h ? fimCheio : h;
@@ -65,7 +63,7 @@ function semanasDoTratamento(h) {
   }
   /* aplicações: na semana do dia previsto */
   ds.forEach((d, i) => {
-    const prev = previstaDe(d.data, habitual);
+    const prev = previstaDe(d.data, diaHabitualEm(E.diaDoseHist, ds, E.diaDose, d.data, h));
     const n = Math.max(1, Math.min(total, Math.floor(entre(d0, prev) / 7) + 1)), s = out[n - 1];
     s.doses.push({ data: d.data, mg: d.mg, local: d.local, atraso: entre(prev, d.data) });
     if (i > 0 && d.mg !== ds[i - 1].mg) s.troca = true;

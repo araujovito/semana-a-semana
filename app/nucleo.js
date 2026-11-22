@@ -21,6 +21,9 @@ const SEMANA = ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
                 discreto: true = não mostrar calorias nem peso em destaque,
                 naoCome: [ids de RESTRICOES], naoGosta: [chaves de alimento] }
    diaDose    dia habitual da aplicação, 0-6 = segunda a domingo; null = o dia da semana da primeira aplicação
+   diaDoseHist [{ desde: "AAAA-MM-DD", dia: 0-6 }] em ordem de data: cada troca em "Mudei o dia da aplicação" (MUD.diaDose).
+              Vale o dia da última entrada com desde <= a data da aplicação; antes da primeira entrada vale o dia dela.
+              Lista vazia (dado antigo ou quem nunca trocou) = vale E.diaDose para todas. Serve à visão semanal (auditoria 3, I2).
    doses      [{ id, data, mg, local, obs }]
    pesos      [{ id, data, kg, cintura }]
    sintomas   [{ id, data, enjoo 0-3, intestino, vomito, refluxo, tontura, cansaco, dor, nota, glicemia (mg/dL, opcional) }]
@@ -31,9 +34,11 @@ const SEMANA = ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
    caneta     null | objeto (doses restantes, validade, saída da geladeira)
    suplementos, exames   listas
    lembretes  { } horários dos lembretes do aparelho
-   ui         preferências de tela (aba aberta, local de treino) */
+   ui         preferências de tela (aba aberta, local de treino). Também: planoNutri (planonutri.js); puPerguntas true = ela já
+              respondeu (no primeiro uso ou no Perfil) vesícula, fígado e plano da nutricionista, mesmo com "Não sei";
+              puAviso "AAAA-MM-DD" = dia em que a faixa "perguntas novas" foi respondida ou dispensada (perfil.js, auditoria 3, I7) */
 const VERSAO = 2;
-function vazio() { return { v: VERSAO, perfil: null, diaDose: null, doses: [], pesos: [], sintomas: [], treinos: [], dias: {}, trocas: {}, caneta: null, suplementos: [], exames: [], lembretes: {}, ui: {} }; }
+function vazio() { return { v: VERSAO, perfil: null, diaDose: null, diaDoseHist: [], doses: [], pesos: [], sintomas: [], treinos: [], dias: {}, trocas: {}, caneta: null, suplementos: [], exames: [], lembretes: {}, ui: {} }; }
 const PERFIL_NOVO = { gestante: null, diabetes: null, insulinaSulf: null, pilula: null, vesicula: null, figado: null, aguardaCirurgia: null, discreto: false, naoCome: [], naoGosta: [] };
 /* Perguntas de sim/não do perfil: qualquer valor que não seja true ou false vira null (sem resposta). */
 const PERGUNTAS_SIM_NAO = ["gestante", "diabetes", "insulinaSulf", "pilula", "vesicula", "figado", "aguardaCirurgia"];
@@ -79,6 +84,10 @@ function migrar(j) {
   if (!Array.isArray(e.suplementos)) e.suplementos = [];
   if (!Array.isArray(e.exames)) e.exames = [];
   if (!(Number.isInteger(e.diaDose) && e.diaDose >= 0 && e.diaDose <= 6)) e.diaDose = null;
+  /* Histórico do dia habitual: entrada sem data válida ou com dia fora de 0-6 sai; fica em ordem de data. */
+  e.diaDoseHist = (Array.isArray(e.diaDoseHist) ? e.diaDoseHist : [])
+    .filter(x => x && typeof x === "object" && dataOk(x.desde) && Number.isInteger(x.dia) && x.dia >= 0 && x.dia <= 6)
+    .map(x => ({ desde: x.desde, dia: x.dia })).sort((a, b) => (a.desde < b.desde ? -1 : a.desde > b.desde ? 1 : 0));
   e.v = VERSAO;
   return e;
 }

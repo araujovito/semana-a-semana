@@ -1,5 +1,5 @@
 // Aplicacoes: proxima aplicacao, dia habitual, datas e saltos de dose. Relogio fixo no navegador: hoje = sexta, 20/11/2026.
-const { abrir, ok, estadoBase } = require("./apoio");
+const { abrir, ok, d, estadoBase } = require("./apoio");
 const HOJE = "2026-11-20";
 let n = 0;
 const dose = (data, mg, local) => ({ id: "d" + (++n), data, mg: mg || 2.5, local: local || "Coxa esquerda", obs: "" });
@@ -78,6 +78,9 @@ const texto = async (p, sel) => (await p.locator(sel).innerText()).replace(/\s+/
   await p.click("#abas a[data-aba=semana]"); await p.click("#subabas a[data-sub=diario]"); await p.waitForSelector("[data-mud=diaDose]");
   await p.selectOption("[data-mud=diaDose]", "2");
   ok((await t.ler()).diaDose === 2 && await p.inputValue("[data-mud=diaDose]") === "2" && await p.locator("#aviso").innerText() === "Dia habitual: quarta-feira.", "dia habitual: mudança gravada em E.diaDose");
+  // Auditoria 3, I2: a troca entra no histórico, valendo de hoje em diante; o dia antigo fica guardado para as aplicações de antes.
+  const hist = (await t.ler()).diaDoseHist;
+  ok(Array.isArray(hist) && hist.length === 2 && hist[0].dia === 0 && hist[1].dia === 2 && hist[1].desde === d(0) && hist[0].desde < d(0), "dia habitual: a troca fica no histórico (segunda antes, quarta a partir de hoje): " + JSON.stringify(hist));
   await p.click("#abas a[data-aba=hoje]"); await p.waitForSelector("[data-dose]");
   ok(/Próxima aplicação: em 5 dias \(Qua, 25\/11\)/.test(await texto(p, "[data-dose]")), "dia habitual: depois da mudança, a próxima é na quarta");
   await p.reload(); await p.waitForSelector("[data-dose]");
