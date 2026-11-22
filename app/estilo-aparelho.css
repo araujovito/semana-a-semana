@@ -2,3 +2,8 @@
 
 /* Com o teclado aberto a barra de abas some (regra em estilo.css); o espaço que o corpo reservava para ela também deixa de fazer falta. */
 body.teclado main { padding-bottom: 12px; }
+
+/* Lembrete de cópia (seguranca.js): cartão baixo, sem cor de alerta, para não soar como cobrança. */
+.seg-lembrete { padding: 10px 14px; }
+.seg-lembrete p { margin: 0; }
+.seg-lembrete .botoes { margin-top: 6px; }

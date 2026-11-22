@@ -30,9 +30,9 @@ function cartaoLembretes() {
     (avisoCalendario ? '<p class="sub" role="status">' + esc(avisoCalendario) + "</p>" : "") + "</div>";
 }
 
-/* Cartão mostrado em Diário > Relatório. */
+/* Cartão mostrado em Diário > Relatório, com o lembrete de cópia (seguranca.js) logo acima quando é a hora. */
 function cartaoCopia() {
-  return '<div class="cartao"><h2>Cópia de segurança</h2><p class="sub" style="margin:0">' + (window.EH_PWA ? "Seus registros ficam guardados neste navegador, neste celular, e o app não os envia para lugar nenhum. Se você limpar os dados do navegador ou desinstalar o app, eles se perdem." : "Seus registros ficam neste celular e o app não os envia para lugar nenhum. Se a cópia de segurança do Google estiver ligada no aparelho, o Android pode incluí-los na cópia da sua conta. Se o app for desinstalado, eles se perdem.") + ' Exporte de vez em quando e guarde o texto (por exemplo, mandando para você mesma).</p><div class="botoes"><button class="sec" data-ac="exportar">Exportar tudo</button></div>' +
+  return segCartaoLembrete() + '<div class="cartao"><h2>Cópia de segurança</h2><p class="sub" style="margin:0">' + (window.EH_PWA ? "Seus registros ficam guardados neste navegador, neste celular, e o app não os envia para lugar nenhum. Se você limpar os dados do navegador ou desinstalar o app, eles se perdem." : "Seus registros ficam neste celular e o app não os envia para lugar nenhum. Se a cópia de segurança do Google estiver ligada no aparelho, o Android pode incluí-los na cópia da sua conta. Se o app for desinstalado, eles se perdem.") + ' Exporte de vez em quando e guarde o texto (por exemplo, mandando para você mesma).</p><div class="botoes"><button class="sec" data-ac="exportar">Exportar tudo</button></div>' +
       '<label>Restaurar: cole aqui o texto exportado<textarea id="imp"></textarea></label><div class="botoes"><button class="sec" data-ac="importar">Restaurar</button><button class="perigo" data-ac="zerar">Apagar todos os dados</button></div></div>';
 }
 

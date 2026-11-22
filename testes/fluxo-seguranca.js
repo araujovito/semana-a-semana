@@ -76,5 +76,27 @@ const violacoes = p => p.evaluate(() => window.__violacoes.splice(0));
   await p.click("[data-ac=compartilhar][data-de=rel]"); await t.sim();
   enviados = await p.evaluate(() => window.__enviados);
   ok(enviados.length === 2 && /RELATÓRIO DE ACOMPANHAMENTO/.test(enviados[1]), "seguir compartilha o relatório");
+  ok(await p.locator("#seg-lembrete-copia").count() === 0, "cópia exportada hoje: sem lembrete");
+  await t.fechar();
+
+  // Lembrete discreto: nunca exportou e usa o app há 20 dias; aparece junto do cartão de cópia, oferece exportar e pode ser adiado.
+  const antigo = { doses: [{ id: "a1", data: d(20), mg: 2.5, local: "Coxa esquerda", obs: "" }] };
+  t = await abrir({ estado: estadoBase(Object.assign({ ui: { diario: "relatorio" } }, antigo)), aba: "diario" }); p = t.p;
+  await p.addInitScript(ponte); await p.reload(); await p.waitForSelector("#seg-lembrete-copia");
+  const lembrete = await p.locator("#seg-lembrete-copia").innerText();
+  ok(/ainda não exportou/.test(lembrete) && !/precisa|deve|esqueceu/i.test(lembrete), "lembrete aparece em Diário > Relatório, sem cobrança: " + lembrete.replace(/\n/g, " "));
+  ok(await p.evaluate(() => { const l = document.getElementById("seg-lembrete-copia"); return l.nextElementSibling && /Cópia de segurança/.test(l.nextElementSibling.textContent); }), "lembrete fica logo acima do cartão de cópia");
+  await t.foto("seguranca-lembrete");
+  await t.alvosDeToque("lembrete de cópia");
+  await p.click("#seg-lembrete-copia [data-ac=exportar]");
+  ok(/dados de saúde/.test(await t.textoDialogo() || ""), "exportar pelo lembrete também passa pelo aviso de dados de saúde");
+  await t.sim();
+  ok((await p.evaluate(() => window.__enviados)).length === 1 && await p.locator("#seg-lembrete-copia").count() === 0, "depois de exportar, o lembrete some");
+  await t.semear(estadoBase(Object.assign({ ui: { diario: "relatorio", ultimaExportacao: d(16) } }, antigo))); await p.waitForSelector("#seg-lembrete-copia");
+  ok(/há 16 dias/.test(await p.locator("#seg-lembrete-copia").innerText()), "com exportação antiga, o lembrete diz há quantos dias foi");
+  await p.click("[data-ac=segAdiarCopia]");
+  ok(await p.locator("#seg-lembrete-copia").count() === 0 && (await t.ler()).ui.lembreteCopia === d(0), "\"Agora não\" esconde o lembrete e guarda a data");
+  await t.semear(estadoBase(Object.assign({ ui: { diario: "relatorio", ultimaExportacao: d(10) } }, antigo))); await p.waitForSelector("[data-ac=zerar]");
+  ok(await p.locator("#seg-lembrete-copia").count() === 0, "exportação há 10 dias: sem lembrete");
   await t.fechar();
 })().catch(e => { console.log("FALHOU: " + e.message); process.exit(1); });
