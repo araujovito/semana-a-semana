@@ -22,8 +22,8 @@ function diaDoToque(d) {
   if (d && d.dia && d.dia !== agora) { render(true); aviso("O dia virou. A tela agora mostra hoje: toque de novo para marcar."); return null; }
   return agora;
 }
-function diaCurto(d) { return SEMANA[diaSemana(d)].toLowerCase() + ", " + br(d); }
-function rotuloDia(d) { const n = entre(d, hoje()); return n === 0 ? "Hoje" : n === 1 ? "Ontem" : diaCurto(d); }
+function diaLongoHoje(d) { return SEMANA[diaSemana(d)].toLowerCase() + ", " + br(d); }
+function rotuloDia(d) { const n = entre(d, hoje()); return n === 0 ? "Hoje" : n === 1 ? "Ontem" : diaLongoHoje(d); }
 function pctBarra(v, meta) { return Math.min(100, meta ? 100 * v / meta : 0).toFixed(0); }
 /* Perfil pede para não ver calorias em destaque (campo discreto; ausente = não). */
 function semCalorias() { return !!(E.perfil && E.perfil.discreto === true); }
@@ -48,9 +48,9 @@ function telaHoje() {
   let out = "";
 
   out += '<div class="dias-nav"><button class="sec" data-ac="diaVer" data-n="-1" aria-label="Dia anterior"' + (atras >= VOLTA_MAX ? " disabled" : "") + '>‹ Anterior</button>' +
-    '<div class="dia-rotulo"><strong>' + rotuloDia(d) + "</strong>" + (atras <= 1 ? '<div class="sub">' + diaCurto(d) + "</div>" : "") + "</div>" +
+    '<div class="dia-rotulo"><strong>' + rotuloDia(d) + "</strong>" + (atras <= 1 ? '<div class="sub">' + diaLongoHoje(d) + "</div>" : "") + "</div>" +
     '<button class="sec" data-ac="diaVer" data-n="1" aria-label="Dia seguinte"' + (eHoje ? " disabled" : "") + ">Seguinte ›</button></div>";
-  if (!eHoje) out += '<div class="cartao destaque faixa-dia"><div>Você está vendo <strong>' + diaCurto(d) + '</strong>. O que marcar aqui vale para esse dia.</div><button data-ac="diaVer" data-n="0">Voltar para hoje</button></div>';
+  if (!eHoje) out += '<div class="cartao destaque faixa-dia"><div>Você está vendo <strong>' + diaLongoHoje(d) + '</strong>. O que marcar aqui vale para esse dia.</div><button data-ac="diaVer" data-n="0">Voltar para hoje</button></div>';
 
   if (eHoje) {
     out += cartaoTratamentoHoje();

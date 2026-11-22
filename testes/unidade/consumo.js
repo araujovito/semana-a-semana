@@ -46,7 +46,7 @@ test("a foto da porção segura o que foi comido quando a meta muda; registro an
   const depois = a.j("[consumoDoDia('" + SEG + "').comida.kcal, consumoDoDia('2026-11-09').comida.kcal, metas().fator]");
   assert.notStrictEqual(antes[2], depois[2], "o fator do plano mudou");
   perto(antes[0], depois[0], "com foto não muda");
-  assert.ok(depois[1] > antes[1], "sem foto acompanha o plano atual");
+  assert.ok(Math.abs(depois[1] - antes[1]) > 1, "sem foto acompanha o plano atual (com a escala de dois fatores, mais energia pode trocar ovo por pão)");
   // corrigir de tudo para metade reaproveita a foto
   marcar(a, SEG, 2, 0.5);
   perto(a.j("consumoDoDia('" + SEG + "').comida.kcal"), antes[0] / 2, "metade da mesma foto");

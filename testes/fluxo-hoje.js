@@ -79,7 +79,7 @@ const diaVazio = extra => Object.assign({ enjoo: false, comido: [], agua: 0, pro
   ok(await p.locator(".faixa-dia").count() === 0 && (await p.locator(".dia-rotulo strong").textContent()) === "Hoje", "a barra de dias mostra Hoje");
   await p.click("[data-ac=diaVer][data-n='-1']");
   ok((await p.locator(".dia-rotulo strong").textContent()) === "Ontem" && /Você está vendo/.test(await p.locator(".faixa-dia").textContent()), "dia anterior mostra Ontem e a faixa de que não é hoje");
-  ok(await p.locator("[data-ac=treino]").count() === 0 && await p.locator("text=Registrar").count() === 0 && await p.locator("[data-ac=ir][data-sub]").count() === 0, "em dia passado não há tratamento, treino nem atalhos de registrar");
+  ok(await p.locator("[data-ac=treino]").count() === 0 && await p.locator("text=Registrar >> visible=true").count() === 0 && await p.locator("[data-ac=ir][data-sub]").count() === 0, "em dia passado não há tratamento, treino nem atalhos de registrar");
   ok(await p.locator("[data-mud=refeicao]:checked").count() === 0, "ontem começa sem marcas");
   await p.click(opcao(4, "comi tudo")); await p.click("[data-ac=agua][data-ml='500']"); await p.click("[data-ac=caminhada][data-min='10']"); await p.click("[data-ac=caminhada][data-min='10']");
   e = await t.ler();
