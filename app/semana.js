@@ -7,6 +7,13 @@
    Cada aplicação entra na semana do dia em que estava PREVISTA (previstaDe, com o dia habitual de hoje): uma aplicação
    adiantada 2 dias continua sendo "a da semana seguinte", e uma atrasada continua na sua semana.
 
+   Limite conhecido (dia habitual por época): o app guarda só o dia habitual de agora (E.diaDose, trocado em "Mudei o dia da
+   aplicação", tratamento.js), sem histórico de quando mudou. Por isso todas as aplicações, inclusive as de antes da mudança, são
+   classificadas ("no dia previsto", "depois", "antes") pelo dia de agora. Exemplo: aplicava às segundas e passou para quarta;
+   as segundas antigas aparecem como "2 dias antes do previsto". Classificar pelo dia vigente em cada época exige gravar o
+   histórico das mudanças (formato de E em nucleo.js e MUD.diaDose em tratamento.js, fora deste arquivo); enquanto não houver,
+   fica assim. O teste "dia habitual mudou" em testes/unidade/semana.js prende este comportamento para a mudança ser consciente.
+
    A tela é registrada em TELAS (inicio.js) quando a página termina de carregar, sem botão na barra de abas: abre por #semana. */
 
 /* Padrão de enjoo: diferença mínima entre as médias (na escala 0 nenhum, 1 leve, 2 moderado, 3 forte) para dizer que o enjoo

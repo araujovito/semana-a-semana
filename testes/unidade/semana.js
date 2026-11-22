@@ -122,3 +122,11 @@ test("dor forte na barriga: caminho para os sinais de alerta do Guia; sem dor, s
   assert.match(h2, /nenhuma dor forte registrada/);
   assert.doesNotMatch(com.v("telaSemana()") + sem.v("telaSemana()"), /sem sinal de alerta|urgente|perigo/i);
 });
+
+test("dia habitual mudou: sem histórico, as aplicações antigas são classificadas pelo dia de agora (limite documentado)", () => {
+  // aplicava às segundas (02/11 e 09/11) e passou para quarta (E.diaDose = 2): 18/11 é quarta
+  const a = base({ diaDose: 2, doses: [dose("2026-11-02", 2.5), dose("2026-11-09", 2.5), dose("2026-11-18", 2.5)] });
+  const ds = semanas(a).reduce((t, s) => t.concat(s.doses), []);
+  assert.deepStrictEqual(ds.map(d => [d.data, d.atraso]), [["2026-11-02", -2], ["2026-11-09", -2], ["2026-11-18", 0]]);
+  assert.strictEqual(a.v("typeof E.diaDoseHistorico"), "undefined", "se um histórico for criado, este teste e semanasDoTratamento mudam juntos");
+});
