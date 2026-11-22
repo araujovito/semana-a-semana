@@ -31,3 +31,4 @@ Uma linha por decisão: data, quem decidiu, o que e por quê.
 - 22/11 [direção] Retomada depois da parada de 20/11: A1 e A2 terminados por mim, testes verdes, juntados em main. Os diálogos novos usam confirmar() da página, não confirm().
 - 22/11 [direção] Meta de energia informada abaixo de 1.200 kcal (1.800 homens): o app pergunta se veio do médico ou da nutricionista e, com o sim, usa a meta também como piso do dia. Motivo: a decisão clínica é deles; a pergunta pega erro de digitação.
 - 22/11 [direção] Sem lactose, o laticínio vira bebida de soja com cálcio (troca por cálcio), e o cálcio não cai. O teste antigo esperava a queda; o teste foi corrigido, não o app. Pendência para depois da entrega: a bebida de soja usa dado americano fortificado.
+- 22/11 [dono] Versão web (PWA) pronta, mas não publicar por enquanto. APK de main (versão 2, 119 KB) fica como forma de uso imediata, se o celular deixar instalar.
