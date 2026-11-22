@@ -81,4 +81,27 @@ const comPerfil = (extra, resto) => estadoBase(Object.assign({ perfil: Object.as
   await p.waitForSelector("form[data-form=peso]");
   ok(await p.locator("#ritmo").count() === 0, "modo sem peso em destaque sem vesícula: continua sem aviso de ritmo");
   await t.fechar();
+
+  /* ---------- cartão do fígado no Plano, com as marcas de 5, 7 e 10% calculadas do peso inicial do Perfil ---------- */
+  const Pf = (n, kg) => ({ id: "f" + n, data: d(n), kg, cintura: null });
+  t = await abrir({ estado: comPerfil({ peso: 130, figado: false }), aba: "plano" }); p = t.p;
+  await p.waitForSelector("text=Metas diárias");
+  ok(await p.locator("[data-aviso=figado]").count() === 0, "fígado respondido não: sem cartão no Plano");
+  await t.fechar();
+  for (const discreto of [false, true]) {
+    const nome = discreto ? " (sem calorias)" : "";
+    t = await abrir({ estado: comPerfil({ peso: 130, figado: true, discreto }, { pesos: [Pf(7, 125)] }), aba: "plano" }); p = t.p;
+    await p.waitForSelector("text=Metas diárias");
+    const fg = await texto(p, "[data-aviso=figado]");
+    ok(/Gordura no fígado.*5% do peso já reduz a gordura.*bebida açucarada.*não beber álcool.*150 minutos/.test(fg), "fígado marcado: cartão no Plano" + nome);
+    if (discreto) ok(!/kg/.test(fg) && /Marcas: 5%, 7%, 10%\./.test(fg), "sem calorias e peso em destaque: progresso só em percentuais");
+    else ok(/Peso no início: 130,0 kg\. Peso dos 5%: 123,5 kg, faltam 1,5 kg\. Peso dos 7%: 120,9 kg, faltam 4,1 kg\. Peso dos 10%: 117,0 kg, faltam 8,0 kg\./.test(fg), "marcas de peso calculadas do peso inicial e do atual: " + fg);
+    ok(await p.locator("[data-v=kcal]").count() === 0 && (/Energia/.test(await texto(p, ".cartao:has-text('Metas diárias')")) === !discreto), "modo sem calorias continua valendo no Plano" + nome);
+    await t.foto("figado-plano" + (discreto ? "-discreto" : "")); await t.semRolagem("plano com fígado" + nome); await t.alvosDeToque("plano com fígado" + nome);
+    await p.click("#btn-perfil"); await p.waitForSelector("form[data-form=perfil]");
+    ok(await p.locator("[data-aviso=figado]").count() === 0, "cartão do fígado não aparece no Perfil" + nome);
+    await p.click("#abas [data-aba=hoje]"); await p.waitForSelector("text=Proteína hoje");
+    ok(await p.locator("[data-aviso=figado]").count() === 0, "cartão do fígado não aparece em Hoje" + nome);
+    await t.fechar();
+  }
 })();

@@ -34,3 +34,30 @@ test("Guia, sinais de alerta: itens da vesícula para quem tem pedra (pesquisa d
   assert.ok(i(/passou sozinha/) > med, "cólica que passou sozinha: médico nos próximos dias");
   assert.ok(i(/febre alta e pele amarela, junto com confusão/) < ps, "com confusão ou desmaio: 192");
 });
+test("progresso até 5, 7 e 10% do peso inicial: contas", () => {
+  const g = JSON.parse(carregar().v("JSON.stringify(progressoPerda(100, 94))"));
+  assert.ok(Math.abs(g.perdaPct - 6) < 1e-9);
+  assert.deepStrictEqual([g.alvo5, g.alvo7, g.alvo10].map(x => Math.round(x * 10) / 10), [95, 93, 90]);
+  assert.deepStrictEqual([g.chegou5, g.chegou7, g.chegou10], [true, false, false]);
+  assert.deepStrictEqual([g.falta5, Math.round(g.falta7 * 10) / 10, Math.round(g.falta10 * 10) / 10], [0, 1, 4]);
+  const e = JSON.parse(carregar().v("JSON.stringify(progressoPerda(100, 93))"));
+  assert.strictEqual(e.chegou7, true, "exatamente 7% conta como alcançado");
+  assert.ok(JSON.parse(carregar().v("JSON.stringify(progressoPerda(100, 103))")).perdaPct < 0, "ganho de peso dá negativo");
+  assert.strictEqual(carregar().v("progressoPerda(null, 90)"), null);
+});
+test("fígado: sem resposta ou não, sem cartão; marcado, cartão só no Plano com as marcas calculadas do peso dela", () => {
+  for (const v of [undefined, null, false]) assert.doesNotMatch(carregar(estado({ figado: v })).v('avisosDoPerfil("plano")'), /data-aviso="figado"/);
+  const app = carregar(estado({ figado: true, peso: 130 }, [{ id: "a", data: "2026-11-01", kg: 120 }]));
+  const t = app.v('avisosDoPerfil("plano")');
+  assert.match(t, /data-aviso="figado"/);
+  assert.match(t, /5% do peso já reduz a gordura, de 7 a 10% melhora a inflamação e 10% ou mais melhora a fibrose/);
+  assert.match(t, /bebida açucarada/); assert.match(t, /não beber álcool/); assert.match(t, /150 minutos por semana/);
+  assert.match(t, /Peso no início: 130,0 kg\. Peso dos 5%: 123,5 kg \(alcançado\)\. Peso dos 7%: 120,9 kg \(alcançado\)\. Peso dos 10%: 117,0 kg, faltam 3,0 kg\./);
+  assert.doesNotMatch(app.v("avisosDoPerfil()"), /data-aviso="figado"/, "não aparece no Perfil");
+  assert.doesNotMatch(app.v('avisoVesicula("hoje")'), /figado/);
+});
+test("fígado no modo sem calorias e peso em destaque: só percentuais, nenhum quilo", () => {
+  const t = carregar(estado({ figado: true, peso: 130, discreto: true }, [{ id: "a", data: "2026-11-01", kg: 120 }])).v("avisoFigado()");
+  assert.match(t, /Marcas: 5% \(alcançada\), 7% \(alcançada\), 10%\./);
+  assert.doesNotMatch(t, /kg/);
+});

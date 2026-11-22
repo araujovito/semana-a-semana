@@ -37,7 +37,7 @@ function telaPlano() {
   let sel = E.ui.diaPlano; if (sel == null || !(sel >= 0 && sel <= 7)) sel = diaSemana(h);
   const d = planoDoDia(sel), t = somarPlano(d), med = mediaSemana();
   const cel = (r, v) => '<div><div class="sub">' + r + "</div><strong>" + v + "</strong></div>";
-  let out = avisosDoPerfil();
+  let out = avisosDoPerfil("plano");
   out += '<div class="cartao"><h2>Metas diárias</h2><div class="tres">' + (disc ? "" : cel("Energia", fmt(m.kcal) + " kcal")) + cel("Proteína", m.prot + " g") + cel("Água", fmt(m.agua / 1000, 1) + " L") +
     (disc ? "" : cel("Carboidrato", m.carb + " g") + cel("Gordura", m.gord + " g")) + cel("Fibra", m.fibra + " g") + "</div>" +
     '<p class="sub" style="margin:10px 0 0">Faixa de proteína: ' + m.protMin + " a " + m.protMax + " g. " + esc(fraseEscala(m)) + " As metas mudam na aba Perfil.</p></div>";

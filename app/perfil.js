@@ -24,9 +24,46 @@ function avisoIdade() {
   const m = metas(); if (!m || m.idade <= 65) return "";
   return '<div class="cartao"><h2>Depois dos 65 anos</h2><p style="margin:0">Nessa idade, quem perde peso costuma perder mais músculo junto. Vale combinar com o médico a meta de energia e a de proteína. O treino de força ajuda a manter o músculo.</p></div>';
 }
-function avisosDoPerfil() { return avisoGestante() + avisoPesoBaixo() + avisoVesicula("perfil") + avisoHipoglicemia("plano") + avisoIdade(); }
+/* onde: "plano" na tela Plano (acrescenta o cartão do fígado); sem valor na tela Perfil. */
+function avisosDoPerfil(onde) {
+  return avisoGestante() + avisoPesoBaixo() + avisoVesicula(onde === "plano" ? "plano" : "perfil") + avisoHipoglicemia("plano") + avisoIdade() + (onde === "plano" ? avisoFigado() : "");
+}
 
 /* ---------- vesícula e fígado ---------- */
+/* Progresso da perda de peso até as marcas de 5%, 7% e 10% do peso inicial do Perfil (as marcas da diretriz de fígado, ver
+   avisoFigado). Conta pura: recebe o peso inicial e o atual, devolve null se faltar um deles. Nada é gravado; muda a cada pesagem.
+   perdaPct negativo = ganhou peso. alvoN = peso em kg que corresponde a perder N%. faltaN em kg, nunca negativo. */
+const MARCAS_FIGADO = [5, 7, 10];
+function progressoPerda(ini, atual) {
+  if (!(ini > 0) || !(atual > 0)) return null;
+  const g = { ini, atual, perdaPct: 100 * (ini - atual) / ini };
+  MARCAS_FIGADO.forEach(n => { g["alvo" + n] = ini * (1 - n / 100); g["falta" + n] = Math.max(0, atual - g["alvo" + n]); g["chegou" + n] = g.perdaPct >= n - 1e-9; });
+  return g;
+}
+/* Bloco de progresso até 10%, com as três marcas. No modo sem calorias e peso em destaque, só percentuais, sem quilos. */
+function blocoProgressoPerda(m) {
+  const g = progressoPerda(E.perfil.peso, m.peso); if (!g) return "";
+  let t = '<div class="progresso-perda" data-progresso="figado">' + barra("Perda desde o início, até a marca de 10%", Math.max(0, g.perdaPct), 10, "%", 1, true);
+  if (m.discreto) t += '<p class="sub" style="margin:4px 0 0">Marcas: ' + MARCAS_FIGADO.map(n => n + "%" + (g["chegou" + n] ? " (alcançada)" : "")).join(", ") + ".</p>";
+  else t += '<p class="sub" style="margin:4px 0 0">Peso no início: ' + fmt(g.ini, 1) + " kg. " + MARCAS_FIGADO.map(n => "Peso dos " + n + "%: " + fmt(g["alvo" + n], 1) + " kg" +
+    (g["chegou" + n] ? " (alcançado)" : ", faltam " + fmt(g["falta" + n], 1) + " kg")).join(". ") + ".</p>";
+  return t + "</div>";
+}
+/* TEXTO DE SAÚDE: gordura no fígado (esteatose) marcada no Perfil. Cartão só na tela Plano.
+   Fontes: diretriz EASL-EASD-EASO 2024 sobre MASLD, resumo executivo, Diabetologia 2024;67:2375-2392,
+   https://pmc.ncbi.nlm.nih.gov/articles/PMC11519095/ : perda de 5% ou mais reduz a gordura do fígado, 7 a 10% melhora a inflamação,
+   10% ou mais melhora a fibrose; evitar bebida açucarada; limitar ultraprocessados; desaconselhar álcool; mais de 150 min por semana
+   de atividade moderada ou 75 de vigorosa. Diretriz brasileira SBEM/SBH/Abeso, Arch Endocrinol Metab 2023;67(6),
+   doi 10.20945/2359-4292-2023-0123: mais de 7% de perda (rec. 22), sem quantidade segura de álcool estabelecida (rec. 34).
+   Resumo em empresa/relatorios/pesquisa-vesicula-figado.md, seção 3 e regras R8, R9, R13, R15 e R16. As marcas de peso são calculadas
+   a partir do peso inicial que ela preencheu no Perfil; nenhum peso fica no código. */
+function avisoFigado() {
+  const m = metas(); if (!m || !m.figado) return "";
+  return '<div class="cartao" data-aviso="figado"><h2>Gordura no fígado</h2>' +
+    '<p style="margin:0">O que mais reduz a gordura do fígado é perder peso: 5% do peso já reduz a gordura, de 7 a 10% melhora a inflamação e 10% ou mais melhora a fibrose.</p>' +
+    '<p style="margin:6px 0 0">Também ajudam: cortar bebida açucarada (refrigerante, suco de caixinha, chá pronto) e ultraprocessados; não beber álcool, porque não há quantidade segura estabelecida para quem tem gordura no fígado; e atividade física, mais de 150 minutos por semana de atividade moderada, como caminhada rápida.</p>' +
+    blocoProgressoPerda(m) + '<p class="sub" style="margin:6px 0 0">Exames e metas do fígado são combinados com o seu médico.</p></div>';
+}
 /* TEXTO DE SAÚDE: pedra na vesícula marcada no Perfil. Cartão fixo nas telas Hoje, Plano e Perfil.
    Fontes:
    - bula americana do Mounjaro (tirzepatida), seção 5.8, doença aguda da vesícula biliar (pedra, inflamação, retirada da vesícula
