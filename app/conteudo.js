@@ -94,9 +94,13 @@ window.GUIA = [
     (numeração corrigida em 22/11 conforme empresa/relatorios/pesquisa-vesicula-figado.md, item 4).
     Itens da vesícula (cólica que passa sozinha, dor que não passa, febre, pele amarela com urina escura e fezes claras, e o item do 192):
     texto proposto na mesma pesquisa, seção 6, com base no Manual MSD (cólica dura em geral menos de 6 horas; febre e calafrio sugerem
-    colecistite; amarelão, urina escura e fezes claras juntos sugerem obstrução da saída da bile). O limite de "cerca de 6 horas" é
+    colecistite; amarelão, urina escura e fezes claras juntos sugerem obstrução da saída da bile). O limite antigo de "cerca de 6 horas" (trocado em 22/11 por "1 ou 2 horas", ver revisao-clinica-onda2.md) é
     escolha conservadora da equipe a partir do MSD, não regra de diretriz: PRECISA DE AVAL MÉDICO.
     A divisão entre 192, pronto-socorro e consulta é da equipe, sem aval médico. */
+ /* Revisão clínica da onda 2 (22/11, B1): crise de vesícula. NIDDK (Symptoms & Causes of Gallstones): procurar atendimento já com dor
+    que dura várias horas, enjoo e vômito, febre mesmo baixa ou calafrio, pele amarela, urina cor de chá ou fezes claras; Manual MSD:
+    a cólica costuma durar menos de 6 h (é descrição, não prazo de espera). O limite de "1 ou 2 horas" é proposta da equipe e precisa
+    do aval do médico dela. */
  { titulo: "Sinais de alerta", alerta: true, corpo: [
   "Ligue 192 (SAMU) agora se:",
   "• Inchaço no rosto, lábios ou garganta, ou falta de ar (reação alérgica grave).",
@@ -104,15 +108,15 @@ window.GUIA = [
   "• Dor na barriga com febre alta e pele amarela, junto com confusão, desmaio ou muita fraqueza.",
   "Vá ao pronto-socorro hoje se:",
   "• Dor forte e contínua na barriga, que pode ir para as costas, com ou sem vômito (pode ser pâncreas).",
-  "• Dor forte no alto da barriga, do lado direito ou na boca do estômago, que não passa em cerca de 6 horas, ou que volta várias vezes no mesmo dia (pode ser vesícula).",
-  "• Essa dor com febre ou calafrio (pode ser vesícula inflamada).",
-  "• Pele ou olhos amarelados, com urina escura como chá-mate e fezes claras (pode ser pedra no canal da bile).",
+  "• Dor forte no alto da barriga, do lado direito ou na boca do estômago, que pode ir para as costas ou o ombro direito, que dura mais de 1 ou 2 horas, ou que vem com enjoo e vômito (pode ser vesícula). Se a dor for muito forte, não espere: vá logo.",
+  "• Essa dor com febre, mesmo baixa, ou calafrio (pode ser vesícula inflamada).",
+  "• Pele ou olhos amarelados. Ou urina escura como chá-mate, ou fezes claras: basta um desses sinais (pode ser pedra no canal da bile).",
   "• Barriga inchada e dura, sem fazer cocô nem soltar gases, com vômito (pode ser intestino parado).",
   "• Você vomita tudo o que bebe, mesmo água em goles pequenos, ou quase não urina e a urina está escura (desidratação, que pode afetar os rins).",
   "• Perda de visão de repente em um olho, sem dor.",
   "• Se também usa insulina ou sulfonilureia: hipoglicemia que não melhora com açúcar (veja o que fazer no aviso de hipoglicemia).",
-  "Fale com o médico nos próximos dias se:",
-  "• Teve uma crise de dor no alto da barriga, depois de comer, que passou sozinha em algumas horas, sem febre e sem pele amarela (pode ser cólica da vesícula). Anote quando foi e o que comeu.",
+  "Fale com o médico (no mesmo dia ou nos próximos dias) se:",
+  "• Teve uma crise curta de dor no alto da barriga que passou sozinha, sem febre, sem vômito e sem pele amarela (pode ser cólica da vesícula): avise o médico no mesmo dia ou no seguinte. Depois de uma crise, outras costumam vir. Anote quando foi e o que comeu.",
   "• Caroço ou inchaço no pescoço, rouquidão que não passa, dificuldade para engolir.",
   "• Mudança na visão, se você tem diabetes.",
   "• Suspeita de gravidez.",

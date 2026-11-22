@@ -72,7 +72,7 @@ function avisoFigado() {
      peso, https://pi.lilly.com/us/zepbound-uspi.pdf; Weinsier 1995 (ver LIMITE_RITMO em peso.js).
    - sinais da crise e quando procurar atendimento: os mesmos itens de "Sinais de alerta" do Guia (conteudo.js), propostos em
      empresa/relatorios/pesquisa-vesicula-figado.md, seção 6 (Manual MSD; NIDDK, "Symptoms & Causes of Gallstones",
-     https://www.niddk.nih.gov/health-information/digestive-diseases/gallstones/symptoms-causes). O limite de "cerca de 6 horas"
+     https://www.niddk.nih.gov/health-information/digestive-diseases/gallstones/symptoms-causes). O limite antigo de "cerca de 6 horas" (trocado em 22/11 por "1 ou 2 horas", ver revisao-clinica-onda2.md)
      é escolha conservadora da equipe e PRECISA DE AVAL MÉDICO; a divisão 192 / pronto-socorro / médico também.
    - aguardando cirurgia: que a cirurgia depende de o fígado diminuir é informação do caso dela (briefing da onda 2); fígado grande e
      gorduroso atrapalha a videolaparoscopia (pesquisa-vesicula-figado.md, seção 3, "Ligação com a cirurgia"); as marcas de 5, 7 e 10%
@@ -81,14 +81,14 @@ function avisoFigado() {
 function avisoVesicula(onde) {
   const m = metas(); if (!m || !m.vesicula) return "";
   let t = '<div class="cartao alerta" data-aviso="vesicula"><h2>Pedra na vesícula</h2>' +
-    '<p style="margin:0">A bula da tirzepatida lista problemas de vesícula (pedra e inflamação) entre os efeitos do remédio, e perder peso rápido aumenta esse risco. O seu médico sabe que você tem pedra na vesícula? Confirme com ele antes de começar.</p>';
+    '<p style="margin:0">A bula da tirzepatida lista problemas de vesícula (pedra e inflamação) entre os efeitos do remédio, e perder peso rápido aumenta esse risco. Se ainda não contou, conte ao seu médico que você tem pedra na vesícula: a bula pede acompanhamento.</p>';
   /* Na tela Hoje o cartão fica curto: os sinais ficam num bloco que abre com um toque (os mesmos itens do Guia). */
-  const sinais = '<p style="margin:6px 0 0"><strong>Crise de vesícula:</strong> dor forte no alto da barriga, do lado direito ou na boca do estômago, muitas vezes depois de comer.</p>' +
-    '<p style="margin:6px 0 0"><strong>Pronto-socorro hoje</strong> se a dor não passar em cerca de 6 horas ou voltar várias vezes no mesmo dia, se vier com febre ou calafrio, ou se aparecer pele ou olhos amarelados, urina escura e fezes claras. Dor forte e contínua que vai para as costas também (pode ser pâncreas).</p>' +
-    '<p style="margin:6px 0 0"><strong>Ligue 192</strong> se a dor vier com febre e pele amarela e houver confusão, desmaio ou muita fraqueza. <strong>Avise o médico</strong> nos próximos dias se teve uma crise que passou sozinha, sem febre e sem pele amarela.</p>';
+  const sinais = '<p style="margin:6px 0 0"><strong>Crise de vesícula:</strong> dor forte no alto da barriga, do lado direito ou na boca do estômago, que pode ir para as costas ou o ombro direito, muitas vezes depois de comer ou à noite.</p>' +
+    '<p style="margin:6px 0 0"><strong>Pronto-socorro hoje</strong> se a dor durar mais de 1 ou 2 horas ou vier com enjoo e vômito (se for muito forte, vá logo), se vier com febre, mesmo baixa, ou calafrio, ou se aparecer pele ou olhos amarelados, urina escura ou fezes claras (basta um desses). Dor forte e contínua que vai para as costas também (pode ser pâncreas).</p>' +
+    '<p style="margin:6px 0 0"><strong>Ligue 192</strong> se a dor vier com febre e pele amarela e houver confusão, desmaio ou muita fraqueza. <strong>Avise o médico</strong> no mesmo dia ou no seguinte se teve uma crise curta que passou sozinha, sem febre, sem vômito e sem pele amarela.</p>';
   t += onde === "hoje" ? '<details style="margin-top:6px"><summary>Sinais de crise e o que fazer</summary>' + sinais + "</details>" : sinais;
   if (m.aguardaCirurgia) {
-    t += '<p style="margin:6px 0 0" data-cirurgia>A sua cirurgia depende de o fígado diminuir. Perder de 7 a 10% do peso reduz a gordura e a inflamação do fígado; o app mostra o seu progresso até essas marcas. Quem decide a data é o cirurgião.</p>';
+    t += '<p style="margin:6px 0 0" data-cirurgia>Se o seu cirurgião disse que a cirurgia depende de o fígado diminuir: perder de 7 a 10% do peso reduz a gordura e a inflamação do fígado (essas marcas são da diretriz de fígado, não um critério de cirurgia). Sem pressa: mais de 1% do peso por semana aumenta o risco de crise. Quem decide a data é o cirurgião.</p>';
     if (!(onde === "plano" && m.figado)) t += blocoProgressoPerda(m);
   }
   if (onde === "hoje") t += '<div class="botoes"><button class="sec" data-ac="ir" data-para="guia">Ver todos os sinais de alerta</button></div>';
