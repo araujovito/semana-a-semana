@@ -139,10 +139,11 @@ function semanaTextoSintomas(x) {
   /* O app só sabe o que foi marcado: diz "nenhuma dor forte registrada", nunca "sem sinal de alerta" (revisão clínica). */
   return p.length ? p.join(", ") + (x.dor ? "" : "; nenhuma dor forte registrada") : "nenhum sintoma marcado";
 }
-function semanaTextoComida(s, discreto, metaProt) {
-  const c = s.comida;
+/* alvo: o alvo único de proteína (alvoProteina, planonutri.js), o mesmo de Hoje, Painel e relatório; um número vale como "meta". */
+function semanaTextoComida(s, discreto, alvo) {
+  const c = s.comida, a = typeof alvo === "number" ? { g: alvo, rotulo: "meta", nutri: false } : alvo;
   if (!c.dias) return "sem registro";
-  return "proteína média de " + fmt(c.prot) + " g por dia (meta " + fmt(metaProt) + " g)" + (discreto ? "" : ", energia média de " + fmt(c.kcal) + " kcal") +
+  return "proteína média de " + fmt(c.prot) + " g por dia (" + a.rotulo + (a.nutri ? ": " : " ") + fmt(a.g) + " g)" + (discreto ? "" : ", energia média de " + fmt(c.kcal) + " kcal") +
     ", em " + nDias(c.dias) + " com registro";
 }
 /* Fatos que viram destaque na semana (os "padrões" de uma semana). */
@@ -154,14 +155,14 @@ function semanaMarcas(s) {
   if (s.enjooDepois) m.push("o enjoo foi maior nos 2 dias depois da aplicação");
   return m;
 }
-function semanaCorpo(s, discreto, metaProt) {
+function semanaCorpo(s, discreto, alvoProt) {
   const item = (rot, txt, attr) => '<li' + (attr ? ' data-item="' + attr + '"' : "") + '><span class="semana-rot">' + rot + "</span><span>" + txt + "</span></li>";
   let out = '<ul class="semana-itens">';
   out += item("Aplicação", s.doses.length ? s.doses.map(semanaTextoDose).join("<br>") : "nenhuma registrada", "dose");
   out += item("Peso", semanaTextoPeso(s, discreto), "peso");
   out += item("Sintomas", semanaTextoSintomas(s.sintomas), "sintomas");
   out += item("Dias de enjoo", s.enjooMarcado ? nDias(s.enjooMarcado) + " com o cardápio de enjoo" : "nenhum marcado", "enjoo");
-  out += item("Comida", semanaTextoComida(s, discreto, metaProt), "comida");
+  out += item("Comida", semanaTextoComida(s, discreto, alvoProt), "comida");
   out += "</ul>";
   /* Dor forte na barriga marcada: caminho para os sinais de alerta do Guia (cólica biliar e pancreatite ficam lá, com fonte), sem alarde. */
   if (s.sintomas.dor) out += '<div class="semana-guia" data-semana-guia><p class="sub">Dor forte na barriga foi marcada nesta semana. O Guia lista os sinais de alerta e o que fazer em cada um.</p>' +
@@ -180,16 +181,16 @@ function telaSemana() {
     return out + '<div class="cartao destaque" data-semana="vazia"><p style="margin:0">Quando você registrar a primeira aplicação, as semanas do tratamento aparecem aqui, uma a uma, com aplicação, peso, sintomas e comida.</p>' +
       '<div class="botoes"><button data-ac="ir" data-para="diario" data-sub="doses">Registrar aplicação</button></div></div>';
   }
-  const metaProt = metas().prot, padroes = semanaPadroesGerais(semanas);
+  const alvoProt = alvoProteina(), padroes = semanaPadroesGerais(semanas);
   const marcas = s => { const m = semanaMarcas(s); return m.length ? '<p class="semana-marcas">' + m.map(t => '<span class="semana-marca">' + t + "</span>").join("") + "</p>" : ""; };
   const atual = semanas[semanas.length - 1];
   out += '<div class="cartao destaque semana-atual" data-semana="' + atual.n + '"><div class="linha"><h2 style="margin:0">' + semanaTitulo(atual) + '</h2><span class="sub">' + semanaPeriodo(atual) + "</span></div>" +
-    marcas(atual) + semanaCorpo(atual, discreto, metaProt) + "</div>";
+    marcas(atual) + semanaCorpo(atual, discreto, alvoProt) + "</div>";
   if (padroes.length) out += '<div class="cartao" id="semana-padroes"><h2>O que se repetiu</h2><ul class="semana-lista">' + padroes.map(p => '<li data-padrao="' + p.id + '">' + p.texto + "</li>").join("") + "</ul></div>";
   if (semanas.length > 1) {
     out += '<div class="cartao" id="semana-anteriores"><h2>Semanas anteriores</h2>' + semanas.slice(0, -1).reverse().map(s =>
       '<details data-semana="' + s.n + '"><summary><span class="semana-resumo"><strong>' + semanaTitulo(s) + "</strong> · " + (s.mg != null ? fmt(s.mg, 1) + " mg" : "sem aplicação") +
-      (s.troca ? " · troca de dose" : "") + '<span class="sub semana-quando">' + semanaPeriodo(s) + "</span></span></summary>" + marcas(s) + semanaCorpo(s, discreto, metaProt) + "</details>").join("") + "</div>";
+      (s.troca ? " · troca de dose" : "") + '<span class="sub semana-quando">' + semanaPeriodo(s) + "</span></span></summary>" + marcas(s) + semanaCorpo(s, discreto, alvoProt) + "</details>").join("") + "</div>";
   }
   out += '<p class="sub semana-nota">Esta tela só junta o que você registrou. Para entender o que os números significam para você, leve à consulta.</p>';
   return out;
