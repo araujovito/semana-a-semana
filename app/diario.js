@@ -19,7 +19,7 @@ function telaDiario() {
 function relatorio() {
   const p = E.perfil, h = hoje(), de = mais(h, -29);
   const cabecalho = ["RELATÓRIO DE ACOMPANHAMENTO" + (p.nome ? " - " + p.nome : ""), "Período: " + brAno(de) + " a " + brAno(h)];
-  return [cabecalho, relTratamento(de), relPeso(de), relSintomas(de), relAlimentacao(de), relExercicio(de)].map(t => t.join("\n")).join("\n\n");
+  return [cabecalho, relTratamento(de), relPeso(de), relSintomas(de), relAlimentacao(de), relExercicio(de)].concat(camRelatorio()).map(t => t.join("\n")).join("\n\n");
 }
 
 Object.assign(AC, {

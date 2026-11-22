@@ -6,10 +6,10 @@
 const CACHE = "semana-a-semana-v1";
 const ARQUIVOS = [
   "./", "index.html", "manifest.webmanifest", "icone-192.png", "icone-512.png", "icone-mascaravel-512.png",
-  "estilo.css", "estilo-plano.css", "estilo-hoje.css", "estilo-diario.css", "estilo-treino.css", "estilo-aparelho.css", "estilo-painel.css", "estilo-semana.css",
+  "estilo.css", "estilo-plano.css", "estilo-hoje.css", "estilo-diario.css", "estilo-treino.css", "estilo-aparelho.css", "estilo-painel.css", "estilo-semana.css", "estilo-caminhos.css",
   "alimentos.js", "cardapio.js", "caminhos.js", "conteudo.js", "nucleo.js", "nutricao.js", "consumo.js", "planonutri.js", "tratamento.js", "caneta.js", "peso.js",
   "sintomas.js", "saude.js", "hoje.js", "plano.js", "compras.js", "treino.js", "diario.js", "guia.js", "perfil.js", "aparelho.js",
-  "painel.js", "pwa.js", "semana.js", "inicio.js",
+  "painel.js", "pwa.js", "semana.js", "caminhostela.js", "inicio.js",
 ];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(ARQUIVOS)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", e => {
