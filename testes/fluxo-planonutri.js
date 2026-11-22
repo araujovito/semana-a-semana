@@ -39,6 +39,16 @@ const opcao = (i, nome) => ".refeicao[data-i='" + i + "'] label.opcao:has-text('
   await p.evaluate(() => { location.hash = "#painel"; });
   await p.waitForSelector(".painel-anel");
   ok(parseInt(await p.locator("[data-painel=prot] [data-v=prot]").textContent(), 10) === Math.round(cafe.prot + almoco.prot / 2), "o painel mostra a proteína marcada no plano dela");
+  // Alvo único de proteína: o mesmo em Hoje, no Painel e no relatório (alvoProteina), aqui o começo da faixa do plano dela.
+  const alvo = await p.evaluate(() => { const a = alvoProteina(), f = pnFaixaDia(); return { g: a.g, min: Math.round(f.min.prot), max: Math.round(f.max.prot), nutri: a.nutri }; });
+  const falta = Math.max(0, Math.round(alvo.g - (cafe.prot + almoco.prot / 2)));
+  ok(alvo.nutri && alvo.g === alvo.min && (await p.locator("[data-painel=falta]").textContent()).indexOf("Faltam " + falta + " g") === 0, "Painel: falta medida contra o alvo do plano dela (" + alvo.g + " g)");
+  ok(new RegExp("plano da sua nutricionista: " + alvo.min + " a " + alvo.max + " g").test(await p.locator(".painel-hoje").textContent()), "Painel: faixa do plano dela");
+  ok(/alvo do plano da nutricionista: \d+ g/.test(await p.evaluate(() => relAlimentacao(mais(hoje(), -29)).join("\n"))) &&
+    new RegExp("alvo do plano da nutricionista: " + alvo.g + " g").test(await p.evaluate(() => relAlimentacao(mais(hoje(), -29)).join("\n"))), "relatório: o mesmo alvo do plano dela");
+  await p.evaluate(() => { location.hash = "#hoje"; }); await p.waitForSelector(".hoje-topo");
+  ok((await p.locator(".hoje-topo .hoje-falta").innerText()).trim() === "Faltam " + falta + " g", "Hoje: a mesma falta do Painel");
+  await p.evaluate(() => { location.hash = "#painel"; }); await p.waitForSelector(".painel-anel");
 
   // tela Plano: faixa dela como referência, sem as metas do app
   await p.evaluate(() => { location.hash = "#plano"; });

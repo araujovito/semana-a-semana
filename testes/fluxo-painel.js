@@ -15,7 +15,7 @@ function semear() {
   let t = await abrir({ estado: semear(), aba: "painel" }), p = t.p;
   await p.waitForSelector(".painel-hoje");
   ok(await p.locator("#abas a.ativa[data-aba=semana]").count() === 1 && await p.locator("#subabas a.ativa[data-sub=painel]").count() === 1, "painel fica dentro da aba Semana, com a sub-aba acesa");
-  const conta = await p.evaluate(() => { const c = consumoDoDia(hoje()), m = metas(); return { prot: Math.round(c.total.prot), kcal: Math.round(c.total.kcal), falta: painelFaltaProt(c.total.prot, m.prot) }; });
+  const conta = await p.evaluate(() => { const c = consumoDoDia(hoje()), m = metas(); return { prot: Math.round(c.total.prot), kcal: Math.round(c.total.kcal), falta: painelFaltaProt(c.total.prot, alvoProteina(m).g) }; });
   ok(parseInt((await p.locator("[data-v=prot]").textContent()).replace(/\./g, ""), 10) === conta.prot, "anel de proteína mostra o consumido hoje");
   ok(parseInt((await p.locator("[data-v=kcal]").textContent()).replace(/\./g, ""), 10) === conta.kcal, "anel de calorias mostra o consumido hoje");
   ok((await p.locator("[data-painel=falta]").textContent()).indexOf("Faltam " + conta.falta.toLocaleString("pt-BR") + " g") === 0, "diz quanto falta de proteína");
@@ -25,7 +25,7 @@ function semear() {
   ok(await p.locator("svg[data-graf=prot] g.dia.lacuna").count() === SEM.filter(n => n < 7).length, "dias sem registro aparecem como lacuna");
   ok(await p.locator("svg[data-graf=prot] g.lacuna rect.coluna").count() === 0, "lacuna não vira barra de zero");
   ok(await p.locator("svg[data-graf=prot] line.meta").count() === 1 && await p.locator("svg[data-graf=prot] rect.faixa").count() === 1, "proteína tem linha de meta e faixa");
-  const r7 = await p.evaluate(() => painelResumo(painelSerie(mais(hoje(), -1), 7), metas()));
+  const r7 = await p.evaluate(() => { const m = metas(), a = alvoProteina(m); return painelResumo(painelSerie(mais(hoje(), -1), 7), Object.assign({}, m, { protMin: a.min, protMax: a.max })); });
   ok(r7.dias === 7 - SEM.filter(n => n >= 1 && n <= 7).length, "resumo de 7 dias conta só dias com registro (" + r7.dias + ")");
   ok((await p.locator("[data-v=diasRegistro]").textContent()).indexOf("Dias com registro: " + r7.dias + " de 7") === 0, "a tela mostra os dias com registro");
   ok(parseInt((await p.locator("[data-v=mediaProt]").textContent()).replace(/\./g, ""), 10) === Math.round(r7.mediaProt), "média de proteína na tela");

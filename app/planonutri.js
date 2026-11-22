@@ -129,12 +129,20 @@ function pnPlanoDoDia(data) {
 }
 /* Plano que a tela Hoje mostra e registra no dia. */
 function pnPlanoDaData(data) { const r = dia(data); return !r.enjoo && pnDiaUsaNutri(data, r) ? pnPlanoDoDia(data) : planoDaData(data); }
+/* Alvo único de proteína do dia, o mesmo em Hoje, no Painel e no relatório (usabilidade da onda 2, item 5):
+   com o plano da nutricionista em uso, o alvo é o começo da faixa do plano dela (combinação de opções mais leve, sem a ceia) e a faixa
+   vai desse mínimo ao máximo; sem o plano, a meta e a faixa calculadas pelo app (metas()). m: metas() já calculadas (opcional). */
+function alvoProteina(m) {
+  m = m || metas();
+  if (pnEmUso()) { const f = pnFaixaDia(); return { g: Math.round(f.min.prot), min: Math.round(f.min.prot), max: Math.round(f.max.prot), nutri: true, rotulo: "alvo do plano da nutricionista" }; }
+  return { g: m.prot, min: m.protMin, max: m.protMax, nutri: false, rotulo: "meta" };
+}
 /* Referência do cartão de proteína e energia da tela Hoje. Com o plano da nutricionista em uso, a referência é a faixa do plano
    dela (a barra enche no mínimo da faixa) e a meta calculada pelo app não aparece. */
 function pnReferenciaDoDia(m) {
   if (!pnEmUso()) return { prot: m.prot, kcal: m.kcal, rotProt: "meta " + m.prot + " g", rotKcal: "meta " + fmt(m.kcal) + " kcal" };
   const f = pnFaixaDia();
-  return { prot: Math.round(f.min.prot), kcal: Math.round(f.min.kcal), nutri: true,
+  return { prot: alvoProteina(m).g, kcal: Math.round(f.min.kcal), nutri: true,
     rotProt: "plano da nutricionista: " + fmt(f.min.prot) + " a " + fmt(f.max.prot) + " g",
     rotKcal: "plano da nutricionista: " + fmt(f.min.kcal) + " a " + fmt(f.max.kcal) + " kcal" };
 }

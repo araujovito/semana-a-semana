@@ -73,8 +73,8 @@ function blocoDose() {
 /* Proteína dita como quanto falta, com um alvo só: a referência do dia (pnReferenciaDoDia: o mínimo da faixa do plano da
    nutricionista quando ele está em uso; senão a meta do app). planoRest: proteína das refeições obrigatórias ainda sem marca. */
 function blocoProteina(c, ref, quando, planoRest, enjoo) {
-  const falta = Math.max(0, Math.round(ref.prot - c.total.prot));
-  const alvo = ref.nutri ? "alvo do plano da nutricionista: " + ref.prot + " g" : "meta " + ref.prot + " g";
+  const a = alvoProteina(), falta = Math.max(0, Math.round(a.g - c.total.prot));
+  const alvo = a.rotulo + (a.nutri ? ": " : " ") + a.g + " g";
   return '<div class="hoje-prot"><div class="rot">Proteína ' + quando + '</div><div class="hoje-num"><span data-v="prot">' + fmt(c.total.prot) + "</span><small> g</small></div>" +
     '<div class="hoje-falta">' + (enjoo ? "Dia leve: o que der, em porções pequenas." : falta > 0 ? "Faltam " + falta + " g" : "Chegou ao alvo de hoje") + "</div>" +
     '<div class="hoje-nota">' + alvo + (!enjoo && falta > 0 && planoRest > 0 ? ". As refeições sem marca do plano têm cerca de " + fmt(planoRest) + " g." : ".") + "</div></div>";
@@ -202,7 +202,8 @@ function relAlimentacao(de) {
   const L = [], m = metas(), h = hoje(), s = resumoConsumo(de, h), periodo = entre(de, h) + 1, discreto = semCalorias();
   L.push("ALIMENTAÇÃO E ÁGUA (estimativa a partir do que foi marcado no app)");
   if (s.dias) {
-    L.push("Dias com registro do que foi comido: " + s.dias + " de " + periodo + ". Média de proteína: " + fmt(s.media.prot) + " g (meta " + m.prot + " g)." +
+    const ap = alvoProteina(m);
+    L.push("Dias com registro do que foi comido: " + s.dias + " de " + periodo + ". Média de proteína: " + fmt(s.media.prot) + " g (" + ap.rotulo + (ap.nutri ? ": " : " ") + ap.g + " g)." +
       (discreto ? "" : " Média de energia: " + fmt(s.media.kcal) + " kcal (referência " + m.kcal + " kcal)."));
     L.push('Refeições marcadas como "nada": ' + s.nada + " de " + s.refeicoes + " registradas.");
   } else L.push("Nenhum dia com registro do que foi comido.");
