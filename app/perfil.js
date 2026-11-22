@@ -147,7 +147,7 @@ FORM.perfil = function (f) {
         gestante: masc ? null : deSimNao(f.gestante), diabetes: diabetes, insulinaSulf: diabetes === true ? deSimNao(f.insulinaSulf) : null, pilula: deSimNao(f.pilula),
         naoCome: naoCome, discreto: !!f.discreto });
       salvar(); aviso("Perfil salvo.");
-      if (primeiro) { location.hash = "hoje"; render(true); } else render();
+      if (primeiro) { irPara("hoje"); render(true); } else render();
     };
     /* Auditoria 1, achado 2: meta de energia abaixo do piso do app (1.200 kcal; 1.800 para homens) é aceita, mas só depois de ela
        confirmar que veio do médico ou da nutricionista. Com a confirmação, o app segue a meta (a decisão clínica é deles). */
