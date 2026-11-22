@@ -25,6 +25,7 @@ function seisSemanas(discreto) {
   ok(/5,0 mg em Seg, 16\/11, Braço direito, no dia previsto/.test(atual), "semana atual: dose, data, local e no dia previsto");
   ok(/116,4 kg \(-0,6 kg na semana\)/.test(atual), "semana atual: peso e variação na semana");
   ok(/enjoo em 2 dias/.test(atual) && /refluxo em 1 dia/.test(atual), "semana atual: sintomas contados por dia");
+  ok(/nenhuma dor forte registrada/.test(atual) && !/sem sinal de alerta/.test(atual) && await p.locator(".semana-atual [data-para=guia]").count() === 0, "sem dor marcada: diz só que nenhuma dor forte foi registrada");
   ok(/1 dia com o cardápio de enjoo/.test(atual), "semana atual: dias de enjoo marcados na tela Hoje");
   ok(/proteína média de 67 g por dia/.test(atual) && /em 3 dias com registro/.test(atual) && /kcal/.test(atual), "semana atual: proteína média, dias com registro e energia");
   ok(/o enjoo foi maior nos 2 dias depois da aplicação/.test(atual), "semana atual: padrão de enjoo depois da aplicação");
@@ -63,6 +64,18 @@ function seisSemanas(discreto) {
   const fundo = await p.evaluate(() => getComputedStyle(document.body).backgroundColor);
   ok(fundo === "rgb(16, 21, 20)", "modo escuro usa as cores do app (" + fundo + ")");
   await t.semRolagem("semana escuro"); await t.alvosDeToque("semana escuro"); await t.foto("semana-3-escuro-discreto");
+  await t.fechar();
+
+  // Dor forte na barriga marcada na semana: botão discreto para os sinais de alerta do Guia.
+  const comDor = seisSemanas(); comDor.sintomas.push(S(1, 0, { id: "dor1", dor: true }));
+  t = await abrir({ estado: comDor, aba: "semana", largura: 320 }); p = t.p;
+  await p.waitForSelector(".semana-atual");
+  ok(/dor forte na barriga em 1 dia/.test(await p.locator(".semana-atual").innerText()), "semana com dor: o sintoma aparece na lista");
+  ok(await p.locator("#semana-anteriores [data-para=guia]").count() === 0, "semanas sem dor não ganham o botão do Guia");
+  await t.alvosDeToque("semana com dor 320");
+  await p.click(".semana-atual [data-ac=ir][data-para=guia]");
+  await p.waitForSelector("#abas a.ativa[href='#guia']");
+  ok(true, "o botão leva ao Guia, onde estão os sinais de alerta");
   await t.fechar();
 
   // Sem aplicação: convite para registrar, que leva ao diário.

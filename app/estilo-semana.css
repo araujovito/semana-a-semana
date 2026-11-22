@@ -16,3 +16,5 @@
 .semana-peso { border-top: 1px solid var(--linha); margin-top: 6px; }
 .semana-nota { margin: 4px 4px 16px; }
 @media (max-width: 360px) { .semana-itens li { grid-template-columns: 80px minmax(0, 1fr); } }
+.semana-guia { margin-top: 8px; }
+.semana-guia p { margin: 0; }

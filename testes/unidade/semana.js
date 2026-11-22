@@ -61,7 +61,7 @@ test("sintomas contados por dia; dias de enjoo marcados e comida da semana", () 
   assert.strictEqual(s.sintomas.preso, 1);
   assert.strictEqual(s.enjooMarcado, 2);
   assert.deepStrictEqual([s.comida.dias, s.comida.prot], [2, 40]);
-  assert.strictEqual(a.v('semanaTextoSintomas(semanasDoTratamento("' + H + '")[0].sintomas)'), "enjoo em 1 dia, vômito em 1 dia, intestino preso em 1 dia");
+  assert.strictEqual(a.v('semanaTextoSintomas(semanasDoTratamento("' + H + '")[0].sintomas)'), "enjoo em 1 dia, vômito em 1 dia, intestino preso em 1 dia; nenhuma dor forte registrada");
   // calorias só sem o modo discreto
   assert.doesNotMatch(a.v('semanaTextoComida(semanasDoTratamento("' + H + '")[0], true, 90)'), /kcal/);
   assert.match(a.v('semanaTextoComida(semanasDoTratamento("' + H + '")[0], false, 90)'), /^proteína média de 40 g por dia \(meta 90 g\), energia média de .* kcal, em 2 dias com registro$/);
@@ -106,4 +106,19 @@ test("padrões gerais de troca de dose e de aplicação fora do dia", () => {
   const p = JSON.parse(a.v("JSON.stringify(semanaPadroesGerais(semanasDoTratamento('" + H + "')))"));
   assert.deepStrictEqual(p.map(x => x.texto), ["Troca de dose nas semanas 3 e 5.", "Aplicação fora do dia habitual na semana 4."]);
   assert.strictEqual(a.v("semanaLista([1, 2, 3])"), "1, 2 e 3");
+});
+
+test("dor forte na barriga: caminho para os sinais de alerta do Guia; sem dor, só o que foi marcado", () => {
+  const com = base({ doses: [dose("2026-11-16", 2.5)], sintomas: [sint("2026-11-17", 1, { dor: true })] });
+  const sc = semanas(com)[0];
+  assert.strictEqual(com.v('semanaTextoSintomas(semanasDoTratamento("' + H + '")[0].sintomas)'), "enjoo em 1 dia, dor forte na barriga em 1 dia");
+  const html = com.v('semanaCorpo(semanasDoTratamento("' + H + '")[0], false, 90)');
+  assert.match(html, /data-ac="ir" data-para="guia"/);
+  assert.match(html, /Ver os sinais de alerta no Guia/);
+  assert.strictEqual(sc.sintomas.dor, 1);
+  const sem = base({ doses: [dose("2026-11-16", 2.5)], sintomas: [sint("2026-11-17", 1)] });
+  const h2 = sem.v('semanaCorpo(semanasDoTratamento("' + H + '")[0], false, 90)');
+  assert.doesNotMatch(h2, /data-para="guia"/);
+  assert.match(h2, /nenhuma dor forte registrada/);
+  assert.doesNotMatch(com.v("telaSemana()") + sem.v("telaSemana()"), /sem sinal de alerta|urgente|perigo/i);
 });

@@ -130,7 +130,8 @@ function semanaTextoSintomas(x) {
   q(x.enjoo, "enjoo"); q(x.vomito, "vômito"); q(x.preso, "intestino preso"); q(x.solto, "intestino solto"); q(x.refluxo, "refluxo");
   q(x.tontura, "tontura"); q(x.cansaco, "cansaço"); q(x.dor, "dor forte na barriga");
   if (!x.registros) return "sem registro";
-  return p.length ? p.join(", ") : "nenhum sintoma marcado";
+  /* O app só sabe o que foi marcado: diz "nenhuma dor forte registrada", nunca "sem sinal de alerta" (revisão clínica). */
+  return p.length ? p.join(", ") + (x.dor ? "" : "; nenhuma dor forte registrada") : "nenhum sintoma marcado";
 }
 function semanaTextoComida(s, discreto, metaProt) {
   const c = s.comida;
@@ -156,6 +157,9 @@ function semanaCorpo(s, discreto, metaProt) {
   out += item("Dias de enjoo", s.enjooMarcado ? nDias(s.enjooMarcado) + " com o cardápio de enjoo" : "nenhum marcado", "enjoo");
   out += item("Comida", semanaTextoComida(s, discreto, metaProt), "comida");
   out += "</ul>";
+  /* Dor forte na barriga marcada: caminho para os sinais de alerta do Guia (cólica biliar e pancreatite ficam lá, com fonte), sem alarde. */
+  if (s.sintomas.dor) out += '<div class="semana-guia" data-semana-guia><p class="sub">Dor forte na barriga foi marcada nesta semana. O Guia lista os sinais de alerta e o que fazer em cada um.</p>' +
+    '<div class="botoes"><button class="sec" data-ac="ir" data-para="guia">Ver os sinais de alerta no Guia</button></div></div>';
   if (discreto && s.peso.pesagens) out += '<details class="semana-peso"><summary>Ver peso</summary><p>' + fmt(s.peso.kg, 1) + " kg" + (s.peso.dif != null ? ", " + comSinal(s.peso.dif, 1) + " kg na semana (" + comSinal(s.peso.pct, 1) + "%)" : "") + "</p></details>";
   return out;
 }
