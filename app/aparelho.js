@@ -9,13 +9,14 @@ let avisoCalendario = "";
 
 function temCalendario() { return typeof window !== "undefined" && !!window.Android && typeof window.Android.calendario === "function"; }
 
-/* Data (AAAA-MM-DD) em que o evento semanal começa: a próxima aplicação prevista; se ela já passou, o mesmo dia da semana, de hoje em diante.
-   Devolve null quando não há aplicação registrada ou a data não é legível. Só usa o campo prox de situacaoDose(). */
+/* Data (AAAA-MM-DD) em que o evento semanal começa: o primeiro dia habitual de aplicação (situacaoDose em tratamento.js) que ainda
+   não tem aplicação feita, de hoje em diante. Em dia: a próxima prevista. Prevista hoje: hoje. Atrasada ou a pular: o dia habitual
+   da semana seguinte (com atraso a data de hoje cairia fora do dia habitual e o evento repetiria no dia errado).
+   null sem aplicação registrada ou quando a conta manda falar com o médico (mais de 14 dias sem registro). */
 function dataParaCalendario(s, h) {
-  const prox = s && s.prox;
-  if (typeof prox !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(prox) || iso(deIso(prox)) !== prox) return null;
-  if (prox >= h) return prox;
-  return mais(h, (diaSemana(prox) - diaSemana(h) + 7) % 7);
+  if (!s || s.estado === "medico") return null;
+  const d = s.estado === "emDia" ? s.prox : s.estado === "hoje" ? h : s.seguinte;
+  return dataValida(d) && d >= h ? d : null;
 }
 
 /* Cartão mostrado no fim da tela Perfil: põe a aplicação semanal no calendário do celular. Só existe no app instalado e depois da primeira aplicação. */
@@ -23,7 +24,7 @@ function cartaoLembretes() {
   if (!temCalendario()) return "";
   const data = dataParaCalendario(situacaoDose(), hoje());
   if (!data) return "";
-  return '<div class="cartao" id="cartao-calendario"><h2>Aplicação no calendário</h2><p class="sub" style="margin:0">Pelos seus registros, a próxima aplicação cai em ' + (diaSemana(data) < 5 ? "uma " : "um ") + DIAS_POR_EXTENSO[diaSemana(data)] + " (" + br(data) + "). " +
+  return '<div class="cartao" id="cartao-calendario"><h2>Aplicação no calendário</h2><p class="sub" style="margin:0">Pelos seus registros, seu dia de aplicação é ' + DIAS_POR_EXTENSO[diaSemana(data)] + ". O evento começa em " + br(data) + ". " +
     "O botão abre o calendário do celular com um evento que se repete toda semana, com o nome “Semana a Semana: aplicação”, sem o nome do remédio. Você confere, escolhe o aviso e salva por lá. Se o dia mudar, o evento é alterado no calendário.</p>" +
     '<div class="botoes"><button class="sec" data-ac="calendario" data-data="' + data + '">Pôr no calendário</button></div>' +
     (avisoCalendario ? '<p class="sub" role="status">' + esc(avisoCalendario) + "</p>" : "") + "</div>";
