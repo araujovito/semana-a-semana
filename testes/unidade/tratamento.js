@@ -194,3 +194,10 @@ test("relatório: plural certo e semanas na dose por calendário", () => {
   const tres = em(HOJE, base({ doses: [dose("2026-10-23"), dose("2026-10-30"), dose("2026-11-13")] })).v("relTratamento('2026-10-22').join('\\n')");
   assert.match(tres, /Semana 5, 3 aplicações no total\. Dose atual: 2,5 mg \(5ª semana nesta dose, 3 aplicações\)\. Dia habitual: sexta-feira\./);
 });
+test("auditoria 2: a data prometida depois de pular não vira 'fale com o médico' no próprio dia", () => {
+  const ds = [dose("2026-11-09"), dose("2026-11-15")];   // habitual segunda (primeira aplicação), a última num domingo
+  const antes = sit(ds, "2026-11-28"), dia = sit(ds, "2026-11-30");
+  assert.strictEqual(antes.estado, "pular"); assert.strictEqual(antes.prox, "2026-11-30");
+  assert.strictEqual(dia.estado, "hoje");
+  assert.strictEqual(sit(ds, "2026-12-01").estado, "medico", "passada também a segunda prevista, só o médico");
+});

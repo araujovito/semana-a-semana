@@ -9,7 +9,6 @@
    - várias semanas sem aplicar: falar com o médico antes de retomar (o app não dá instrução de dose);
    - pelo menos 3 dias (72 horas) entre duas aplicações. */
 const DIAS_TOLERANCIA = 4;      // atraso máximo em que ainda se aplica a dose prevista
-const DIAS_SEM_REGISTRO = 14;   // mais do que isto sem registro: só a orientação de falar com o médico
 const DIAS_ENTRE_DOSES = 3;     // intervalo mínimo entre duas aplicações
 const DIAS_PARA_TRAS = 365;     // data mais antiga aceita no registro: 1 ano atrás
 const SEMANA_LONGA = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado", "domingo"];
@@ -52,8 +51,10 @@ function situacaoDoseEm(doses, diaDose, h) {
     /* semanas de calendário desde a primeira aplicação da sequência atual nesta dose (1 = primeira semana) */
     semanaNaDose: Math.floor(entre(nd.data, h) / 7) + 1, inicioNaDose: nd.data, naDose: nd.aplicacoes,
     diasSemRegistro: entre(ult.data, h), prevista: null, atraso: 0, seguinte: null, prox: null, falta: null };
-  if (s.diasSemRegistro > DIAS_SEM_REGISTRO) { s.estado = "medico"; return s; }
   const devida = mais(previstaDe(ult.data, habitual), 7);          // primeira aplicação prevista ainda sem registro
+  /* "medico" quando passaram duas aplicações previstas sem registro (mais de 7 dias depois da primeira que faltou). Antes contava
+     14 dias desde a última e, depois de um "pular" com data prometida, o dia prometido podia virar "fale com o médico" (auditoria 2). */
+  if (entre(devida, h) > 7) { s.estado = "medico"; return s; }
   if (h < devida) { s.estado = "emDia"; s.prox = devida; s.falta = entre(h, devida); return s; }
   /* O atraso conta a partir da prevista MAIS RECENTE no dia habitual, não de "última + 7". */
   s.atraso = (diaSemana(h) - habitual + 7) % 7;
