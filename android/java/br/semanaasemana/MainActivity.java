@@ -102,7 +102,10 @@ public class MainActivity extends Activity {
         View d = w.getDecorView();
         int f = d.getSystemUiVisibility();
         boolean clara = getResources().getBoolean(R.bool.barra_navegacao_clara);
-        d.setSystemUiVisibility(clara ? f | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR : f & ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
+        f = clara ? f | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR : f & ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+        // Barra de status clara (base lilás do topo) pede ícones escuros; no modo escuro, ícones claros.
+        boolean statusClara = getResources().getBoolean(R.bool.barra_status_clara);
+        d.setSystemUiVisibility(statusClara ? f | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR : f & ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
     }
 
     /**
