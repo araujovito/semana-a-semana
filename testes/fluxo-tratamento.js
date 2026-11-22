@@ -66,8 +66,8 @@ const texto = async (p, sel) => (await p.locator(sel).innerText()).replace(/\s+/
   perg = await t.textoDialogo(); await t.sim();
   ok(/72 horas/.test(perg || "") && !(await t.textoDialogo()) && await gravadas() === 4, "registrar: redução de dose pergunta só das 72 horas, não do salto");
   await p.click("[data-ac=apagar] >> nth=0"); await t.sim();
-  // dia habitual: deduzido da primeira aplicação (segunda); não muda por ela ter aplicado na sexta
-  ok(await p.inputValue("[data-mud=diaDose]") === "0" && (await t.ler()).diaDose == null, "dia habitual: começa no dia da primeira aplicação (segunda), sem nada gravado");
+  // dia habitual: o da primeira aplicação (segunda), gravado ao abrir porque o dado veio sem ele; não muda por ela ter aplicado na sexta
+  ok(await p.inputValue("[data-mud=diaDose]") === "0" && (await t.ler()).diaDose === 0, "dia habitual: começa no dia da primeira aplicação (segunda) e fica gravado");
   ok(/Dá para mudar o dia da semana, desde que haja pelo menos 3 dias \(72 horas\) entre duas aplicações\./.test(await texto(p, "[data-cartao=dia-habitual]")), "dia habitual: cartão lembra a regra das 72 horas");
   await t.foto("tratamento-2-aplicacoes"); await t.semRolagem("aplicações"); await t.alvosDeToque("aplicações");
   await p.click("#abas a[data-aba=hoje]"); await p.waitForSelector("[data-dose]");

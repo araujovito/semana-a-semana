@@ -201,3 +201,36 @@ test("auditoria 2: a data prometida depois de pular não vira 'fale com o médic
   assert.strictEqual(dia.estado, "hoje");
   assert.strictEqual(sit(ds, "2026-12-01").estado, "medico", "passada também a segunda prevista, só o médico");
 });
+test("auditoria 2, resíduo 3: o dia habitual fica gravado e não muda com aplicação mais antiga nem ao apagar a primeira", () => {
+  // quem já tinha aplicações e nada gravado recebe, ao abrir, o dia da primeira aplicação atual (migração)
+  const seg = [dose("2026-11-02"), dose("2026-11-09"), dose("2026-11-16")];
+  const a = em(HOJE, base({ doses: seg, diaDose: null }));
+  assert.strictEqual(a.v("E.diaDose"), 0);
+  assert.strictEqual(JSON.parse(a.guardado["semana-a-semana.v1"]).diaDose, 0, "a migração é gravada");
+  // registra uma aplicação antiga, numa quarta: o dia habitual continua segunda e a próxima continua 23/11
+  a.v("FORM.dose({ data: '2026-10-28', mg: '2.5', local: 'Coxa direita', obs: '' })");
+  assert.deepStrictEqual([a.v("E.doses.length"), a.v("E.diaDose"), a.v("situacaoDose().habitual"), a.v("situacaoDose().prox")], [4, 0, 0, "2026-11-23"]);
+  // apaga a primeira (a de quarta) e depois a de 02/11: nada muda
+  a.v("E.doses = E.doses.filter(d => d.data !== '2026-10-28' && d.data !== '2026-11-02')");
+  assert.deepStrictEqual([a.v("situacaoDose().habitual"), a.v("situacaoDose().prox")], [0, "2026-11-23"]);
+  // só "Mudei o dia da aplicação" muda
+  a.v("MUD.diaDose({ value: '2' })");
+  assert.strictEqual(a.v("situacaoDose().prox"), "2026-11-25");
+  // cópia restaurada com aplicações e sem dia gravado: a primeira conta acerta o dia e grava
+  const r = em(HOJE, base());
+  r.v("E = migrar(" + JSON.stringify(base({ doses: [dose("2026-11-05"), dose("2026-11-12")] })) + ")");
+  assert.strictEqual(r.v("E.diaDose"), null);
+  assert.strictEqual(r.v("situacaoDose().habitual"), 3);
+  assert.strictEqual(JSON.parse(r.guardado["semana-a-semana.v1"]).diaDose, 3);
+  // sem aplicação: nada é gravado
+  assert.strictEqual(em(HOJE, base()).v("E.diaDose"), null);
+});
+test("primeira aplicação grava o dia habitual e diz qual ficou", () => {
+  const a = em(HOJE, base());
+  a.v("FORM.dose({ data: '2026-11-19', mg: '2.5', local: 'Coxa direita', obs: '' })");
+  assert.strictEqual(a.v("E.diaDose"), 3);
+  assert.strictEqual(a.avisos[a.avisos.length - 1], "Aplicação registrada. Dia habitual: quinta-feira. Se não for o seu dia, mude em “Mudei o dia da aplicação”.");
+  a.v("FORM.dose({ data: '2026-11-12', mg: '2.5', local: 'Coxa direita', obs: '' })");
+  assert.strictEqual(a.v("E.diaDose"), 3);
+  assert.strictEqual(a.avisos[a.avisos.length - 1], "Aplicação registrada.", "a partir da segunda, o aviso é o curto");
+});

@@ -66,7 +66,18 @@ function situacaoDoseEm(doses, diaDose, h) {
   else { s.estado = "pular"; s.prox = s.seguinte; }
   return s;
 }
-function situacaoDose() { return situacaoDoseEm(E.doses, E.diaDose, hoje()); }
+/* O dia habitual fica gravado em E.diaDose desde a primeira aplicação e só muda em "Mudei o dia da aplicação" (MUD.diaDose).
+   Antes, sem nada gravado, ele era deduzido da primeira aplicação a cada conta: registrar uma aplicação mais antiga ou apagar a
+   primeira mudava o dia sozinho, e a data da próxima junto (auditoria 2, A1, resíduo 3). Quem já tem aplicações e nada gravado
+   (dado de antes desta versão ou cópia restaurada) recebe o dia da primeira aplicação atual. Devolve true se mudou o estado. */
+function fixarDiaHabitual(e) {
+  if (!e || e.diaDose != null) return false;
+  const d = diaHabitual(e.doses, null, hoje());
+  if (d == null) return false;
+  e.diaDose = d; return true;
+}
+if (fixarDiaHabitual(E)) salvar();
+function situacaoDose() { if (fixarDiaHabitual(E)) salvar(); return situacaoDoseEm(E.doses, E.diaDose, hoje()); }
 
 /* Motivo para recusar a data de uma aplicação, ou "" se a data serve: de 1 ano atrás até hoje. */
 function erroDataDose(data, h) {
@@ -162,7 +173,13 @@ FORM.dose = function (f) {
   const h = hoje(), erro = erroDataDose(f.data, h), mg = num(f.mg);
   if (erro) return aviso(erro);
   const outra = E.doses.find(d => dataValida(d.data) && Math.abs(entre(d.data, f.data)) < DIAS_ENTRE_DOSES);
-  const gravar = () => { E.doses.push({ id: novoId(), data: f.data, mg: mg, local: f.local, obs: (f.obs || "").trim() }); salvar(); aviso("Aplicação registrada."); render(); };
+  const gravar = () => {
+    E.doses.push({ id: novoId(), data: f.data, mg: mg, local: f.local, obs: (f.obs || "").trim() });
+    /* Primeira aplicação: o dia dela vira o dia habitual, gravado (ver fixarDiaHabitual). O aviso diz qual ficou, porque quem
+       registra no dia seguinte sem mudar a data fica com o dia errado. */
+    const novo = E.diaDose == null; if (novo) E.diaDose = diaSemana(f.data);
+    salvar(); aviso("Aplicação registrada." + (novo ? " Dia habitual: " + SEMANA_LONGA[E.diaDose] + ". Se não for o seu dia, mude em “Mudei o dia da aplicação”." : "")); render();
+  };
   /* Guia, "Doses: como sobem": "o médico pode subir de 2,5 em 2,5 mg". Pular degrau pode ser erro de digitação: pergunta antes de gravar. */
   const conferirSalto = () => saltoDeDose(E.doses, f.data, mg)
     ? confirmar("A aplicação anterior foi de " + fmt(doseAnterior(E.doses, f.data).mg, 1) + " mg e esta é de " + fmt(mg, 1) + " mg. As doses costumam subir de 2,5 em 2,5 mg. Salvar " + fmt(mg, 1) + " mg mesmo assim?", gravar, "Salvar")
