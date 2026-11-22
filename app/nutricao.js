@@ -243,7 +243,7 @@ function calcularEscala(kcal, prot, R, pisoDia, protTeto) {
 /* ---------- o que as telas usam ---------- */
 /* Plano com gramas finais: escala do perfil e restrições R (R serve para comparar, por exemplo como seria sem restrições). */
 function planoCom(i, R) {
-  const m = metas(), e = calcularEscala(m.kcal, m.prot, R, m.pisoDia, m.protMax);
+  const m = metas(), e = calcularEscala(m.kcal, m.prot, R, m.pisoDia, (E.perfil && E.perfil.metaProt) ? 0 : m.protMax);
   return escalar(resolverDia(i, R), i === 7 ? { prot: Math.min(1, e.prot), energia: Math.min(1, e.energia) } : { prot: e.prot, energia: e.dias[i] });
 }
 function planoDoDia(i) { return planoCom(i, restricoesDoPerfil()); }
@@ -294,7 +294,9 @@ function metas() {
   const carb = Math.max(0, Math.round((kcal - prot * 4 - gord * 9) / 4));
   /* Piso por dia do cardápio. Meta de energia informada pelo médico abaixo de 1.200 kcal vale como piso: a decisão clínica é dele. */
   const pisoDia = p.metaKcal && p.metaKcal < PISO_DIA ? p.metaKcal : PISO_DIA;
-  const esc = calcularEscala(kcal, prot, restricoesDoPerfil(), pisoDia, Math.round(1.6 * pesoRef));
+  /* Auditoria 3 (B1): o teto de 1,6 g/kg só vale para a meta calculada pelo app; meta de proteína informada pelo médico ou
+     pela nutricionista é respeitada (teto = a própria meta + 3%, dentro de calcularEscala). */
+  const esc = calcularEscala(kcal, prot, restricoesDoPerfil(), pisoDia, p.metaProt ? 0 : Math.round(1.6 * pesoRef));
   return {
     peso, idade, imc, tmb, gasto, piso, kcalCalc, kcal, pesoRef, protCalc, prot,
     semDeficit, abaixoDoPeso, gestante, discreto: p.discreto === true, pisoDia,

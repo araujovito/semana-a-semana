@@ -210,3 +210,7 @@ test("revisão clínica B1 e B2: sinais de alerta por urgência e o que fazer na
   assert.match(guia, /sem fazer cocô nem soltar gases/); assert.match(guia, /Perda de visão de repente em um olho/);
   assert.match(a.v("avisoHipoglicemia('plano')"), /abaixo de 70.*Espere 15 minutos.*ligue 192 e não dê nada pela boca/);
 });
+test("auditoria 3 (B1): meta de proteína informada pelo médico ou nutricionista é respeitada pelo cardápio", () => {
+  const m = j(app({ altura: 163, peso: 95, metaProt: 80 }), "metas()");
+  assert.ok(m.planoProt <= 80 * 1.03 * 1.07, "proteína do cardápio perto de 80 g, não no teto de 1,6 g/kg: " + Math.round(m.planoProt));
+});
