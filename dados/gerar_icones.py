@@ -1,15 +1,24 @@
 """Gera os ícones do PWA (app/icone-*.png) a partir do mesmo desenho do ícone Android
-(android/res/drawable/ic_launcher_frente.xml): folha de calendário com um "feito", fundo #0f766e.
+(android/res/drawable/ic_launcher_frente.xml): folha de calendário com um "feito", sobre o degradê rosa, violeta e azul
+de android/res/drawable/ic_launcher_fundo.xml (identidade aprovada em 22/11).
 Uso: python3 dados/gerar_icones.py"""
 from PIL import Image, ImageDraw
 import os
-COR, BRANCO = (15, 118, 110), (255, 255, 255)
+COR, BRANCO = (95, 61, 196), (255, 255, 255)   # #5f3dc4: o violeta da identidade, na faixa e no "feito"
+ROSA, VIOLETA, AZUL = (230, 73, 128), (121, 80, 242), (51, 154, 240)   # #e64980, #7950f2, #339af0
 SAIDA = os.path.join(os.path.dirname(__file__), "..", "app")
 
 def desenhar(tam, mascaravel):
     s = 4  # desenha maior e reduz, para suavizar as bordas
     T = tam * s
-    im = Image.new("RGB", (T, T), COR)
+    # degradê na diagonal (de baixo à esquerda para cima à direita, como o angle 315 do Android): rosa, violeta, azul
+    im = Image.new("RGB", (T, T))
+    px = im.load()
+    def mistura(a, b, t): return tuple(round(a[i] + (b[i] - a[i]) * t) for i in range(3))
+    for y in range(T):
+        for x in range(T):
+            t = (x + (T - 1 - y)) / (2 * (T - 1))
+            px[x, y] = mistura(ROSA, VIOLETA, t * 2) if t < .5 else mistura(VIOLETA, AZUL, (t - .5) * 2)
     d = ImageDraw.Draw(im)
     # o desenho Android ocupa a área segura de 66 em 108; no ícone comum ele pode crescer um pouco
     k = T / (108 if mascaravel else 84)
