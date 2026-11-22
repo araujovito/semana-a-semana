@@ -1,0 +1,244 @@
+<!doctype html>
+<!-- Gerado por fonte/montar.js a partir de fonte/semana.html. Edite a fonte. -->
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Semana · protótipo</title>
+<style>
+/* Protótipo da identidade "Ciclo de sete". Tudo local: fontes do sistema, ícones em SVG desenhados à mão, sem nada de fora.
+   CSS até 2022 (WebView 113): variáveis, grid, flex, gap, aspect-ratio. Sem :has(), sem nesting, sem color-mix(). */
+:root {
+  --fundo: #f6f1ea; --cartao: #fffdfa; --texto: #2b2230; --suave: #685d6b; --linha: #e6ddd4;
+  --cor: #6d3b5e; --sobre-cor: #ffffff; --cor-clara: #efe2ea;
+  --acento: #a8481f; --acento-clara: #f7e3d6;
+  --ok: #3d6f4f; --alerta: #b42318; --alerta-clara: #fbe9e7;
+  --dado: #6d3b5e; --dado-suave: #c9a9bf; --faixa: #e9dfe5; --vazio: #e6ddd4;
+  --titulo: "Noto Serif", "Droid Serif", Georgia, serif;
+  --corpo: system-ui, -apple-system, Roboto, "Segoe UI", sans-serif;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fundo: #16121a; --cartao: #211b25; --texto: #f2ebf0; --suave: #b4a8b6; --linha: #352c39;
+    --cor: #dcaacb; --sobre-cor: #2a1525; --cor-clara: #38243a;
+    --acento: #f0a57a; --acento-clara: #3d2a22;
+    --ok: #8fc8a2; --alerta: #f59a8e; --alerta-clara: #3a1f1d;
+    --dado: #dcaacb; --dado-suave: #6e4a64; --faixa: #2f2533; --vazio: #3a313e;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 16px/1.45 var(--corpo); }
+main { max-width: 520px; margin: 0 auto; padding: 4px 16px 104px; }
+h1, h2, h3 { font-family: var(--titulo); font-weight: 600; letter-spacing: -.01em; }
+h1 { font-size: 27px; line-height: 1.15; margin: 0; }
+h2 { font-size: 19px; line-height: 1.25; margin: 0 0 6px; }
+h3 { font-size: 16px; margin: 14px 0 4px; }
+p { margin: 0 0 8px; }
+.sub { color: var(--suave); font-size: 14px; }
+.mini { font-size: 13px; color: var(--suave); }
+.num { font-variant-numeric: tabular-nums; }
+.sobre { font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--suave); font-weight: 600; }
+svg.ic { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+svg.ic.p { width: 20px; height: 20px; }
+
+/* Topo: papel, sem faixa colorida. */
+.topo { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 16px; background: var(--fundo); border-bottom: 1px solid transparent; }
+.topo .marca { font-family: var(--titulo); font-size: 17px; font-weight: 600; color: var(--cor); }
+.topo .voltar { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; color: var(--cor); font-weight: 600; text-decoration: none; }
+.redondo { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid var(--linha); background: var(--cartao); color: var(--texto); }
+
+.cartao { background: var(--cartao); border: 1px solid var(--linha); border-radius: 20px; padding: 16px; margin-bottom: 14px; }
+.cartao.suave { background: var(--cor-clara); border-color: transparent; }
+.linha { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.pilha > * + * { margin-top: 10px; }
+
+button, .botao { font: inherit; font-weight: 600; min-height: 48px; min-width: 44px; padding: 10px 18px; border-radius: 999px; border: 0;
+  background: var(--cor); color: var(--sobre-cor); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+button.sec, .botao.sec { background: transparent; color: var(--cor); border: 1.5px solid var(--cor); }
+button.leve, .botao.leve { background: var(--cor-clara); color: var(--cor); }
+.botoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+
+/* Escolhas de um toque (como está, quanto comeu). */
+.escolhas { display: flex; flex-wrap: wrap; gap: 8px; }
+.escolhas span { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 14px; border-radius: 14px;
+  border: 1.5px solid var(--linha); background: var(--cartao); font-size: 15px; font-weight: 500; }
+.escolhas span.on { background: var(--cor); border-color: var(--cor); color: var(--sobre-cor); font-weight: 600; }
+.quatro { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 12px; }
+.quatro span { display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 14px; border: 1.5px solid var(--linha);
+  font-size: 14.5px; font-weight: 600; text-align: center; line-height: 1.15; padding: 4px; }
+.quatro span.on { background: var(--cor); border-color: var(--cor); color: var(--sobre-cor); }
+
+/* Faixa de sinais: sempre visível, sóbria. */
+.sinais { font-size: 15px; display: flex; gap: 12px; align-items: flex-start; border: 1.5px solid var(--alerta); background: var(--alerta-clara); }
+.sinais svg { color: var(--alerta); margin-top: 2px; }
+.sinais strong { color: var(--alerta); }
+
+/* Barra de abas com ícones próprios. */
+.abas { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; display: flex; background: var(--cartao); border-top: 1px solid var(--linha);
+  padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); }
+.abas a { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 52px; color: var(--suave); text-decoration: none; font-size: 12px; font-weight: 500; }
+.abas a .pilula { display: flex; align-items: center; justify-content: center; width: 56px; height: 30px; border-radius: 999px; }
+.abas a.ativa { color: var(--cor); font-weight: 700; }
+.abas a.ativa .pilula { background: var(--cor-clara); }
+
+/* Gráficos */
+svg.graf { display: block; width: 100%; height: auto; overflow: visible; }
+svg.graf text { fill: var(--suave); font: 11px var(--corpo); }
+svg.graf .faixa { fill: var(--faixa); }
+svg.graf .barra { fill: var(--dado); }
+svg.graf .parcial { fill: url(#hachura); stroke: var(--dado); stroke-width: 1.5; }
+svg.graf .base { stroke: var(--linha); stroke-width: 1; }
+svg.graf .media { stroke: var(--texto); stroke-width: 1.5; stroke-dasharray: 4 4; }
+svg.graf .linhad { fill: none; stroke: var(--dado); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+svg.graf .ponto { fill: var(--dado); stroke: var(--cartao); stroke-width: 2; }
+svg.graf .forte { fill: var(--texto); font-weight: 600; }
+.legenda { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; font-size: 13px; color: var(--suave); }
+.legenda i { display: inline-block; width: 14px; height: 10px; border-radius: 3px; vertical-align: -1px; margin-right: 5px; }
+</style>
+<style>
+.navsem { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 2px 0 0; }
+.navsem .meio { text-align: center; flex: 1; }
+.navsem .redondo[aria-disabled] { opacity: .35; }
+.peso-graf text.d { fill: var(--texto); font-weight: 600; }
+.peso-graf .dose { stroke: var(--acento); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.peso-graf text.dl { fill: var(--acento); font-weight: 600; }
+.linha-tempo { list-style: none; margin: 6px 0 0; padding: 0; position: relative; }
+.linha-tempo::before { content: ""; position: absolute; left: 25px; top: 18px; bottom: 30px; width: 2px; background: var(--linha); }
+.dia { display: grid; grid-template-columns: 52px 1fr; gap: 10px; margin-bottom: 12px; position: relative; }
+.dia .data { display: flex; flex-direction: column; align-items: center; padding-top: 6px; }
+.dia .data b { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%;
+  background: var(--fundo); border: 2px solid var(--linha); font: 600 16px var(--titulo); font-variant-numeric: tabular-nums; position: relative; z-index: 1; }
+.dia .data span { font-size: 12.5px; color: var(--suave); margin-top: 2px; }
+.dia.ap .data b { border-color: var(--acento); color: var(--acento); }
+.dia.hoje .data b { background: var(--cor); border-color: var(--cor); color: var(--sobre-cor); }
+.dia .cartao { margin: 0; padding: 12px 14px; }
+.dia.futuro .cartao { background: transparent; border-style: dashed; display: flex; align-items: center; }
+.dia.futuro .data b { color: var(--suave); }
+.fato { display: flex; align-items: center; gap: 8px; font-size: 15px; padding: 3px 0; }
+.fato .ic { color: var(--suave); }
+.fato.ap { color: var(--acento); font-weight: 600; }
+.fato.ap .ic { color: var(--acento); }
+.fato .rot { color: var(--suave); width: 86px; flex: none; font-size: 14px; }
+.enjoo { display: inline-flex; gap: 3px; align-items: flex-end; margin-right: 4px; }
+.enjoo i { width: 7px; border-radius: 2px; background: var(--vazio); }
+.enjoo i:nth-child(1) { height: 8px; } .enjoo i:nth-child(2) { height: 12px; } .enjoo i:nth-child(3) { height: 16px; }
+.enjoo i.on { background: var(--dado); }
+svg.refs { flex: none; width: 92px; height: 16px; display: inline-block; vertical-align: -3px; margin-right: 4px; }
+svg.refs circle { stroke: var(--dado); stroke-width: 1.6; fill: none; }
+svg.refs .c { fill: var(--dado); }
+.leg { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--suave); margin: 4px 0 0 62px; }
+.leg svg { width: 16px; height: 16px; vertical-align: -3px; margin-right: 4px; }
+.leg svg circle { stroke: var(--dado); stroke-width: 1.6; fill: none; }
+.leg svg .c { fill: var(--dado); }
+.marca-hoje { font-size: 12px; font-weight: 700; color: var(--cor); background: var(--cor-clara); border-radius: 999px; padding: 2px 8px; margin-left: 6px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-hoje" viewBox="0 0 24 24"><path d="M3 18.5h18M6.5 18.5a5.5 5.5 0 0 1 11 0M12 6v2.5M5.3 10.3l1.6 1.6M18.7 10.3l-1.6 1.6M3.5 15h1.5M19 15h1.5"/></symbol>
+  <symbol id="i-semana" viewBox="0 0 24 24"><circle cx="12" cy="4" r="1.7" fill="currentColor"/><circle cx="18.25" cy="7.01" r="1.5"/><circle cx="19.8" cy="13.78" r="1.5"/><circle cx="15.47" cy="19.21" r="1.5"/><circle cx="8.53" cy="19.21" r="1.5"/><circle cx="4.2" cy="13.78" r="1.5"/><circle cx="5.75" cy="7.01" r="1.5"/></symbol>
+  <symbol id="i-comer" viewBox="0 0 24 24"><path d="M3.5 12.5h17a8.5 8 0 0 1-17 0zM8 20.5h8M9.5 3.5c-1.2 1.2 1.2 2.3 0 3.5M14.5 3.5c-1.2 1.2 1.2 2.3 0 3.5"/></symbol>
+  <symbol id="i-mover" viewBox="0 0 24 24"><circle cx="13.5" cy="4.3" r="1.8"/><path d="M12.8 8.2 10.6 14l3.4 2.6V21M10.6 14 8.2 20.8M12.8 8.2l3.2 3 2.6-.4M12.8 8.2 9.2 9.8l-1.4 3"/></symbol>
+  <symbol id="i-guia" viewBox="0 0 24 24"><path d="M3 5.5c2.6-1 6-1 9 1 3-2 6.4-2 9-1V19c-2.6-1-6-1-9 1-3-2-6.4-2-9-1zM12 6.5V20"/></symbol>
+  <symbol id="i-perfil" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.2-3.6 4-5.3 7.5-5.3s6.3 1.7 7.5 5.3"/></symbol>
+  <symbol id="i-caneta" viewBox="0 0 24 24"><path d="M14.5 4.5l5 5M16 3l5 5M17 7 7.5 16.5l-3 1 1-3L15 5M4.5 19.5 3 21"/></symbol>
+  <symbol id="i-peso" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M8 9.5a5 5 0 0 1 8 0M12 9.5l1.4-2"/></symbol>
+  <symbol id="i-gota" viewBox="0 0 24 24"><path d="M12 3.5s-6 6.6-6 10.8a6 6 0 0 0 12 0C18 10.1 12 3.5 12 3.5z"/></symbol>
+  <symbol id="i-alerta" viewBox="0 0 24 24"><path d="M12 3.8 21.2 19.5H2.8zM12 10v4.2M12 16.9v.1"/></symbol>
+  <symbol id="i-seta" viewBox="0 0 24 24"><path d="M9 5.5 15.5 12 9 18.5"/></symbol>
+  <symbol id="i-volta" viewBox="0 0 24 24"><path d="M15 5.5 8.5 12l6.5 6.5"/></symbol>
+  <symbol id="i-relogio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-conversa" viewBox="0 0 24 24"><path d="M4 5.5h16v10H10l-4.5 3.5v-3.5H4z"/></symbol>
+</svg>
+
+<header class="topo">
+  <span class="marca">Semana a Semana</span>
+  <a class="redondo" href="#" aria-label="Perfil e metas"><svg class="ic p" aria-hidden="true"><use href="#i-perfil"/></svg></a>
+</header>
+<main>
+  <div class="navsem">
+    <a class="redondo" href="#" aria-label="Semana anterior"><svg class="ic p" aria-hidden="true"><use href="#i-volta"/></svg></a>
+    <div class="meio"><h1>Semana 6</h1><div class="sub">17 a 23 de novembro</div></div>
+    <a class="redondo" href="#" aria-label="Semana seguinte" aria-disabled="true"><svg class="ic p" aria-hidden="true"><use href="#i-seta"/></svg></a>
+  </div>
+
+  <section class="cartao" style="margin-top:14px" aria-labelledby="t-peso">
+    <div class="linha"><h2 id="t-peso" style="margin:0">Peso, semana a semana</h2><span class="sub num">96,9 kg hoje</span></div>
+    <svg class="graf peso-graf" viewBox="0 0 320 118" role="img" aria-label="Peso no dia de cada aplicação, da semana 1 a hoje: de 101,2 a 96,9 kg">
+      <line class="base" x1="16" y1="100.5" x2="316" y2="100.5"/>
+      <line class="dose" x1="214" y1="8" x2="214" y2="100"/>
+      <text class="dl" x="220" y="16">5 mg</text>
+      <text class="dl" x="208" y="16" text-anchor="end" style="fill:var(--suave);font-weight:400">2,5 mg</text>
+      <polyline class="linhad" points="30,30 76,46.5 122,58.5 168,69 214,78 260,87"/>
+      <polyline class="linhad" style="stroke-dasharray:3 4" points="260,87 306,94.5"/>
+      <circle class="ponto" cx="30" cy="30" r="4.5"/><circle class="ponto" cx="76" cy="46.5" r="4.5"/><circle class="ponto" cx="122" cy="58.5" r="4.5"/><circle class="ponto" cx="168" cy="69" r="4.5"/><circle class="ponto" cx="214" cy="78" r="4.5"/><circle class="ponto" cx="260" cy="87" r="4.5"/>
+      <circle cx="306" cy="94.5" r="4.5" fill="var(--cartao)" stroke="var(--dado)" stroke-width="2"/>
+      <text class="d" x="40" y="26">101,2</text>
+      <text class="d" x="248" y="76" text-anchor="end">97,4</text>
+      <text x="30" y="115" text-anchor="middle">S1</text><text x="76" y="115" text-anchor="middle">S2</text><text x="122" y="115" text-anchor="middle">S3</text><text x="168" y="115" text-anchor="middle">S4</text><text x="214" y="115" text-anchor="middle">S5</text><text x="260" y="115" text-anchor="middle">S6</text><text class="forte" x="306" y="115" text-anchor="middle">hoje</text>
+    </svg>
+    <p style="margin:10px 0 0">Média das últimas 4 semanas: <b class="num">0,7 kg por semana</b>.</p>
+    <p class="sub" style="margin:4px 0 0">Perder peso muito rápido aumenta a chance de pedra na vesícula. O ritmo certo para você é o médico quem combina. <span class="mini">Fonte: bula do Mounjaro (Anvisa).</span></p>
+  </section>
+
+  <h2 style="margin:20px 0 4px">Dia a dia</h2>
+  <div class="leg" style="margin:0 0 8px">
+    <span><svg viewBox="0 0 16 16" aria-hidden="true"><circle class="c" cx="8" cy="8" r="6"/></svg>comeu tudo</span>
+    <span><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path class="c" d="M8 2a6 6 0 0 1 0 12z"/></svg>metade ou pouco</span>
+    <span><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6"/></svg>nada ou sem marcar</span>
+  </div>
+
+  <ol class="linha-tempo">
+    <li class="dia ap">
+      <div class="data"><b>17</b><span>ter</span></div>
+      <div class="cartao">
+        <div class="fato ap"><svg class="ic p" aria-hidden="true"><use href="#i-caneta"/></svg>Aplicação 5 mg · coxa dir.</div>
+        <div class="fato"><span class="rot">Peso</span><span class="num">97,4 kg</span></div>
+        <div class="fato"><span class="rot">Refeições</span><svg class="refs" viewBox="0 0 92 16" aria-hidden="true"><circle class="c" cx="8" cy="8" r="6"/><circle class="c" cx="27" cy="8" r="6"/><circle class="c" cx="46" cy="8" r="6"/><circle cx="65" cy="8" r="6"/><path class="c" d="M65 2a6 6 0 0 1 0 12z"/><circle class="c" cx="84" cy="8" r="6"/></svg><span class="sub">88 g</span></div>
+        <div class="fato"><span class="rot">Como foi</span>bem</div>
+      </div>
+    </li>
+    <li class="dia">
+      <div class="data"><b>18</b><span>qua</span></div>
+      <div class="cartao">
+        <div class="fato"><span class="rot">Enjoo</span><span class="enjoo" aria-hidden="true"><i class="on"></i><i class="on"></i><i></i></span>forte de manhã</div>
+        <div class="fato"><span class="rot">Refeições</span><svg class="refs" viewBox="0 0 92 16" aria-hidden="true"><circle class="c" cx="8" cy="8" r="6"/><circle cx="27" cy="8" r="6"/><path class="c" d="M27 2a6 6 0 0 1 0 12z"/><circle cx="46" cy="8" r="6"/><path class="c" d="M46 2a6 6 0 0 1 0 12z"/><circle class="c" cx="65" cy="8" r="6"/><circle cx="84" cy="8" r="6"/></svg><span class="sub">64 g</span></div>
+        <div class="fato"><span class="rot">Cardápio</span>dia de enjoo</div>
+      </div>
+    </li>
+    <li class="dia">
+      <div class="data"><b>19</b><span>qui</span></div>
+      <div class="cartao">
+        <div class="fato"><span class="rot">Enjoo</span><span class="enjoo" aria-hidden="true"><i class="on"></i><i></i><i></i></span>leve</div>
+        <div class="fato"><span class="rot">Refeições</span><svg class="refs" viewBox="0 0 92 16" aria-hidden="true"><circle class="c" cx="8" cy="8" r="6"/><circle class="c" cx="27" cy="8" r="6"/><circle class="c" cx="46" cy="8" r="6"/><circle cx="65" cy="8" r="6"/><path class="c" d="M65 2a6 6 0 0 1 0 12z"/><circle class="c" cx="84" cy="8" r="6"/></svg><span class="sub">82 g</span></div>
+        <div class="fato"><span class="rot">Sintomas</span>intestino preso</div>
+        <div class="fato"><span class="rot">Movimento</span>caminhada 20 min</div>
+      </div>
+    </li>
+    <li class="dia hoje">
+      <div class="data"><b>20</b><span>sex</span></div>
+      <div class="cartao">
+        <div class="fato" style="font-weight:600">Hoje<span class="marca-hoje">em andamento</span></div>
+        <div class="fato"><span class="rot">Enjoo</span><span class="enjoo" aria-hidden="true"><i class="on"></i><i></i><i></i></span>leve</div>
+        <div class="fato"><span class="rot">Peso</span><span class="num">96,9 kg</span></div>
+        <div class="fato"><span class="rot">Refeições</span><svg class="refs" viewBox="0 0 92 16" aria-hidden="true"><circle class="c" cx="8" cy="8" r="6"/><circle class="c" cx="27" cy="8" r="6"/><circle cx="46" cy="8" r="6"/><circle cx="65" cy="8" r="6"/><circle cx="84" cy="8" r="6"/></svg><span class="sub">2 de 5</span></div>
+      </div>
+    </li>
+    <li class="dia futuro"><div class="data"><b>21</b><span>sáb</span></div><div class="cartao sub">Ainda não chegou.</div></li>
+    <li class="dia futuro"><div class="data"><b>22</b><span>dom</span></div><div class="cartao sub">Ainda não chegou.</div></li>
+    <li class="dia futuro"><div class="data"><b>23</b><span>seg</span></div><div class="cartao sub">Véspera da aplicação: deixe a caneta à mão.</div></li>
+  </ol>
+
+  <section class="cartao suave" aria-labelledby="t-res">
+    <h2 id="t-res">Resumo para a consulta</h2>
+    <p style="margin:0">3 dias com enjoo, 1 com cardápio de enjoo. Proteína média de 78 g nos dias completos. Nenhum sinal de alerta registrado.</p>
+    <div class="botoes"><a class="botao" href="#">Montar relatório</a></div>
+  </section>
+</main>
+<nav class="abas" aria-label="Seções"><a href="#"><span class="pilula"><svg class="ic" aria-hidden="true"><use href="#i-hoje"/></svg></span>Hoje</a><a href="#" class="ativa" aria-current="page"><span class="pilula"><svg class="ic" aria-hidden="true"><use href="#i-semana"/></svg></span>Semana</a><a href="#"><span class="pilula"><svg class="ic" aria-hidden="true"><use href="#i-comer"/></svg></span>Comer</a><a href="#"><span class="pilula"><svg class="ic" aria-hidden="true"><use href="#i-mover"/></svg></span>Mover</a><a href="#"><span class="pilula"><svg class="ic" aria-hidden="true"><use href="#i-guia"/></svg></span>Guia</a></nav>
+</body>
+</html>

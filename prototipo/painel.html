@@ -1,0 +1,268 @@
+<!doctype html>
+<!-- Gerado por fonte/montar.js a partir de fonte/painel.html. Edite a fonte. -->
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Painel · protótipo</title>
+<style>
+/* Protótipo da identidade "Ciclo de sete". Tudo local: fontes do sistema, ícones em SVG desenhados à mão, sem nada de fora.
+   CSS até 2022 (WebView 113): variáveis, grid, flex, gap, aspect-ratio. Sem :has(), sem nesting, sem color-mix(). */
+:root {
+  --fundo: #f6f1ea; --cartao: #fffdfa; --texto: #2b2230; --suave: #685d6b; --linha: #e6ddd4;
+  --cor: #6d3b5e; --sobre-cor: #ffffff; --cor-clara: #efe2ea;
+  --acento: #a8481f; --acento-clara: #f7e3d6;
+  --ok: #3d6f4f; --alerta: #b42318; --alerta-clara: #fbe9e7;
+  --dado: #6d3b5e; --dado-suave: #c9a9bf; --faixa: #e9dfe5; --vazio: #e6ddd4;
+  --titulo: "Noto Serif", "Droid Serif", Georgia, serif;
+  --corpo: system-ui, -apple-system, Roboto, "Segoe UI", sans-serif;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fundo: #16121a; --cartao: #211b25; --texto: #f2ebf0; --suave: #b4a8b6; --linha: #352c39;
+    --cor: #dcaacb; --sobre-cor: #2a1525; --cor-clara: #38243a;
+    --acento: #f0a57a; --acento-clara: #3d2a22;
+    --ok: #8fc8a2; --alerta: #f59a8e; --alerta-clara: #3a1f1d;
+    --dado: #dcaacb; --dado-suave: #6e4a64; --faixa: #2f2533; --vazio: #3a313e;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 16px/1.45 var(--corpo); }
+main { max-width: 520px; margin: 0 auto; padding: 4px 16px 104px; }
+h1, h2, h3 { font-family: var(--titulo); font-weight: 600; letter-spacing: -.01em; }
+h1 { font-size: 27px; line-height: 1.15; margin: 0; }
+h2 { font-size: 19px; line-height: 1.25; margin: 0 0 6px; }
+h3 { font-size: 16px; margin: 14px 0 4px; }
+p { margin: 0 0 8px; }
+.sub { color: var(--suave); font-size: 14px; }
+.mini { font-size: 13px; color: var(--suave); }
+.num { font-variant-numeric: tabular-nums; }
+.sobre { font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--suave); font-weight: 600; }
+svg.ic { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+svg.ic.p { width: 20px; height: 20px; }
+
+/* Topo: papel, sem faixa colorida. */
+.topo { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 16px; background: var(--fundo); border-bottom: 1px solid transparent; }
+.topo .marca { font-family: var(--titulo); font-size: 17px; font-weight: 600; color: var(--cor); }
+.topo .voltar { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; color: var(--cor); font-weight: 600; text-decoration: none; }
+.redondo { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid var(--linha); background: var(--cartao); color: var(--texto); }
+
+.cartao { background: var(--cartao); border: 1px solid var(--linha); border-radius: 20px; padding: 16px; margin-bottom: 14px; }
+.cartao.suave { background: var(--cor-clara); border-color: transparent; }
+.linha { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.pilha > * + * { margin-top: 10px; }
+
+button, .botao { font: inherit; font-weight: 600; min-height: 48px; min-width: 44px; padding: 10px 18px; border-radius: 999px; border: 0;
+  background: var(--cor); color: var(--sobre-cor); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+button.sec, .botao.sec { background: transparent; color: var(--cor); border: 1.5px solid var(--cor); }
+button.leve, .botao.leve { background: var(--cor-clara); color: var(--cor); }
+.botoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+
+/* Escolhas de um toque (como está, quanto comeu). */
+.escolhas { display: flex; flex-wrap: wrap; gap: 8px; }
+.escolhas span { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 14px; border-radius: 14px;
+  border: 1.5px solid var(--linha); background: var(--cartao); font-size: 15px; font-weight: 500; }
+.escolhas span.on { background: var(--cor); border-color: var(--cor); color: var(--sobre-cor); font-weight: 600; }
+.quatro { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 12px; }
+.quatro span { display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 14px; border: 1.5px solid var(--linha);
+  font-size: 14.5px; font-weight: 600; text-align: center; line-height: 1.15; padding: 4px; }
+.quatro span.on { background: var(--cor); border-color: var(--cor); color: var(--sobre-cor); }
+
+/* Faixa de sinais: sempre visível, sóbria. */
+.sinais { font-size: 15px; display: flex; gap: 12px; align-items: flex-start; border: 1.5px solid var(--alerta); background: var(--alerta-clara); }
+.sinais svg { color: var(--alerta); margin-top: 2px; }
+.sinais strong { color: var(--alerta); }
+
+/* Barra de abas com ícones próprios. */
+.abas { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; display: flex; background: var(--cartao); border-top: 1px solid var(--linha);
+  padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); }
+.abas a { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 52px; color: var(--suave); text-decoration: none; font-size: 12px; font-weight: 500; }
+.abas a .pilula { display: flex; align-items: center; justify-content: center; width: 56px; height: 30px; border-radius: 999px; }
+.abas a.ativa { color: var(--cor); font-weight: 700; }
+.abas a.ativa .pilula { background: var(--cor-clara); }
+
+/* Gráficos */
+svg.graf { display: block; width: 100%; height: auto; overflow: visible; }
+svg.graf text { fill: var(--suave); font: 11px var(--corpo); }
+svg.graf .faixa { fill: var(--faixa); }
+svg.graf .barra { fill: var(--dado); }
+svg.graf .parcial { fill: url(#hachura); stroke: var(--dado); stroke-width: 1.5; }
+svg.graf .base { stroke: var(--linha); stroke-width: 1; }
+svg.graf .media { stroke: var(--texto); stroke-width: 1.5; stroke-dasharray: 4 4; }
+svg.graf .linhad { fill: none; stroke: var(--dado); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+svg.graf .ponto { fill: var(--dado); stroke: var(--cartao); stroke-width: 2; }
+svg.graf .forte { fill: var(--texto); font-weight: 600; }
+.legenda { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; font-size: 13px; color: var(--suave); }
+.legenda i { display: inline-block; width: 14px; height: 10px; border-radius: 3px; vertical-align: -1px; margin-right: 5px; }
+</style>
+<style>
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; padding: 4px; border-radius: 999px; background: var(--cor-clara); margin: 14px 0; }
+.seg a { display: flex; align-items: center; justify-content: center; min-height: 44px; border-radius: 999px; color: var(--cor); text-decoration: none; font-weight: 600; font-size: 15px; }
+.seg a.on { background: var(--cartao); color: var(--texto); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.medida { margin-top: 14px; }
+.medida:first-of-type { margin-top: 10px; }
+.medida .val { font: 600 30px/1.1 var(--titulo); font-variant-numeric: tabular-nums; }
+.medida .val small { font: 500 15px var(--corpo); color: var(--suave); }
+.trilho { position: relative; height: 14px; border-radius: 999px; background: var(--vazio); margin-top: 8px; overflow: hidden; }
+.trilho .f { position: absolute; top: 0; bottom: 0; background: var(--dado-suave); border-left: 2px solid var(--suave); border-right: 2px solid var(--suave); }
+.trilho .v { position: absolute; top: 3px; bottom: 3px; left: 3px; border-radius: 999px; background: var(--dado); }
+.escala { position: relative; height: 16px; font-size: 12px; color: var(--suave); margin-top: 3px; font-variant-numeric: tabular-nums; }
+.escala span { position: absolute; transform: translateX(-50%); }
+.escala span:first-child { transform: none; }
+.escala span:last-child { transform: translateX(-100%); }
+.tres { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 4px; }
+.tres div { background: var(--fundo); border-radius: 14px; padding: 10px; }
+.tres b { display: block; font: 600 21px/1.15 var(--titulo); font-variant-numeric: tabular-nums; }
+.tres span { font-size: 12.5px; color: var(--suave); line-height: 1.25; display: block; margin-top: 2px; }
+svg.cal rect.fora { fill: none; }
+svg.cal rect.na { fill: var(--dado); }
+svg.cal rect.abaixo { fill: var(--dado-suave); }
+svg.cal rect.sem { fill: none; stroke: var(--vazio); stroke-width: 1.5; stroke-dasharray: 3 3; }
+svg.cal rect.hojec { fill: url(#hachura2); stroke: var(--dado); stroke-width: 1.5; }
+svg.cal text { font: 600 13px var(--corpo); fill: var(--texto); }
+svg.cal text.na { fill: var(--sobre-cor); }
+svg.cal text.sem { fill: var(--suave); font-weight: 400; }
+.cabcal { display: grid; grid-template-columns: repeat(7, 1fr); font-size: 12px; color: var(--suave); text-align: center; margin: 10px 0 4px; }
+details.tabela { margin-top: 10px; border-top: 1px solid var(--linha); }
+details.tabela summary { min-height: 44px; display: flex; align-items: center; font-weight: 600; color: var(--cor); cursor: pointer; }
+.nota { font-size: 14px; color: var(--suave); border-left: 3px solid var(--dado-suave); padding: 2px 0 2px 10px; margin: 12px 0 0; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-hoje" viewBox="0 0 24 24"><path d="M3 18.5h18M6.5 18.5a5.5 5.5 0 0 1 11 0M12 6v2.5M5.3 10.3l1.6 1.6M18.7 10.3l-1.6 1.6M3.5 15h1.5M19 15h1.5"/></symbol>
+  <symbol id="i-semana" viewBox="0 0 24 24"><circle cx="12" cy="4" r="1.7" fill="currentColor"/><circle cx="18.25" cy="7.01" r="1.5"/><circle cx="19.8" cy="13.78" r="1.5"/><circle cx="15.47" cy="19.21" r="1.5"/><circle cx="8.53" cy="19.21" r="1.5"/><circle cx="4.2" cy="13.78" r="1.5"/><circle cx="5.75" cy="7.01" r="1.5"/></symbol>
+  <symbol id="i-comer" viewBox="0 0 24 24"><path d="M3.5 12.5h17a8.5 8 0 0 1-17 0zM8 20.5h8M9.5 3.5c-1.2 1.2 1.2 2.3 0 3.5M14.5 3.5c-1.2 1.2 1.2 2.3 0 3.5"/></symbol>
+  <symbol id="i-mover" viewBox="0 0 24 24"><circle cx="13.5" cy="4.3" r="1.8"/><path d="M12.8 8.2 10.6 14l3.4 2.6V21M10.6 14 8.2 20.8M12.8 8.2l3.2 3 2.6-.4M12.8 8.2 9.2 9.8l-1.4 3"/></symbol>
+  <symbol id="i-guia" viewBox="0 0 24 24"><path d="M3 5.5c2.6-1 6-1 9 1 3-2 6.4-2 9-1V19c-2.6-1-6-1-9 1-3-2-6.4-2-9-1zM12 6.5V20"/></symbol>
+  <symbol id="i-perfil" viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20c1.2-3.6 4-5.3 7.5-5.3s6.3 1.7 7.5 5.3"/></symbol>
+  <symbol id="i-caneta" viewBox="0 0 24 24"><path d="M14.5 4.5l5 5M16 3l5 5M17 7 7.5 16.5l-3 1 1-3L15 5M4.5 19.5 3 21"/></symbol>
+  <symbol id="i-peso" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M8 9.5a5 5 0 0 1 8 0M12 9.5l1.4-2"/></symbol>
+  <symbol id="i-gota" viewBox="0 0 24 24"><path d="M12 3.5s-6 6.6-6 10.8a6 6 0 0 0 12 0C18 10.1 12 3.5 12 3.5z"/></symbol>
+  <symbol id="i-alerta" viewBox="0 0 24 24"><path d="M12 3.8 21.2 19.5H2.8zM12 10v4.2M12 16.9v.1"/></symbol>
+  <symbol id="i-seta" viewBox="0 0 24 24"><path d="M9 5.5 15.5 12 9 18.5"/></symbol>
+  <symbol id="i-volta" viewBox="0 0 24 24"><path d="M15 5.5 8.5 12l6.5 6.5"/></symbol>
+  <symbol id="i-relogio" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-conversa" viewBox="0 0 24 24"><path d="M4 5.5h16v10H10l-4.5 3.5v-3.5H4z"/></symbol>
+</svg>
+
+<header class="topo">
+  <a class="voltar" href="#"><svg class="ic p" aria-hidden="true"><use href="#i-volta"/></svg>Hoje</a>
+  <span class="mini">estimativa do que você marcou</span>
+</header>
+<main>
+  <h1>Seu painel</h1>
+  <p class="sub" style="margin:4px 0 0">Calorias e proteína. A faixa sombreada é a meta combinada no Perfil.</p>
+  <nav class="seg" aria-label="Período"><a href="#hoje" class="on">Hoje</a><a href="#d7">7 dias</a><a href="#d30">30 dias</a></nav>
+
+  <section class="cartao" id="hoje" aria-labelledby="t-hoje">
+    <div class="linha"><h2 id="t-hoje" style="margin:0">Hoje, até agora</h2><span class="mini">15h</span></div>
+    <div class="medida">
+      <div class="linha"><span class="sub">Proteína</span><span class="val">52 <small>de 80 a 110 g</small></span></div>
+      <div class="trilho" role="img" aria-label="52 gramas; faixa de 80 a 110"><span class="f" style="left:61.5%;width:23.1%"></span><span class="v" style="width:40%"></span></div>
+      <div class="escala"><span style="left:0">0</span><span style="left:61.5%">80</span><span style="left:84.6%">110</span><span style="left:100%">g</span></div>
+    </div>
+    <div class="medida">
+      <div class="linha"><span class="sub">Calorias</span><span class="val">860 <small>de 1.300 a 1.700</small></span></div>
+      <div class="trilho" role="img" aria-label="860 quilocalorias; faixa de 1.300 a 1.700"><span class="f" style="left:65%;width:20%"></span><span class="v" style="width:43%"></span></div>
+      <div class="escala"><span style="left:0">0</span><span style="left:65%">1.300</span><span style="left:85%">1.700</span><span style="left:100%">kcal</span></div>
+    </div>
+    <p class="nota">Faltam o lanche e o jantar do plano: juntos, cerca de 30 g de proteína.</p>
+  </section>
+
+  <section class="cartao" id="d7" aria-labelledby="t-7">
+    <h2 id="t-7">Últimos 7 dias</h2>
+    <div class="tres">
+      <div><b>82 g</b><span>proteína, média</span></div>
+      <div><b>1.398</b><span>calorias, média</span></div>
+      <div><b>4 de 6</b><span>dias na faixa de proteína</span></div>
+    </div>
+    <h3>Proteína por dia</h3>
+    <svg class="graf" viewBox="0 30 320 146" role="img" aria-label="Proteína por dia, de sábado a hoje">
+      <defs><pattern id="hachura" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="var(--cartao)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--dado)" stroke-width="2.5"/></pattern></defs>
+      <rect class="faixa" x="34" y="40" width="282" height="30"/>
+      <text x="28" y="44" text-anchor="end">110</text><text x="28" y="74" text-anchor="end">80</text><text x="28" y="154" text-anchor="end">0</text>
+      <line class="base" x1="34" y1="150.5" x2="316" y2="150.5"/>
+      <path class="barra" d="M42.1 150V68Q42.1 64 46.1 64H62.1Q66.1 64 66.1 68V150Z"/>
+      <path class="barra" d="M82.4 150V76Q82.4 72 86.4 72H102.4Q106.4 72 106.4 76V150Z"/>
+      <path class="barra" d="M122.7 150V63Q122.7 59 126.7 59H142.7Q146.7 59 146.7 63V150Z"/>
+      <path class="barra" d="M163 150V66Q163 62 167 62H183.0Q187.0 62 187.0 66V150Z"/>
+      <path class="barra" d="M203.3 150V90Q203.3 86 207.3 86H223.3Q227.3 86 227.3 90V150Z"/>
+      <path class="barra" d="M243.6 150V72Q243.6 68 247.6 68H263.6Q267.6 68 267.6 72V150Z"/>
+      <path class="parcial" d="M283.9 150V102Q283.9 98 287.9 98H303.9Q307.9 98 307.9 102V150Z"/>
+      <line class="media" x1="34" y1="68" x2="276" y2="68"/>
+      <text x="54.1" y="168" text-anchor="middle">sáb</text><text x="94.4" y="168" text-anchor="middle">dom</text><text x="134.7" y="168" text-anchor="middle">seg</text><text x="175" y="168" text-anchor="middle">ter</text><text x="215.3" y="168" text-anchor="middle">qua</text><text x="255.6" y="168" text-anchor="middle">qui</text><text class="forte" x="295.9" y="168" text-anchor="middle">hoje</text>
+      <text class="forte" x="295.9" y="92" text-anchor="middle">52</text>
+      <text class="forte" x="215.3" y="80" text-anchor="middle">64</text>
+    </svg>
+    <div class="legenda"><span><i style="background:var(--faixa);border:1px solid var(--suave)"></i>faixa da meta</span><span><i style="background:none;border-top:2px dashed var(--texto);border-radius:0;height:0;vertical-align:3px"></i>média 82 g</span><span><i style="background:repeating-linear-gradient(45deg,var(--dado) 0 2px,transparent 2px 5px);border:1px solid var(--dado)"></i>hoje, em andamento</span></div>
+
+    <h3 style="margin-top:20px">Calorias por dia</h3>
+    <svg class="graf" viewBox="0 42 320 134" role="img" aria-label="Calorias por dia, de sábado a hoje">
+      <rect class="faixa" x="34" y="52.5" width="282" height="43.3"/>
+      <text x="28" y="56.5" text-anchor="end">1.700</text><text x="28" y="99.8" text-anchor="end">1.300</text><text x="28" y="132.3" text-anchor="end">1.000</text>
+      <line class="base" x1="34" y1="150.5" x2="316" y2="150.5"/>
+      <polyline class="linhad" points="54.1,72.0 94.4,86.1 134.7,62.3 175.0,79.6 215.3,119.7 255.6,91.5"/>
+      <polyline class="linhad" style="stroke-dasharray:3 4" points="255.6,91.5 295.9,143.5"/>
+      <circle class="ponto" cx="54.1" cy="72" r="4.5"/><circle class="ponto" cx="94.4" cy="86.1" r="4.5"/><circle class="ponto" cx="134.7" cy="62.3" r="4.5"/><circle class="ponto" cx="175" cy="79.6" r="4.5"/><circle class="ponto" cx="215.3" cy="119.7" r="4.5"/><circle class="ponto" cx="255.6" cy="91.5" r="4.5"/>
+      <circle cx="295.9" cy="143.5" r="4.5" fill="var(--cartao)" stroke="var(--dado)" stroke-width="2"/>
+      <text class="forte" x="215.3" y="138" text-anchor="middle">1.080</text>
+      <text x="54.1" y="168" text-anchor="middle">sáb</text><text x="94.4" y="168" text-anchor="middle">dom</text><text x="134.7" y="168" text-anchor="middle">seg</text><text x="175" y="168" text-anchor="middle">ter</text><text x="215.3" y="168" text-anchor="middle">qua</text><text x="255.6" y="168" text-anchor="middle">qui</text><text class="forte" x="295.9" y="168" text-anchor="middle">hoje</text>
+    </svg>
+    <p class="nota">Quarta, dia seguinte à aplicação, teve menos comida e mais enjoo. Isso costuma acontecer; se virar vários dias seguidos, é assunto para o médico.</p>
+    <details class="tabela"><summary>Ver como tabela</summary><p class="sub">(No app: tabela com dia, proteína e calorias.)</p></details>
+  </section>
+
+  <section class="cartao" id="d30" aria-labelledby="t-30">
+    <h2 id="t-30">Últimos 30 dias</h2>
+    <p style="margin:0"><b class="num">19 de 27</b> dias com registro ficaram na faixa de proteína.</p>
+    <div class="cabcal" aria-hidden="true"><span>sáb</span><span>dom</span><span>seg</span><span>ter</span><span>qua</span><span>qui</span><span>sex</span></div>
+    <svg class="cal graf" viewBox="0 0 308 200" role="img" aria-label="Calendário de 22 de outubro a 20 de novembro">
+      <defs><pattern id="hachura2" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" fill="var(--cartao)"/><line x1="0" y1="0" x2="0" y2="6" stroke="var(--dado-suave)" stroke-width="3"/></pattern></defs>
+      <rect class="fora" x="2" y="2" width="40" height="36" rx="8"/><rect class="fora" x="46" y="2" width="40" height="36" rx="8"/><rect class="fora" x="90" y="2" width="40" height="36" rx="8"/><rect class="fora" x="134" y="2" width="40" height="36" rx="8"/><rect class="fora" x="178" y="2" width="40" height="36" rx="8"/><rect class="abaixo" x="222" y="2" width="40" height="36" rx="8"><title>22/10: 75 g</title></rect><text class="abaixo" x="242" y="25" text-anchor="middle">22</text>
+      <rect class="abaixo" x="266" y="2" width="40" height="36" rx="8"><title>23/10: 72 g</title></rect><text class="abaixo" x="286" y="25" text-anchor="middle">23</text>
+      <rect class="na" x="2" y="42" width="40" height="36" rx="8"><title>24/10: 80 g</title></rect><text class="na" x="22" y="65" text-anchor="middle">24</text>
+      <rect class="na" x="46" y="42" width="40" height="36" rx="8"><title>25/10: 85 g</title></rect><text class="na" x="66" y="65" text-anchor="middle">25</text>
+      <rect class="sem" x="90" y="42" width="40" height="36" rx="8"><title>26/10: sem registro</title></rect><text class="sem" x="110" y="65" text-anchor="middle">26</text>
+      <rect class="na" x="134" y="42" width="40" height="36" rx="8"><title>27/10: 90 g</title></rect><text class="na" x="154" y="65" text-anchor="middle">27</text>
+      <rect class="na" x="178" y="42" width="40" height="36" rx="8"><title>28/10: 88 g</title></rect><text class="na" x="198" y="65" text-anchor="middle">28</text>
+      <rect class="abaixo" x="222" y="42" width="40" height="36" rx="8"><title>29/10: 79 g</title></rect><text class="abaixo" x="242" y="65" text-anchor="middle">29</text>
+      <rect class="na" x="266" y="42" width="40" height="36" rx="8"><title>30/10: 83 g</title></rect><text class="na" x="286" y="65" text-anchor="middle">30</text>
+      <rect class="na" x="2" y="82" width="40" height="36" rx="8"><title>31/10: 91 g</title></rect><text class="na" x="22" y="105" text-anchor="middle">31</text>
+      <rect class="abaixo" x="46" y="82" width="40" height="36" rx="8"><title>1/11: 58 g</title></rect><text class="abaixo" x="66" y="105" text-anchor="middle">1</text>
+      <rect class="abaixo" x="90" y="82" width="40" height="36" rx="8"><title>2/11: 62 g</title></rect><text class="abaixo" x="110" y="105" text-anchor="middle">2</text>
+      <rect class="na" x="134" y="82" width="40" height="36" rx="8"><title>3/11: 84 g</title></rect><text class="na" x="154" y="105" text-anchor="middle">3</text>
+      <rect class="na" x="178" y="82" width="40" height="36" rx="8"><title>4/11: 87 g</title></rect><text class="na" x="198" y="105" text-anchor="middle">4</text>
+      <rect class="na" x="222" y="82" width="40" height="36" rx="8"><title>5/11: 93 g</title></rect><text class="na" x="242" y="105" text-anchor="middle">5</text>
+      <rect class="na" x="266" y="82" width="40" height="36" rx="8"><title>6/11: 81 g</title></rect><text class="na" x="286" y="105" text-anchor="middle">6</text>
+      <rect class="abaixo" x="2" y="122" width="40" height="36" rx="8"><title>7/11: 76 g</title></rect><text class="abaixo" x="22" y="145" text-anchor="middle">7</text>
+      <rect class="na" x="46" y="122" width="40" height="36" rx="8"><title>8/11: 89 g</title></rect><text class="na" x="66" y="145" text-anchor="middle">8</text>
+      <rect class="na" x="90" y="122" width="40" height="36" rx="8"><title>9/11: 92 g</title></rect><text class="na" x="110" y="145" text-anchor="middle">9</text>
+      <rect class="sem" x="134" y="122" width="40" height="36" rx="8"><title>10/11: sem registro</title></rect><text class="sem" x="154" y="145" text-anchor="middle">10</text>
+      <rect class="na" x="178" y="122" width="40" height="36" rx="8"><title>11/11: 85 g</title></rect><text class="na" x="198" y="145" text-anchor="middle">11</text>
+      <rect class="na" x="222" y="122" width="40" height="36" rx="8"><title>12/11: 82 g</title></rect><text class="na" x="242" y="145" text-anchor="middle">12</text>
+      <rect class="na" x="266" y="122" width="40" height="36" rx="8"><title>13/11: 88 g</title></rect><text class="na" x="286" y="145" text-anchor="middle">13</text>
+      <rect class="na" x="2" y="162" width="40" height="36" rx="8"><title>14/11: 86 g</title></rect><text class="na" x="22" y="185" text-anchor="middle">14</text>
+      <rect class="abaixo" x="46" y="162" width="40" height="36" rx="8"><title>15/11: 78 g</title></rect><text class="abaixo" x="66" y="185" text-anchor="middle">15</text>
+      <rect class="na" x="90" y="162" width="40" height="36" rx="8"><title>16/11: 91 g</title></rect><text class="na" x="110" y="185" text-anchor="middle">16</text>
+      <rect class="na" x="134" y="162" width="40" height="36" rx="8"><title>17/11: 88 g</title></rect><text class="na" x="154" y="185" text-anchor="middle">17</text>
+      <rect class="abaixo" x="178" y="162" width="40" height="36" rx="8"><title>18/11: 64 g</title></rect><text class="abaixo" x="198" y="185" text-anchor="middle">18</text>
+      <rect class="na" x="222" y="162" width="40" height="36" rx="8"><title>19/11: 82 g</title></rect><text class="na" x="242" y="185" text-anchor="middle">19</text>
+      <rect class="hojec" x="266" y="162" width="40" height="36" rx="8"><title>20/11: 52 g</title></rect><text class="hojec" x="286" y="185" text-anchor="middle">20</text>
+      
+    </svg>
+    <div class="legenda"><span><i style="background:var(--dado)"></i>na faixa</span><span><i style="background:var(--dado-suave)"></i>abaixo</span><span><i style="border:1.5px dashed var(--vazio)"></i>sem registro</span></div>
+    <h3 style="margin-top:18px">Média por semana</h3>
+    <div class="tres" style="grid-template-columns:1fr 1fr">
+      <div><b>80 → 82 g</b><span>proteína, da 1ª à 4ª semana</span></div>
+      <div><b>1.469 → 1.419</b><span>calorias, da 1ª à 4ª semana</span></div>
+    </div>
+  </section>
+</main>
+<nav class="abas" aria-label="Seções"><a href="#" class="ativa" aria-current="page"><span class="pilula"><svg class="ic" aria-hidden="true"><use href="#i-hoje"/></svg></span>Hoje</a><a href="#"><span class="pilula"><svg class="ic" aria-hidden="true"><use href="#i-semana"/></svg></span>Semana</a><a href="#"><span class="pilula"><svg class="ic" aria-hidden="true"><use href="#i-comer"/></svg></span>Comer</a><a href="#"><span class="pilula"><svg class="ic" aria-hidden="true"><use href="#i-mover"/></svg></span>Mover</a><a href="#"><span class="pilula"><svg class="ic" aria-hidden="true"><use href="#i-guia"/></svg></span>Guia</a></nav>
+</body>
+</html>

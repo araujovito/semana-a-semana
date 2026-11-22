@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Caminhos · protótipo</title>
+<!--CSS-->
+<style>
+.base-comum { margin-top: 14px; }
+.base-comum ul { margin: 8px 0 0; padding: 0; list-style: none; }
+.base-comum li { display: flex; gap: 10px; padding: 5px 0; font-size: 15px; }
+.base-comum li::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--cor); margin-top: 8px; }
+.caminho { position: relative; padding: 0; overflow: hidden; }
+.caminho .cab { display: flex; gap: 14px; align-items: center; padding: 16px 16px 0; }
+.caminho .cab svg { width: 60px; height: 60px; flex: none; }
+.caminho .corpo { padding: 4px 16px 16px; }
+.caminho.escolhido { border: 2px solid var(--cor); }
+.selo { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: var(--sobre-cor); background: var(--cor);
+  border-radius: 999px; padding: 3px 10px; margin-bottom: 4px; }
+.serve { margin: 10px 0 0; font-size: 15px; }
+.pc { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 12px; }
+.pc div { background: var(--fundo); border-radius: 14px; padding: 10px 12px; }
+.pc h3 { margin: 0 0 4px; font: 700 12.5px var(--corpo); letter-spacing: .06em; text-transform: uppercase; color: var(--suave); }
+.pc ul { margin: 0; padding-left: 16px; font-size: 14px; }
+.pc li + li { margin-top: 4px; }
+.exemplo { margin-top: 12px; font-size: 14.5px; }
+.exemplo b { color: var(--cor); }
+.prato .p { fill: var(--cartao); stroke: var(--dado); stroke-width: 2; }
+.prato .a { fill: var(--dado); }
+.prato .b { fill: var(--dado-suave); }
+.prato .c { fill: var(--acento); }
+.fonte { font-size: 12.5px; color: var(--suave); margin-top: 10px; }
+</style>
+</head>
+<body>
+<!--ICONES-->
+<header class="topo">
+  <span class="marca">Semana a Semana</span>
+  <a class="redondo" href="#" aria-label="Perfil e metas"><svg class="ic p" aria-hidden="true"><use href="#i-perfil"/></svg></a>
+</header>
+<main>
+  <p class="sobre" style="margin:6px 0 4px">Comer</p>
+  <h1>Caminhos para comer</h1>
+  <p class="sub" style="margin:6px 0 0">Três jeitos de montar a semana. Nenhum é obrigatório: você escolhe um para começar e pode trocar quando quiser. O cardápio do app segue o caminho escolhido.</p>
+
+  <section class="cartao suave base-comum" aria-labelledby="t-base">
+    <h2 id="t-base">O que vale em todos</h2>
+    <p class="sub" style="margin:0">Pensado para a vesícula e o fígado.</p>
+    <ul>
+      <li>Refeições menores, sem muita gordura de uma vez.</li>
+      <li>Proteína em todas as refeições.</li>
+      <li>Pouco açúcar, refrigerante e álcool.</li>
+      <li>Perda de peso sem pressa: o ritmo é combinado com o médico.</li>
+    </ul>
+    <p class="fonte">Fontes: anotadas no app, item por item.</p>
+  </section>
+
+  <article class="cartao caminho" aria-labelledby="c1">
+    <div class="cab">
+      <svg class="prato" viewBox="0 0 60 60" aria-hidden="true"><circle class="p" cx="30" cy="30" r="26"/><path class="a" d="M14 32c6-8 18-9 26-3l5-4v12l-5-4c-8 6-20 5-26-1z"/><circle class="b" cx="22" cy="18" r="4"/><circle class="b" cx="30" cy="15" r="3.5"/><circle class="c" cx="38" cy="44" r="3"/><circle class="b" cx="28" cy="45" r="4"/></svg>
+      <div><h2 id="c1" style="margin:0">Mediterrâneo adaptado</h2><div class="sub">peixe, legumes, grãos, azeite em fio</div></div>
+    </div>
+    <div class="corpo">
+      <p class="serve"><b>Para quem:</b> gosta de variedade e de cozinhar um pouco, e quer um jeito de comer para a vida toda.</p>
+      <div class="pc">
+        <div><h3>A favor</h3><ul><li>Um dos mais estudados para gordura no fígado</li><li>Comida de verdade, sem cortar grupos</li></ul></div>
+        <div><h3>Atenção</h3><ul><li>Azeite e castanhas em porções pequenas, por causa da vesícula</li><li>Peixe pesa no orçamento</li></ul></div>
+      </div>
+      <p class="exemplo"><b>Um almoço assim:</b> sardinha assada, grão-de-bico, salada de tomate e pepino.</p>
+      <div class="botoes"><button class="sec">Escolher este caminho</button></div>
+    </div>
+  </article>
+
+  <article class="cartao caminho escolhido" aria-labelledby="c2">
+    <div class="cab">
+      <svg class="prato" viewBox="0 0 60 60" aria-hidden="true"><circle class="p" cx="30" cy="30" r="26"/><path class="b" d="M30 6a24 24 0 0 0 0 48z"/><path class="a" d="M31.5 6a24 24 0 0 1 22.5 22.5H31.5z"/><path class="c" d="M31.5 31.5H54A24 24 0 0 1 31.5 54z"/></svg>
+      <div><span class="selo">Seu caminho atual</span><h2 id="c2" style="margin:0">Prato dividido</h2><div class="sub">metade legumes, ¼ proteína, ¼ arroz, feijão ou raiz</div></div>
+    </div>
+    <div class="corpo">
+      <p class="serve"><b>Para quem:</b> não quer contar nem pesar nada e come muitas vezes fora de casa.</p>
+      <div class="pc">
+        <div><h3>A favor</h3><ul><li>Fácil de lembrar e de usar no restaurante</li><li>Prato menor combina com o apetite do tratamento</li></ul></div>
+        <div><h3>Atenção</h3><ul><li>Números menos precisos</li><li>O preparo conta: fritura e molho gorduroso pesam na vesícula</li></ul></div>
+      </div>
+      <p class="exemplo"><b>Um almoço assim:</b> frango grelhado, arroz e feijão, abobrinha e salada.</p>
+      <div class="botoes"><button>Ver a semana deste caminho</button></div>
+    </div>
+  </article>
+
+  <article class="cartao caminho" aria-labelledby="c3">
+    <div class="cab">
+      <svg class="prato" viewBox="0 0 60 60" aria-hidden="true"><circle class="p" cx="30" cy="30" r="26"/><rect class="b" x="17" y="22" width="14" height="14" rx="2"/><path d="M14 44 46 16" stroke="var(--acento)" stroke-width="3" stroke-linecap="round"/><circle class="a" cx="38" cy="38" r="7"/></svg>
+      <div><h2 id="c3" style="margin:0">Menos açúcar e farinha</h2><div class="sub">doce, pão branco e massa ficam para às vezes</div></div>
+    </div>
+    <div class="corpo">
+      <p class="serve"><b>Para quem:</b> sente que doce e pão são o ponto fraco, ou tem glicose alta no exame.</p>
+      <div class="pc">
+        <div><h3>A favor</h3><ul><li>Açúcar em excesso alimenta a gordura no fígado</li><li>Menos picos de fome</li></ul></div>
+        <div><h3>Atenção</h3><ul><li>Dá mais trabalho no começo</li><li>Não é cortar todo carboidrato: em dia de enjoo, pão e arroz ajudam</li></ul></div>
+      </div>
+      <p class="exemplo"><b>Um almoço assim:</b> carne moída com legumes, feijão e meia concha de arroz integral.</p>
+      <div class="botoes"><button class="sec">Escolher este caminho</button></div>
+    </div>
+  </article>
+
+  <section class="cartao" style="display:flex;gap:12px;align-items:flex-start" aria-labelledby="t-nutri">
+    <svg class="ic" aria-hidden="true" style="color:var(--cor);margin-top:2px"><use href="#i-conversa"/></svg>
+    <div>
+      <h2 id="t-nutri">Converse com sua nutricionista</h2>
+      <p style="margin:0">Leve esta comparação para a consulta. Ela pode ajustar qualquer caminho ao que você come, aos exames e à data da cirurgia.</p>
+      <div class="botoes"><a class="botao leve" href="#">Mostrar na consulta</a></div>
+    </div>
+  </section>
+</main>
+<!--ABAS:comer-->
+</body>
+</html>

@@ -1,0 +1,92 @@
+/* Protótipo da identidade "Ciclo de sete". Tudo local: fontes do sistema, ícones em SVG desenhados à mão, sem nada de fora.
+   CSS até 2022 (WebView 113): variáveis, grid, flex, gap, aspect-ratio. Sem :has(), sem nesting, sem color-mix(). */
+:root {
+  --fundo: #f6f1ea; --cartao: #fffdfa; --texto: #2b2230; --suave: #685d6b; --linha: #e6ddd4;
+  --cor: #6d3b5e; --sobre-cor: #ffffff; --cor-clara: #efe2ea;
+  --acento: #a8481f; --acento-clara: #f7e3d6;
+  --ok: #3d6f4f; --alerta: #b42318; --alerta-clara: #fbe9e7;
+  --dado: #6d3b5e; --dado-suave: #c9a9bf; --faixa: #e9dfe5; --vazio: #e6ddd4;
+  --titulo: "Noto Serif", "Droid Serif", Georgia, serif;
+  --corpo: system-ui, -apple-system, Roboto, "Segoe UI", sans-serif;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fundo: #16121a; --cartao: #211b25; --texto: #f2ebf0; --suave: #b4a8b6; --linha: #352c39;
+    --cor: #dcaacb; --sobre-cor: #2a1525; --cor-clara: #38243a;
+    --acento: #f0a57a; --acento-clara: #3d2a22;
+    --ok: #8fc8a2; --alerta: #f59a8e; --alerta-clara: #3a1f1d;
+    --dado: #dcaacb; --dado-suave: #6e4a64; --faixa: #2f2533; --vazio: #3a313e;
+  }
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 16px/1.45 var(--corpo); }
+main { max-width: 520px; margin: 0 auto; padding: 4px 16px 104px; }
+h1, h2, h3 { font-family: var(--titulo); font-weight: 600; letter-spacing: -.01em; }
+h1 { font-size: 27px; line-height: 1.15; margin: 0; }
+h2 { font-size: 19px; line-height: 1.25; margin: 0 0 6px; }
+h3 { font-size: 16px; margin: 14px 0 4px; }
+p { margin: 0 0 8px; }
+.sub { color: var(--suave); font-size: 14px; }
+.mini { font-size: 13px; color: var(--suave); }
+.num { font-variant-numeric: tabular-nums; }
+.sobre { font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--suave); font-weight: 600; }
+svg.ic { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+svg.ic.p { width: 20px; height: 20px; }
+
+/* Topo: papel, sem faixa colorida. */
+.topo { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 16px; background: var(--fundo); border-bottom: 1px solid transparent; }
+.topo .marca { font-family: var(--titulo); font-size: 17px; font-weight: 600; color: var(--cor); }
+.topo .voltar { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; color: var(--cor); font-weight: 600; text-decoration: none; }
+.redondo { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid var(--linha); background: var(--cartao); color: var(--texto); }
+
+.cartao { background: var(--cartao); border: 1px solid var(--linha); border-radius: 20px; padding: 16px; margin-bottom: 14px; }
+.cartao.suave { background: var(--cor-clara); border-color: transparent; }
+.linha { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.pilha > * + * { margin-top: 10px; }
+
+button, .botao { font: inherit; font-weight: 600; min-height: 48px; min-width: 44px; padding: 10px 18px; border-radius: 999px; border: 0;
+  background: var(--cor); color: var(--sobre-cor); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+button.sec, .botao.sec { background: transparent; color: var(--cor); border: 1.5px solid var(--cor); }
+button.leve, .botao.leve { background: var(--cor-clara); color: var(--cor); }
+.botoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+
+/* Escolhas de um toque (como está, quanto comeu). */
+.escolhas { display: flex; flex-wrap: wrap; gap: 8px; }
+.escolhas span { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 14px; border-radius: 14px;
+  border: 1.5px solid var(--linha); background: var(--cartao); font-size: 15px; font-weight: 500; }
+.escolhas span.on { background: var(--cor); border-color: var(--cor); color: var(--sobre-cor); font-weight: 600; }
+.quatro { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 12px; }
+.quatro span { display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 14px; border: 1.5px solid var(--linha);
+  font-size: 14.5px; font-weight: 600; text-align: center; line-height: 1.15; padding: 4px; }
+.quatro span.on { background: var(--cor); border-color: var(--cor); color: var(--sobre-cor); }
+
+/* Faixa de sinais: sempre visível, sóbria. */
+.sinais { font-size: 15px; display: flex; gap: 12px; align-items: flex-start; border: 1.5px solid var(--alerta); background: var(--alerta-clara); }
+.sinais svg { color: var(--alerta); margin-top: 2px; }
+.sinais strong { color: var(--alerta); }
+
+/* Barra de abas com ícones próprios. */
+.abas { position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; display: flex; background: var(--cartao); border-top: 1px solid var(--linha);
+  padding: 6px 4px calc(6px + env(safe-area-inset-bottom)); }
+.abas a { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; min-height: 52px; color: var(--suave); text-decoration: none; font-size: 12px; font-weight: 500; }
+.abas a .pilula { display: flex; align-items: center; justify-content: center; width: 56px; height: 30px; border-radius: 999px; }
+.abas a.ativa { color: var(--cor); font-weight: 700; }
+.abas a.ativa .pilula { background: var(--cor-clara); }
+
+/* Gráficos */
+svg.graf { display: block; width: 100%; height: auto; overflow: visible; }
+svg.graf text { fill: var(--suave); font: 11px var(--corpo); }
+svg.graf .faixa { fill: var(--faixa); }
+svg.graf .barra { fill: var(--dado); }
+svg.graf .parcial { fill: url(#hachura); stroke: var(--dado); stroke-width: 1.5; }
+svg.graf .base { stroke: var(--linha); stroke-width: 1; }
+svg.graf .media { stroke: var(--texto); stroke-width: 1.5; stroke-dasharray: 4 4; }
+svg.graf .linhad { fill: none; stroke: var(--dado); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+svg.graf .ponto { fill: var(--dado); stroke: var(--cartao); stroke-width: 2; }
+svg.graf .forte { fill: var(--texto); font-weight: 600; }
+.legenda { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; font-size: 13px; color: var(--suave); }
+.legenda i { display: inline-block; width: 14px; height: 10px; border-radius: 3px; vertical-align: -1px; margin-right: 5px; }
