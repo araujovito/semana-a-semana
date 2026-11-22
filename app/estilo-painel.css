@@ -15,7 +15,9 @@
 .painel-periodo .linha h2 { margin: 0; }
 .painel-chips { display: flex; gap: 6px; }
 .painel-chips button { min-height: 44px; }
-svg.painel-graf { width: 100%; height: auto; aspect-ratio: 320 / 150; display: block; margin-top: 4px; touch-action: manipulation; }
+svg.painel-graf { width: 100%; height: auto; aspect-ratio: 320 / 150; display: block; margin-top: 4px; touch-action: pan-y; }
+svg.painel-graf:focus { outline: none; }
+svg.painel-graf:focus-visible { outline: 2px solid var(--cor); outline-offset: 2px; border-radius: 4px; }
 svg.painel-graf text { fill: var(--suave); font-size: 10px; }
 svg.painel-graf line.eixo { stroke: var(--linha); }
 svg.painel-graf line.meta { stroke: var(--texto); stroke-width: 1.5; stroke-dasharray: 5 4; }
@@ -25,6 +27,7 @@ svg.painel-graf rect.coluna { fill: var(--cor); }
 svg.painel-graf rect.vazio { fill: none; stroke: var(--suave); stroke-width: 1; stroke-dasharray: 2 2; }
 svg.painel-graf g.hoje rect.coluna { fill: var(--cor); opacity: .55; }
 svg.painel-graf g.dia:hover rect.alvo, svg.painel-graf g.dia.sel rect.alvo { fill: var(--linha); opacity: .5; }
+svg.painel-graf:focus-visible g.dia.sel rect.alvo { fill: var(--cor-clara); opacity: 1; }
 .painel-leitura { margin: 8px 0 4px; font-weight: 600; min-height: 1.45em; }
 .painel-legenda { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
 .painel-legenda .leg { display: inline-block; width: 14px; height: 10px; margin-right: 4px; vertical-align: middle; border-radius: 2px; }
@@ -34,3 +37,11 @@ svg.painel-graf g.dia:hover rect.alvo, svg.painel-graf g.dia.sel rect.alvo { fil
 .painel-legenda .leg.faixa { background: var(--cor-clara); }
 
 .painel-numeros { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 8px; }
+
+/* "Ver como tabela": os números do gráfico em tabela, para leitor de tela e para quem prefere ler. */
+.painel-tabela { margin: 2px 0 6px; }
+.painel-tabela summary { min-height: 44px; display: flex; align-items: center; color: var(--cor); font-weight: 600; cursor: pointer; }
+.painel-tabela table { margin-top: 4px; }
+.painel-tabela caption { text-align: left; color: var(--suave); font-size: 13px; padding-bottom: 4px; }
+.painel-tabela th[scope=row] { color: var(--texto); font-weight: 400; font-size: inherit; text-align: left; border-top: 1px solid var(--linha); }
+.painel-tabela td { text-align: right; }

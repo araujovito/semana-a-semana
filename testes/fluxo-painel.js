@@ -54,6 +54,50 @@ function semear() {
   ok(await p.locator("svg[data-graf=prot] g.dia").count() === 30 && await p.locator("[data-ac=painelPeriodo][data-n='30'][aria-pressed=true]").count() === 1, "ao abrir de novo, o painel volta em 30 dias");
   const textos = await p.locator("#tela").textContent();
   ok(!/parab|falhou|fracass|deveria/i.test(textos), "texto sem elogio nem cobrança");
+  // 30 dias num celular de 320 px: barra fina, mas o alvo de cada dia é a coluna inteira e alto
+  await p.setViewportSize({ width: 320, height: 800 });
+  const alvos = await p.evaluate(() => { const svg = document.querySelector("svg[data-graf=prot]").getBoundingClientRect();
+    const rs = [...document.querySelectorAll("svg[data-graf=prot] rect.alvo")].map(r => r.getBoundingClientRect());
+    const barras = [...document.querySelectorAll("svg[data-graf=prot] rect.coluna")].map(r => r.getBoundingClientRect().width);
+    return { svg: [svg.left, svg.right], min: Math.min.apply(null, rs.map(r => r.height)), larg: rs.map(r => r.width), x: rs.map(r => [r.left, r.right]), barra: Math.max.apply(null, barras) }; });
+  const emenda = alvos.x.every((r, i) => i === 0 || Math.abs(r[0] - alvos.x[i - 1][1]) < 0.6);
+  ok(alvos.min >= 44, "30 dias em 320 px: alvo de cada dia com " + Math.round(alvos.min) + " px de altura (pelo menos 44)");
+  ok(emenda && alvos.x[0][0] - alvos.svg[0] < 8 && alvos.svg[1] - alvos.x[29][1] < 8 && Math.min.apply(null, alvos.larg) > alvos.barra,
+    "os alvos cobrem a coluna inteira de cada dia, emendados, mais largos que a barra (" + alvos.larg[0].toFixed(1) + " contra " + alvos.barra.toFixed(1) + " px)");
+  // arrastar o dedo troca o dia
+  const caixa = await p.locator("svg[data-graf=prot]").boundingBox();
+  const meio = i => caixa.x + alvos.x[i][0] - alvos.svg[0] + alvos.larg[i] / 2;
+  await p.evaluate(([x, y]) => { const svg = document.querySelector("svg[data-graf=prot]"); const el = document.elementFromPoint(x, y);
+    el.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, clientX: x, clientY: y, pointerType: "touch" })); }, [meio(3), caixa.y + 20]);
+  const l1 = await p.locator("[data-painel=leitura]").textContent();
+  await p.evaluate(([x, y]) => { document.elementFromPoint(x, y).dispatchEvent(new PointerEvent("pointermove", { bubbles: true, clientX: x, clientY: y, pointerType: "touch" })); }, [meio(10), caixa.y + 20]);
+  const l2 = await p.locator("[data-painel=leitura]").textContent(), esp = await p.evaluate(() => [3, 10].map(i => document.querySelectorAll("svg[data-graf=prot] g.dia")[i].dataset.ler));
+  ok(l1 === esp[0] && l2 === esp[1], "arrastar o dedo pelo gráfico vai mostrando o dia debaixo dele");
+  // teclado: o gráfico recebe foco; setas, Home e End percorrem os dias e a leitura é falada (aria-live)
+  await p.focus("svg[data-graf=prot]");
+  await p.keyboard.press("End");
+  ok(/^Hoje \(em andamento\)/.test(await p.locator("[data-painel=leitura]").textContent()), "End vai a hoje");
+  await p.keyboard.press("ArrowLeft");
+  ok((await p.locator("[data-painel=leitura]").textContent()) === await p.evaluate(() => document.querySelectorAll("svg[data-graf=prot] g.dia")[28].dataset.ler), "seta para a esquerda vai ao dia anterior");
+  await p.keyboard.press("Home");
+  ok((await p.locator("[data-painel=leitura]").textContent()) === await p.evaluate(() => document.querySelector("svg[data-graf=prot] g.dia").dataset.ler) &&
+    await p.locator("svg[data-graf=prot] g.dia.sel").count() === 1, "Home vai ao dia mais antigo e só ele fica destacado");
+  ok(await p.locator("[data-painel=leitura][aria-live=polite]").count() === 1, "a linha de leitura é aria-live");
+  const tab = await p.evaluate(() => [...document.querySelectorAll("svg.painel-graf")].map(s => s.getAttribute("tabindex") + "|" + s.getAttribute("role") + "|" + s.getAttribute("aria-label")));
+  ok(tab.length === 2 && tab.every(x => /^0\|img\|Gráfico de (proteína|calorias) por dia, 30 dias, meta de .*Setas/.test(x)), "os gráficos têm foco, papel de imagem e descrição: " + tab[0]);
+  ok((await p.locator(".painel-anel svg[role=img]").evaluateAll(xs => xs.map(x => x.getAttribute("aria-label")))).every(x => /^\d+% da meta de (proteína|calorias)$/.test(x)), "os anéis dizem o percentual ao leitor de tela");
+  // tabela equivalente a cada gráfico
+  for (const k of ["prot", "kcal"]) {
+    const linhas = await p.locator("details[data-tabela=" + k + "] tbody tr").count();
+    const lacunas = await p.locator("details[data-tabela=" + k + "] tbody td", { hasText: "sem registro" }).count();
+    ok(linhas === 30 && lacunas === SEM.length, "tabela de " + k + ": 30 dias e as mesmas " + SEM.length + " lacunas do gráfico");
+  }
+  await p.click("details[data-tabela=prot] summary");
+  const primeira = await p.locator("details[data-tabela=prot] tbody tr").first().innerText();
+  ok(/^Hoje \(em andamento\)\s+\d/.test(primeira) && primeira.indexOf(String(conta.prot)) > 0, "tabela começa por hoje com o mesmo valor do anel");
+  ok(await p.locator("details[data-tabela=prot] th[scope=col]").count() === 2 && await p.locator("details[data-tabela=prot] caption").count() === 1, "tabela com legenda e cabeçalho de coluna");
+  await t.foto("painel-2b-tabela");
+  await p.click("details[data-tabela=prot] summary");
   for (const w of [320, 430]) { await p.setViewportSize({ width: w, height: 800 }); await t.semRolagem("painel 30 dias " + w + " px"); await t.alvosDeToque("painel " + w + " px"); }
   await t.foto("painel-2-30dias");
   await t.fechar();

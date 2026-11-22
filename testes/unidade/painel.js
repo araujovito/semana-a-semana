@@ -95,3 +95,19 @@ test("período 7/30 lembrado em E.ui.painelPeriodo; valor estranho vira 7", () =
   a.v("E.ui.painelPeriodo = 12");
   assert.strictEqual(a.v("painelPeriodo()"), 7);
 });
+
+test("tabela equivalente ao gráfico: um dia por linha, lacuna escrita, hoje em andamento; discreto sem a de calorias", () => {
+  const a = abrir({ "2026-11-20": so(30), "2026-11-19": so(100) });
+  const t = a.v("painelTabela(painelSerie('" + HOJE + "', 7), 'prot', 'g', '" + HOJE + "')");
+  assert.strictEqual((t.match(/<tr><th scope="row">/g) || []).length, 7);
+  assert.match(t, /<caption>Proteína por dia \(g\)<\/caption>/);
+  assert.match(t, /^<details class="painel-tabela"[^>]*><summary>Ver proteína como tabela/);
+  assert.match(t, /Hoje \(em andamento\)<\/th><td class="num">30</);
+  assert.match(t, /quinta, 19\/11<\/th><td class="num">100</);
+  assert.strictEqual((t.match(/sem registro/g) || []).length, 5);
+  assert.strictEqual((a.v("telaPainel()").match(/data-tabela=/g) || []).length, 2);
+  a.v("E.perfil.discreto = true");
+  const d = a.v("telaPainel()");
+  assert.strictEqual((d.match(/data-tabela=/g) || []).length, 1);
+  assert.ok(d.indexOf('data-tabela="prot"') > 0);
+});
