@@ -118,17 +118,33 @@ function resolverDia(i, R) {
 /* ---------- escala das porções ---------- */
 /* Dois fatores, em vez de um só para tudo:
    - prot: multiplica as fontes de proteína (grupo proteina), para a proteína média da semana chegar à meta de proteína;
-   - energia: multiplica carboidrato, leguminosa e gordura, para a energia média chegar à meta depois de fixada a proteína.
+   - energia: multiplica carboidrato e leguminosa, para a energia média chegar à meta depois de fixada a proteína. Leguminosa
+     (feijões) só acompanha para cima: nunca fica abaixo da porção base, porque traz fibra (R12) e proteína; nos dias de pouca
+     energia quem encolhe é arroz, pão e raízes.
    Vegetais, frutas, laticínios e bebidas ficam na porção base: carregam vitaminas, minerais e cálcio com pouca energia,
    e as medidas deles são naturais (um pote, um copo, uma fruta).
    Quem decide o fator de um item é o grupo do alimento original do cardápio (o papel dele na refeição), mesmo depois de trocado.
    Piso por dia: nenhum dia planejado (segunda a domingo) fica abaixo de pisoDia kcal; se ficar, o fator de energia daquele dia sobe
    de 0,05 em 0,05 até passar do piso (no máximo até energiaTeto). O dia de enjoo é leve de propósito: não tem piso e nunca é
-   escalado para cima (fatores de no máximo 1). */
+   escalado para cima (fatores de no máximo 1).
+   Vesícula e fígado (REGRAS_CARDAPIO em app/cardapio.js; relatório empresa/relatorios/pesquisa-vesicula-figado.md):
+   - o grupo gordura (azeite, castanhas, sementes, abacate) tem fator próprio em cada refeição: acompanha o de energia, mas
+     encolhe menos que o resto do prato (GORDURA_PISO), o azeite ou óleo não passa de azeiteMaxRefeicao e a gordura da refeição
+     não passa de gordAlvoRefeicao (R3 e R4). Antes o azeite seguia o fator de energia sem limite (com 1,65, ia de 8 para 13 g);
+   - nenhuma refeição passa de kcalMaxRefeicao (R5): se o fator do dia levaria a refeição acima disso, o fator de energia daquela
+     refeição desce até caber. A energia que falta vai para as outras refeições, em geral os lanches, porque a busca de
+     calcularEscala sobe o fator do dia até a média chegar à meta. As duas contas estão em fatorDaRefeicao. */
 const ESCALA = { protMin: 0.5, protMax: 1.75, energiaMin: 0.5, energiaMax: 2, energiaTeto: 3, passo: 0.05, tolerancia: 0.07 };
 const PISO_DIA = 1200;
+/* Menor fator do grupo gordura quando o resto do prato encolhe (fator de energia abaixo de 1). Nas refeições principais desce pouco,
+   para manter a gordura que faz a vesícula esvaziar (R3); nos lanches desce mais, para o dia não passar de 35% de gordura (R4).
+   Valores escolhidos pela conferência de perfis de 1.200 a 1.950 kcal (testes/unidade/regras-cardapio.js), não por estudo. */
+const GORDURA_PISO = { principal: 0.85, lanche: 0.75 };
+/* Fator de um item pelo grupo. esc.gordura vem de fatorDaRefeicao; sem ele, a gordura segue o fator de energia. */
 function fatorDoGrupo(grupo, esc) {
-  return grupo === "proteina" ? esc.prot : (grupo === "carboidrato" || grupo === "leguminosa" || grupo === "gordura") ? esc.energia : 1;
+  if (grupo === "gordura") return esc.gordura != null ? esc.gordura : esc.energia;
+  if (grupo === "leguminosa") return Math.max(1, esc.energia);
+  return grupo === "proteina" ? esc.prot : grupo === "carboidrato" ? esc.energia : 1;
 }
 function gramasFinais(it, esc) {
   const f = fatorDoGrupo(it.papel, esc), g = porcao(it.k, it.gb, f);
@@ -138,10 +154,38 @@ function gramasFinais(it, esc) {
   const u = passoDaUnidade(it.k);
   return u ? Math.max(1, Math.floor(teto / u)) * u : teto;
 }
+function somaDaRefeicao(itens, esc, campo) { let t = 0; itens.forEach(it => { t += A[it.k][campo] * gramasFinais(it, esc) / 100; }); return t; }
+/* Escala de uma refeição a partir da escala do dia { prot, energia }. Devolve { prot, energia, gordura }, todos na grade de ESCALA.passo:
+   1. gordura: começa no fator de energia, mas não abaixo de GORDURA_PISO (principal: tipo em REGRAS_CARDAPIO.principais), para a
+      refeição não ficar sem a gordura que faz a vesícula esvaziar (R3) quando o resto do prato encolhe; desce enquanto o azeite ou
+      óleo passar de azeiteMaxRefeicao ou a gordura da refeição passar de gordAlvoRefeicao (até ESCALA.energiaMin; se a refeição já passa do alvo sem a gordura de adição, fica no mínimo);
+   2. energia: desce enquanto a refeição passar de kcalMaxRefeicao (até ESCALA.energiaMin; proteína alta pode não caber nem assim).
+   Primeiro uma estimativa linear entre o mínimo e o fator do dia, depois o acerto fino com o arredondamento real das porções. */
+function fatorDaRefeicao(itens, esc, principal) {
+  const RG = REGRAS_CARDAPIO, fMin = ESCALA.energiaMin, P = ESCALA.passo, e = { prot: esc.prot, energia: esc.energia, gordura: Math.max(principal ? GORDURA_PISO.principal : GORDURA_PISO.lanche, esc.energia) };
+  const azeite = x => { let g = 0; itens.forEach(it => { if (RG.gordurasDeAdicao.indexOf(it.k) >= 0) g += gramasFinais(it, x); }); return g; };
+  const descer = (campo, passou, estimar) => {
+    if (e[campo] <= fMin || !passou()) return;
+    const alto = e[campo]; e[campo] = fMin;
+    if (passou()) return;
+    const v = estimar(alto);
+    e[campo] = Math.max(fMin, Math.min(alto, f2(fMin + Math.floor((v - fMin) / P) * P)));
+    while (e[campo] > fMin && passou()) e[campo] = f2(e[campo] - P);
+    for (;;) { const ant = e[campo], prox = f2(ant + P); if (prox > alto) break; e[campo] = prox; if (passou()) { e[campo] = ant; break; } }
+  };
+  const gordura = () => somaDaRefeicao(itens, e, "gord"), kcal = () => somaDaRefeicao(itens, e, "kcal");
+  // valor da conta (gordura ou kcal) com o fator campo em fMin e em alto, para a estimativa linear
+  const nasPontas = (campo, alto, conta) => { const c = e[campo]; e[campo] = fMin; const a = conta(); e[campo] = alto; const b = conta(); e[campo] = c; return { a, b }; };
+  const linear = (campo, conta, max) => alto => { const v = nasPontas(campo, alto, conta); return v.b > v.a ? fMin + (max - v.a) / (v.b - v.a) * (alto - fMin) : fMin; };
+  descer("gordura", () => azeite(e) > RG.azeiteMaxRefeicao.valor || gordura() > RG.gordAlvoRefeicao.valor, linear("gordura", gordura, RG.gordAlvoRefeicao.valor));
+  descer("energia", () => kcal() > RG.kcalMaxRefeicao.valor, linear("energia", kcal, RG.kcalMaxRefeicao.valor));
+  return e;
+}
 function escalar(res, esc) {
   return { indice: res.indice, nome: res.nome, refeicoes: res.refeicoes.map(r => {
+    const er = fatorDaRefeicao(r.itens, esc, REGRAS_CARDAPIO.principais.indexOf(r.tipo) >= 0);
     const itens = r.itens.map(it => {
-      const o = { k: it.k, g: gramasFinais(it, esc), pos: it.pos };
+      const o = { k: it.k, g: gramasFinais(it, er), pos: it.pos };
       if (it.de) { o.de = it.de; o.motivo = it.motivo; if (it.outroGrupo) o.outroGrupo = true; }
       return o;
     });
@@ -157,7 +201,7 @@ const f2 = x => Math.round(x * 100) / 100;
 const MEMO_ESCALA = {};
 /* Guarda as escalas já calculadas entre aberturas do app (a primeira conta leva de 0,3 s a alguns segundos num celular fraco:
    auditoria 2). É dado derivado: se o armazenamento falhar ou vier de outra versão do cardápio, a conta é refeita. */
-const CHAVE_ESCALA = "semana-a-semana.escala", VERSAO_ESCALA = 2 + "|" + Object.keys(A).length + "|" + JSON.stringify(C).length;
+const CHAVE_ESCALA = "semana-a-semana.escala", VERSAO_ESCALA = 3 + "|" + Object.keys(A).length + "|" + JSON.stringify(C).length;
 function lerEscalasGuardadas() { try { const x = JSON.parse(localStorage.getItem(CHAVE_ESCALA)); return x && x.v === VERSAO_ESCALA ? x.e : {}; } catch (e) { return {}; } }
 function guardarEscala(chave, r) {
   try { const e = lerEscalasGuardadas(), ks = Object.keys(e); if (ks.length > 20) delete e[ks[0]]; e[chave] = r; localStorage.setItem(CHAVE_ESCALA, JSON.stringify({ v: VERSAO_ESCALA, e })); } catch (e) { /* sem cache: só fica mais lento */ }
@@ -172,15 +216,16 @@ function calcularEscala(kcal, prot, R, pisoDia, protTeto) {
   const guardada = lerEscalasGuardadas()[chave];
   if (guardada && Array.isArray(guardada.dias) && guardada.dias.length === 7) return (MEMO_ESCALA[chave] = guardada);
   const dias = [];
-  for (let i = 0; i < 7; i++) { const itens = []; resolverDia(i, R).refeicoes.forEach(r => r.itens.forEach(it => { itens.push(it); })); dias.push(itens); }
-  const soma = (itens, esc) => { let k = 0, p = 0; itens.forEach(it => { const g = gramasFinais(it, esc), al = A[it.k]; k += al.kcal * g / 100; p += al.prot * g / 100; }); return { k, p }; };
+  for (let i = 0; i < 7; i++) dias.push(resolverDia(i, R).refeicoes.map(r => ({ itens: r.itens, principal: REGRAS_CARDAPIO.principais.indexOf(r.tipo) >= 0 })));
+  // mesma conta de escalar(): cada refeição com o seu fator (fatorDaRefeicao)
+  const soma = (refs, esc) => { let k = 0, p = 0; refs.forEach(r => { const er = fatorDaRefeicao(r.itens, esc, r.principal); r.itens.forEach(it => { const g = gramasFinais(it, er), al = A[it.k]; k += al.kcal * g / 100; p += al.prot * g / 100; }); }); return { k, p }; };
   const n = (a, b) => Math.round((b - a) / ESCALA.passo), todas = [];
   for (let a = 0; a <= n(ESCALA.protMin, ESCALA.protMax); a++) for (let b = 0; b <= n(ESCALA.energiaMin, ESCALA.energiaMax); b++) {
     const fp = f2(ESCALA.protMin + a * ESCALA.passo), fe = f2(ESCALA.energiaMin + b * ESCALA.passo), fDias = [];
     let sk = 0, sp = 0;
-    dias.forEach(itens => {
-      let f = fe, s = soma(itens, { prot: fp, energia: f });
-      while (s.k < piso && f < ESCALA.energiaTeto) { f = f2(f + ESCALA.passo); s = soma(itens, { prot: fp, energia: f }); }
+    dias.forEach(refs => {
+      let f = fe, s = soma(refs, { prot: fp, energia: f });
+      while (s.k < piso && f < ESCALA.energiaTeto) { f = f2(f + ESCALA.passo); s = soma(refs, { prot: fp, energia: f }); }
       fDias.push(f); sk += s.k / 7; sp += s.p / 7;
     });
     todas.push({ prot: fp, energia: fe, dias: fDias, kcalMedia: sk, protMedia: sp, eP: Math.abs(sp / prot - 1), eK: Math.abs(sk / kcal - 1) });
