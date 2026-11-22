@@ -1,4 +1,5 @@
-// Vesícula marcada: aviso de ritmo de perda em Hoje e na Semana e sinais da vesícula ao registrar dor forte (teste Android da onda 2, I2).
+// Vesícula marcada: aviso de ritmo de perda em Hoje e na Semana e sinais da vesícula ao registrar dor forte (teste Android da onda 2, I2);
+// começo do relatório para a consulta com condições, datas de dor forte e marcas de 5, 7 e 10% (M6).
 // Relógio fixo do apoio: sexta, 20/11/2026. Os pesos daqui são de teste, não os dela.
 const { abrir, ok, d, estadoBase } = require("./apoio");
 const texto = async (p, sel) => ((await p.locator(sel).count()) ? (await p.locator(sel).first().innerText()).replace(/\s+/g, " ") : "");
@@ -55,4 +56,19 @@ const doses = [{ id: "d1", data: d(14), mg: 2.5, local: "Abdômen", obs: "" }, {
   await p.check("[name=dor]"); await p.click("form[data-form=sintoma] button:not([data-ac])");
   ok(/vá ao pronto-socorro hoje/.test(await t.textoDialogo() || "") && await p.locator("#folha").isHidden(), "sem vesícula: dor forte mostra o aviso geral, sem a folha");
   await t.fechar();
+
+  /* ---------- relatório: o que o médico pergunta primeiro, logo abaixo do cabeçalho ---------- */
+  const sDor = (id, n) => ({ id, data: d(n), enjoo: 0, intestino: "Normal", vomito: false, refluxo: false, tontura: false, cansaco: false, dor: true, nota: "" });
+  for (const discreto of [false, true]) {
+    const nome = discreto ? " (modo discreto)" : "";
+    t = await abrir({ estado: comPerfil({ peso: 102, vesicula: true, aguardaCirurgia: true, figado: true, diabetes: false, discreto }, { pesos: rapido, sintomas: [sDor("s1", 3), sDor("s2", 12)], ui: { planoNutri: false, diario: "relatorio" } }), aba: "diario" }); p = t.p;
+    await p.waitForSelector("#rel");
+    const l = (await p.inputValue("#rel")).split("\n");
+    ok(l[3] === "PARA COMEÇAR" && l[4] === "Condições informadas no perfil: pedra na vesícula: sim; aguardando cirurgia da vesícula: sim; gordura no fígado: sim; diabetes: não.", "relatório começa pelas condições do perfil" + nome + ": " + l[4]);
+    ok(l[5] === "Dor forte na barriga registrada em: 08/11/2026, 17/11/2026.", "relatório traz as datas de dor forte" + nome + ": " + l[5]);
+    ok(discreto ? l[6] === "Marcas de perda de peso da diretriz de fígado: perda de 5,4% do peso desde o início. 5% alcançada; 7% ainda não; 10% ainda não."
+      : /^Marcas de perda de peso da diretriz de fígado: perda de 5,4% do peso desde o início \(102,0 kg -> 96,5 kg\)\. 5% \(96,9 kg\) alcançada; 7% \(94,9 kg\), faltam 1,6 kg; 10% \(91,8 kg\), faltam 4,7 kg\.$/.test(l[6]), "relatório traz as marcas de 5, 7 e 10%" + nome + ": " + l[6]);
+    ok(l[7] === "" && /^TRATAMENTO|^APLICA/.test(l[8] || ""), "depois do começo vem o resto do relatório, como antes" + nome + ": " + l[8]);
+    await t.fechar();
+  }
 })();

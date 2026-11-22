@@ -76,3 +76,13 @@ function relSintomas(de) {
   } else L.push("Nenhum registro.");
   return L;
 }
+
+/* Datas com dor forte na barriga, para o começo do relatório (a data da crise é o que o médico pergunta primeiro; teste Android da
+   onda 2, M6). No período, cada data; antes dele, quantos dias e o último. Dois registros no mesmo dia contam uma vez. */
+function relDorForte(de) {
+  const datas = Array.from(new Set(E.sintomas.filter(x => x && x.dor && x.data).map(x => x.data))).sort();
+  const no = datas.filter(x => x >= de), antes = datas.filter(x => x < de);
+  let t = no.length ? "Dor forte na barriga registrada em: " + no.map(brAno).join(", ") + "." : "Dor forte na barriga: nenhum registro no período.";
+  if (antes.length) t += " Antes do período: " + (antes.length === 1 ? "1 dia" : antes.length + " dias") + ", o último em " + brAno(antes[antes.length - 1]) + ".";
+  return [t];
+}

@@ -94,6 +94,29 @@ function avisoVesicula(onde) {
   if (onde === "hoje") t += '<div class="botoes"><button class="sec" data-ac="ir" data-para="guia">Ver todos os sinais de alerta</button></div>';
   return t + "</div>";
 }
+/* ---------- relatório: o que o médico pergunta primeiro ----------
+   Condições respondidas no Perfil (sim ou não; sem resposta não entra) e, com fígado ou cirurgia marcados, o progresso até as marcas
+   de 5, 7 e 10% (as da diretriz de fígado, ver avisoFigado). Modo discreto: o progresso sai só em percentuais, sem quilos.
+   O app só repete o que ela marcou: não interpreta. */
+function relCondicoes() {
+  const p = E.perfil || {}, sn = v => (v === true ? "sim" : "não"), L = [];
+  const itens = [["vesicula", "pedra na vesícula"]];
+  if (p.vesicula === true) itens.push(["aguardaCirurgia", "aguardando cirurgia da vesícula"]);
+  itens.push(["figado", "gordura no fígado"], ["diabetes", "diabetes"]);
+  if (p.diabetes === true) itens.push(["insulinaSulf", "usa insulina ou sulfonilureia"]);
+  const resp = itens.filter(x => p[x[0]] === true || p[x[0]] === false).map(x => x[1] + ": " + sn(p[x[0]]));
+  L.push("Condições informadas no perfil: " + (resp.length ? resp.join("; ") + "." : "nenhuma respondida."));
+  return L;
+}
+function relProgressoPerda() {
+  const m = metas(); if (!m || !(m.figado || m.aguardaCirurgia)) return [];
+  if (!pesagensEmOrdem(E.pesos).length) return ["Marcas de perda de peso da diretriz de fígado (5, 7 e 10%): sem pesagens registradas."];
+  const g = progressoPerda(E.perfil.peso, m.peso); if (!g) return [];
+  const desde = g.perdaPct >= 0 ? "perda de " + fmt(g.perdaPct, 1) + "% do peso desde o início" : "ganho de " + fmt(-g.perdaPct, 1) + "% do peso desde o início";
+  const marcas = MARCAS_FIGADO.map(n => n + "%" + (m.discreto ? "" : " (" + fmt(g["alvo" + n], 1) + " kg)") + (g["chegou" + n] ? " alcançada" : m.discreto ? " ainda não" : ", faltam " + fmt(g["falta" + n], 1) + " kg"));
+  return ["Marcas de perda de peso da diretriz de fígado: " + desde + (m.discreto ? "" : " (" + fmt(g.ini, 1) + " kg -> " + fmt(g.atual, 1) + " kg)") + ". " + marcas.join("; ") + "."];
+}
+
 function avisoPesoBaixo() {
   const m = metas(); if (!m || !m.abaixoDoPeso) return "";
   return '<div class="cartao alerta"><h2>Peso abaixo da faixa de referência</h2><p style="margin:0">Pelo peso e pela altura registrados, você está abaixo da faixa de referência (IMC menor que 18,5). Fale com o seu médico sobre a dose e o peso. O app não calcula redução de calorias nesta faixa.</p></div>';

@@ -19,7 +19,10 @@ function telaDiario() {
 function relatorio() {
   const p = E.perfil, h = hoje(), de = mais(h, -29);
   const cabecalho = ["RELATÓRIO DE ACOMPANHAMENTO" + (p.nome ? " - " + p.nome : ""), "Período: " + brAno(de) + " a " + brAno(h)];
-  return [cabecalho, relTratamento(de), relPeso(de), relSintomas(de), relAlimentacao(de), relExercicio(de)].concat(camRelatorio()).map(t => t.join("\n")).join("\n\n");
+  /* Logo abaixo do cabeçalho, o que o médico pergunta primeiro: condições do perfil, datas de dor forte e, com fígado ou cirurgia,
+     o progresso até 5, 7 e 10% (perfil.js e sintomas.js). */
+  const primeiro = ["PARA COMEÇAR"].concat(relCondicoes(), relDorForte(de), relProgressoPerda());
+  return [cabecalho, primeiro, relTratamento(de), relPeso(de), relSintomas(de), relAlimentacao(de), relExercicio(de)].concat(camRelatorio()).map(t => t.join("\n")).join("\n\n");
 }
 
 Object.assign(AC, {
