@@ -36,6 +36,18 @@ function cartaoCopia() {
       '<label>Restaurar: cole aqui o texto exportado<textarea id="imp"></textarea></label><div class="botoes"><button class="sec" data-ac="importar">Restaurar</button><button class="perigo" data-ac="zerar">Apagar todos os dados</button></div></div>';
 }
 
+/* Celular novo ou dados apagados: antes, para restaurar era preciso preencher um perfil qualquer e só então achar o campo em
+   Diário > Relatório. Agora a primeira tela do Perfil (a do formulário, depois de "Antes de começar") também oferece restaurar. */
+function cartaoRestaurarInicio() {
+  return '<div class="cartao" id="restaurar-inicio"><h2>Já usava o app?</h2><p class="sub">Se você exportou uma cópia de segurança, cole o texto aqui para trazer tudo de volta. Não precisa preencher os dados acima.</p>' +
+    '<label>Texto exportado<textarea id="imp"></textarea></label><div class="botoes"><button class="sec" data-ac="importar">Restaurar</button></div></div>';
+}
+const aparelhoTelaPerfil = telaPerfil;
+telaPerfil = function () {
+  const t = aparelhoTelaPerfil();
+  return !E.perfil && E.ui.entradaVista && ILEGIVEL == null ? t + cartaoRestaurarInicio() : t;
+};
+
 Object.assign(AC, {
   calendario(d) {
     let abriu = false;
@@ -47,9 +59,10 @@ Object.assign(AC, {
   importar() {
     let j; try { j = migrar(JSON.parse(texto("imp"))); } catch (e) { j = null; }
     if (!j || !j.perfil) { aviso("Texto inválido. Cole o conteúdo exportado inteiro."); return; }
-    confirmar("Substituir os dados deste celular pelos do texto colado?", function () {
-      E = j; salvar(); aviso("Dados restaurados."); irPara("hoje");
-    }, "Substituir");
+    const restaurar = function () { E = j; salvar(); aviso("Dados restaurados."); irPara("hoje"); };
+    // Sem perfil não há o que substituir (celular novo ou dados apagados): restaura direto.
+    if (!E.perfil) { restaurar(); return; }
+    confirmar("Substituir os dados deste celular pelos do texto colado?", restaurar, "Substituir");
   },
   zerar() { confirmar("Apagar TODOS os dados deste celular? Não dá para desfazer.", function () { E = vazio(); salvar(); render(true); }, "Apagar tudo"); },
 });

@@ -99,4 +99,45 @@ const violacoes = p => p.evaluate(() => window.__violacoes.splice(0));
   await t.semear(estadoBase(Object.assign({ ui: { diario: "relatorio", ultimaExportacao: d(10) } }, antigo))); await p.waitForSelector("[data-ac=zerar]");
   ok(await p.locator("#seg-lembrete-copia").count() === 0, "exportação há 10 dias: sem lembrete");
   await t.fechar();
+
+  // Restaurar de ponta a ponta: exporta um estado com tudo preenchido (inclui os campos de vesícula e fígado da onda 2 e um campo
+  // que ainda não existe, para provar que campo novo não se perde), apaga tudo e restaura num navegador limpo, pela primeira tela.
+  const cheio = estadoBase({
+    perfil: Object.assign(estadoBase().perfil, { gestante: false, diabetes: false, insulinaSulf: null, pilula: true, vesicula: true, figado: true, aguardaCirurgia: true,
+      discreto: true, naoCome: ["lactose"], naoGosta: ["sardinha"], metaKcal: 1500, metaProt: 110, metaAgua: 2500, campoFuturo: { x: [1, 2] } }),
+    diaDose: 1,
+    doses: [{ id: "a1", data: d(14), mg: 2.5, local: "Coxa esquerda", obs: "primeira" }, { id: "a2", data: d(7), mg: 2.5, local: "Abdômen direito", obs: "" }],
+    pesos: [{ id: "p1", data: d(14), kg: 120.2, cintura: 128 }, { id: "p2", data: d(0), kg: 118.4, cintura: null }],
+    sintomas: [{ id: "s1", data: d(6), enjoo: 2, intestino: "Preso", vomito: false, refluxo: true, tontura: false, cansaco: true, dor: false, nota: "depois do almoço", glicemia: 98 }],
+    treinos: [{ id: "t1", data: d(2), tipo: "A", local: "casa", exercicios: [{ nome: "Agachamento", carga: "", reps: [10, 10] }] }],
+    dias: { [d(1)]: { enjoo: true, agua: 1500, protExtra: 20, caminhada: 15, comido: [{ q: 1, itens: [["ovo", 100]] }, null, { q: 0.5, outros: [["arroz", 80]] }] } },
+    trocas: { "0.1.2": "frango" }, caneta: { restantes: 3, validade: "2027-01-01" }, suplementos: [{ id: "x", nome: "Vitamina D" }], exames: [{ id: "e", data: d(30) }],
+    lembretes: { agua: "10:00" }, ui: { diario: "relatorio", diaPlano: 3, local: "casa", entradaVista: true, avisoPouco: d(1) }, novoTopo: "fica",
+  });
+  t = await abrir({ estado: cheio, aba: "diario" }); p = t.p;
+  await p.addInitScript(ponte); await p.reload(); await p.waitForSelector("[data-ac=exportar]");
+  await p.click("[data-ac=exportar]"); await t.sim();
+  const copiaTexto = (await p.evaluate(() => window.__enviados))[0], antes = await t.ler();
+  await p.click("[data-ac=zerar]"); await t.sim();
+  ok(!(await t.ler()).perfil, "restaurar: dados apagados antes de restaurar");
+  await t.fechar();
+
+  t = await abrir({ aba: "hoje" }); p = t.p; // navegador novo, sem nada guardado
+  await p.waitForSelector("[data-ac=entradaContinuar]"); await p.click("[data-ac=entradaContinuar]");
+  ok(await p.locator("#imp").count() === 1, "celular novo: a primeira tela oferece restaurar sem pedir perfil antes");
+  if (await p.locator("#imp").count()) {
+    await t.foto("seguranca-restaurar-inicio");
+    await p.fill("#imp", copiaTexto); await p.click("[data-ac=importar]");
+    if (await t.textoDialogo()) await t.sim();
+    await p.waitForSelector("text=Proteína hoje");
+    const depois = await t.ler();
+    let igual = true, dif = "";
+    try { require("assert").deepStrictEqual(depois, antes); } catch (e) { igual = false; dif = e.message.slice(0, 600); }
+    ok(igual, "restaurar num navegador limpo traz tudo de volta, campo por campo" + (igual ? "" : ": " + dif));
+    ok(depois.perfil.vesicula === true && depois.perfil.figado === true && depois.perfil.aguardaCirurgia === true && depois.perfil.discreto === true && depois.perfil.campoFuturo.x[1] === 2 && depois.novoTopo === "fica",
+      "restaurar mantém vesícula, fígado, aguarda cirurgia, modo discreto e campos que ainda não existem");
+    await p.click("#abas a[data-aba=diario]"); await p.click("[data-ac=diario][data-v=peso]");
+    ok(/118,4/.test(await p.locator("#tela").innerText()), "depois de restaurar, o diário mostra os registros");
+  }
+  await t.fechar();
 })().catch(e => { console.log("FALHOU: " + e.message); process.exit(1); });
