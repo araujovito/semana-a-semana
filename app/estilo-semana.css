@@ -1,0 +1,18 @@
+/* Visão semanal (app/semana.js). Só usa as cores de estilo.css, então claro e escuro saem juntos. */
+.semana-topo { margin: 4px 2px 12px; font-size: 18px; }
+.semana-itens { list-style: none; margin: 10px 0 0; padding: 0; }
+.semana-itens li { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 8px; padding: 6px 0; border-top: 1px solid var(--linha); font-size: 15px; overflow-wrap: anywhere; }
+.semana-itens li:first-child { border-top: 0; }
+.semana-rot { color: var(--suave); font-size: 13px; padding-top: 2px; }
+.semana-marcas { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 0; }
+.semana-marca { background: var(--cartao); border: 1px solid var(--linha); color: var(--texto); border-radius: 999px; padding: 2px 10px; font-size: 13px; }
+.semana-atual .semana-itens li { border-top-color: rgba(127, 127, 127, .25); }
+.semana-lista { margin: 0; padding-left: 18px; }
+.semana-lista li { margin: 4px 0; overflow-wrap: anywhere; }
+#semana-anteriores details { padding: 4px 0; }
+#semana-anteriores summary { min-height: 44px; }
+.semana-resumo { display: block; min-width: 0; font-weight: 400; }
+.semana-quando { display: block; }
+.semana-peso { border-top: 1px solid var(--linha); margin-top: 6px; }
+.semana-nota { margin: 4px 4px 16px; }
+@media (max-width: 360px) { .semana-itens li { grid-template-columns: 80px minmax(0, 1fr); } }
