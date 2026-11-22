@@ -61,15 +61,15 @@ footer { color: var(--muted); font-size: 12px; }
       <h1>Semana a Semana</h1>
       <p class="sub">O que já está pronto, o que falta, quem está fazendo e onde estão os riscos.</p>
     </div>
-    <span class="chip"><i style="background:var(--warning)"></i>Ainda não entregável</span>
+    <span class="chip"><i style="background:var(--warning)"></i>App pronto · falta hospedar a versão web</span>
   </div>
 
   <div class="card span">
     <div class="hero">
       <div><div class="n" id="pct">43%</div><div class="l">das etapas da entrega concluídas</div></div>
-      <div><div class="n">5</div><div class="l">agentes trabalhando agora</div></div>
-      <div><div class="n">75</div><div class="l">testes de unidade passando</div></div>
-      <div><div class="n" style="color:var(--critical)">2</div><div class="l">riscos altos em aberto</div></div>
+      <div><div class="n">5 de 5</div><div class="l">agentes entregaram</div></div>
+      <div><div class="n">101</div><div class="l">testes de unidade passando</div></div>
+      <div><div class="n" style="color:var(--critical)">1</div><div class="l">decisão sua pendente: onde hospedar</div></div>
     </div>
     <h2>Régua da entrega</h2>
     <svg id="regua" viewBox="0 0 1000 110" role="img" aria-label="Sete etapas da entrega: três feitas, duas em andamento, duas a fazer"></svg>
@@ -78,8 +78,8 @@ footer { color: var(--muted); font-size: 12px; }
 
   <div class="grid">
     <div class="card">
-      <h2>Fluxo até o APK</h2>
-      <p class="sub">Cada agente entrega para mim; eu junto ao main, e só então vem o APK final.</p>
+      <h2>Fluxo até a entrega</h2>
+      <p class="sub">Cada agente entregou para mim; juntei tudo ao main. Falta só publicar a versão web.</p>
       <svg id="fluxo" viewBox="0 0 480 300" role="img" aria-label="Fluxo de trabalho dos cinco agentes até a entrega"></svg>
       <div class="legenda"><span><i style="background:var(--good)"></i>Feito</span><span><i style="background:var(--warning)"></i>Em andamento</span><span><i style="background:var(--todo)"></i>A fazer</span></div>
     </div>
@@ -122,6 +122,10 @@ footer { color: var(--muted); font-size: 12px; }
         <div><time>22/11</time><span>A2 no main: limites de segurança do perfil.</span></div>
         <div><time>22/11</time><span>Tela Hoje no main, depois de consertar o nome repetido.</span></div>
         <div><time>22/11</time><span>Equipe ampliada para cinco agentes, cada um na sua área.</span></div>
+        <div><time>22/11</time><span>Documentação entregue e no main. O redator achou 8 pendências; todas foram resolvidas.</span></div>
+        <div><time>22/11</time><span>Revisão clínica: 2 bloqueios de texto (sinais de alerta e hipoglicemia), corrigidos.</span></div>
+        <div><time>22/11</time><span>Você decidiu migrar para PWA. Versão web pronta, abre sem internet.</span></div>
+        <div><time>22/11</time><span>Auditoria: 1 bloqueio (escala com IMC abaixo de 25), corrigido. Peso e Android juntados. APK recompilado.</span></div>
       </div>
     </div>
   </div>
@@ -146,10 +150,10 @@ const ETAPAS = [
   ["A1", "Próxima aplicação", "feito", "Segue o dia habitual; até 4 dias de atraso aplica, 5 ou 6 pula, mais de 14 sem registro só manda falar com o médico."],
   ["A2", "Limites de segurança", "feito", "Tela de entrada, menores de 18 recusados, sem redução com IMC < 25 ou gravidez, aviso de hipoglicemia e acima de 65, meta baixa confirmada."],
   ["Hoje", "Tela Hoje", "feito", "Marcar quanto comeu, ver dias anteriores, dia de enjoo sem perder marcas."],
-  ["Peso", "Peso e sintomas", "andamento", "Agente trocando os diálogos nativos e consertando o teste que falha."],
-  ["Android", "Casca Android", "andamento", "Agente juntando modo escuro, botão voltar, teclado e calendário; compila e testa no emulador."],
-  ["APK", "APK final no emulador", "fazer", "Recompilar com tudo junto e percorrer as telas no Android 14 virtual."],
-  ["Docs", "Entrega e instruções", "fazer", "LEIAME, guia de instalação e primeiros passos (agente já escrevendo), relatório final."],
+  ["Peso", "Peso e sintomas", "feito", "Gráfico com datas, edição de registros, modo discreto, alerta por urgência (192, pronto-socorro, médico)."],
+  ["Android", "Casca Android (plano B)", "feito", "Voltar sai do app, modo escuro, diálogos da página, versão 2. APK recompilado: 119 KB."],
+  ["PWA", "Versão web instalável", "feito", "Manifesto, ícone, funciona sem internet. Testada no navegador."],
+  ["Publicar", "Hospedar a versão web", "fazer", "Precisa da sua decisão: onde publicar o endereço HTTPS."],
 ];
 (function () {
   const s = document.getElementById("regua"), w = 1000 / ETAPAS.length;
@@ -169,8 +173,8 @@ const ETAPAS = [
 /* Fluxo: cinco agentes -> integração -> APK -> entrega */
 (function () {
   const s = document.getElementById("fluxo");
-  const AG = [["Peso e sintomas", "andamento", "Termina o ramo peso."], ["Android", "andamento", "Junta a casca, compila, testa no emulador."], ["Auditoria final", "andamento", "Só lê: diz se o main está entregável."], ["Revisão clínica", "andamento", "Só lê: textos de saúde contra a bula."], ["Documentação", "andamento", "LEIAME, instalação, primeiros passos."]];
-  const FIM = [["Juntar ao main", "fazer", "Eu reviso cada entrega, rodo os testes e junto."], ["APK final", "fazer", "Compilar e abrir no celular virtual."], ["Entrega", "fazer", "APK + instruções + relatório."]];
+  const AG = [["Peso e sintomas", "feito", "Entregue e juntado."], ["Android", "feito", "Entregue e juntado; achou e corrigiu o voltar que não saía do app."], ["Auditoria final", "feito", "1 bloqueio (escala com IMC < 25): corrigido."], ["Revisão clínica", "feito", "2 bloqueios de texto: corrigidos."], ["Documentação", "feito", "LEIAME, guia de instalação e primeiros passos."]];
+  const FIM = [["Juntar ao main", "feito", "Tudo junto, 101 testes de unidade e todos os de ponta a ponta passando."], ["Hospedar PWA", "fazer", "Falta a sua decisão sobre onde publicar."], ["Entrega", "fazer", "Endereço da versão web + APK como plano B + instruções."]];
   AG.forEach((a, i) => {
     const y = 14 + i * 56;
     el(s, "path", { d: "M170 " + (y + 18) + " C 220 " + (y + 18) + ", 220 150, 258 150", fill: "none", stroke: "var(--line)", "stroke-width": 2 });
@@ -191,10 +195,10 @@ const ETAPAS = [
 
 /* Achados: barra empilhada + tabela */
 const ACHADOS = [
-  ["1 Próxima dose", "Resolvido", "main"], ["2 Limites de segurança", "Resolvido", "main"], ["3 Falar com ela em 2ª pessoa", "Parcial", "agente de peso"],
+  ["1 Próxima dose", "Resolvido", "main"], ["2 Limites de segurança", "Resolvido", "main"], ["3 Falar com ela em 2ª pessoa", "Resolvido", "main"],
   ["4 Virada do dia", "Resolvido", "main"], ["5 Reação a comer pouco", "Resolvido", "main"], ["6 Enjoo apagava marcações", "Resolvido", "main"],
   ["8 Falha ao salvar escondida", "Resolvido", "main"], ["9 Escala de porções", "Resolvido", "main"], ["10 Degrau da proteína no IMC 30", "Resolvido", "main"],
-  ["11 Editar registros", "Pendente", "agente de peso"], ["14 Erros de composição", "Resolvido", "main"], ["15 Teclado cobrindo campos", "Parcial", "agente Android"],
+  ["11 Editar registros", "Resolvido", "main"], ["14 Erros de composição", "Resolvido", "main"], ["15 Teclado cobrindo campos", "Parcial", "feito no código; não testado com teclado de aparelho"],
   ["21 Dado de outra versão sobrescrito", "Resolvido", "main"],
 ];
 (function () {
@@ -208,16 +212,16 @@ const ACHADOS = [
     comDica(r, k + ": " + l.map(a => a[0].split(" ")[0]).join(", "));
     x += w;
   });
-  el(s, "text", { x: 0, y: 84, style: "font-size:11px" }, "77% resolvidos no main; os outros 3 estão com agentes agora.");
+  el(s, "text", { x: 0, y: 84, style: "font-size:11px" }, "12 de 13 resolvidos no main; o do teclado falta testar num aparelho.");
   const t = document.getElementById("tab-achados");
   ACHADOS.forEach(a => { const tr = document.createElement("tr"); a.forEach(c => { const td = document.createElement("td"); td.textContent = c; tr.appendChild(td); }); t.appendChild(tr); });
 })();
 
 /* Testes: colunas, uma série */
 (function () {
-  const s = document.getElementById("testes"), D = [["depois do A1", 42], ["depois do A2", 60], ["depois da tela Hoje", 75]];
-  const x0 = 34, y0 = 140, H = 120, max = 80, bw = 70, gap = (480 - x0 - bw * 3) / 3;
-  [0, 20, 40, 60, 80].forEach(v => { const y = y0 - H * v / max; el(s, "line", { x1: x0, x2: 480, y1: y, y2: y, stroke: "var(--grid)" }); el(s, "text", { x: x0 - 6, y: y + 4, "text-anchor": "end", style: "font-size:11px" }, v); });
+  const s = document.getElementById("testes"), D = [["A1", 42], ["A2", 60], ["Hoje", 75], ["auditoria", 78], ["peso", 101]];
+  const x0 = 34, y0 = 140, H = 120, max = 120, bw = 54, gap = (480 - x0 - bw * D.length) / D.length;
+  [0, 30, 60, 90, 120].forEach(v => { const y = y0 - H * v / max; el(s, "line", { x1: x0, x2: 480, y1: y, y2: y, stroke: "var(--grid)" }); el(s, "text", { x: x0 - 6, y: y + 4, "text-anchor": "end", style: "font-size:11px" }, v); });
   D.forEach((d, i) => {
     const x = x0 + gap / 2 + i * (bw + gap), h = H * d[1] / max;
     el(s, "path", { d: "M" + x + " " + y0 + " V" + (y0 - h + 4) + " q0 -4 4 -4 H" + (x + bw - 4) + " q4 0 4 4 V" + y0 + " Z", fill: "var(--series-1)" });
@@ -229,12 +233,13 @@ const ACHADOS = [
 
 /* Riscos: matriz 3x3 */
 const RISCOS = [
-  [3, 3, "O Android bloquear a instalação do APK no celular dela", "Regra nova de instalação por arquivo; ainda não testamos num aparelho real."],
-  [2, 3, "Texto de saúde impreciso", "Ninguém com formação clínica revisou; a revisão do agente está em andamento."],
+  [1, 3, "O Android bloquear o APK", "Deixou de ser crítico: a versão web não depende de instalar arquivo. O APK fica como plano B."],
+  [1, 3, "Texto de saúde impreciso", "Revisão do agente completa e 2 bloqueios corrigidos, mas sem profissional de saúde habilitado."],
+  [2, 2, "Dados da versão web apagados ao limpar o navegador", "O app agora avisa isso no cartão de cópia. Exportar de vez em quando resolve."],
   [2, 2, "Defeito que só aparece no celular de verdade", "Tudo foi testado no navegador e no celular virtual."],
-  [1, 3, "Perder a chave de assinatura", "Sem ela não dá para atualizar o app instalado sem apagar os dados."],
+  [1, 3, "Perder a chave de assinatura", "Há uma cópia idêntica em ~/Documents, mas na mesma máquina. Vale guardar outra num pendrive ou na nuvem."],
   [2, 1, "Bebida de soja com dado americano", "O cálcio das marcas brasileiras varia; é para olhar o rótulo."],
-  [1, 2, "Conta das porções lenta num celular fraco", "A auditoria está medindo."],
+  [1, 2, "Conta das porções lenta num celular fraco", "Medido: 2 a 4 s na primeira abertura num celular lento. O resultado agora fica guardado entre aberturas."],
 ];
 (function () {
   const s = document.getElementById("riscos"), x0 = 40, y0 = 260, c = 130;
