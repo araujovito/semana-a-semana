@@ -61,7 +61,7 @@ footer { color: var(--muted); font-size: 12px; }
       <h1>Semana a Semana</h1>
       <p class="sub">O que já está pronto, o que falta, quem está fazendo e onde estão os riscos.</p>
     </div>
-    <span class="chip"><i style="background:var(--good)"></i>App pronto · versão web guardada para depois</span>
+    <span class="chip"><i style="background:var(--warning)"></i>Onda 2 em andamento: app feito para ela</span>
   </div>
 
   <div class="card span">
@@ -76,9 +76,16 @@ footer { color: var(--muted); font-size: 12px; }
     <div class="legenda"><span><i style="background:var(--good)"></i>Feito</span><span><i style="background:var(--warning)"></i>Em andamento</span><span><i style="background:var(--todo)"></i>A fazer</span></div>
   </div>
 
+  <div class="card span">
+    <h2>Onda 2: o app feito para ela</h2>
+    <p class="sub">Pedido de 22/11: levar em conta a vesícula e o fígado, indicar caminhos de alimentação com opções, painel de calorias e proteína, identidade visual própria, tela Hoje pelo tratamento e visão semanal. Os dados dela não vão para o código: ela preenche no Perfil.</p>
+    <svg id="onda2" viewBox="0 0 1000 120" role="img" aria-label="Seis frentes da onda 2"></svg>
+    <div class="legenda"><span><i style="background:var(--good)"></i>Feito</span><span><i style="background:var(--warning)"></i>Em andamento</span><span><i style="background:var(--todo)"></i>A fazer</span></div>
+  </div>
+
   <div class="grid">
     <div class="card">
-      <h2>Fluxo até a entrega</h2>
+      <h2>Onda 1: fluxo até a entrega</h2>
       <p class="sub">Cada agente entregou para mim; juntei tudo ao main. Falta só publicar a versão web.</p>
       <svg id="fluxo" viewBox="0 0 480 300" role="img" aria-label="Fluxo de trabalho dos cinco agentes até a entrega"></svg>
       <div class="legenda"><span><i style="background:var(--good)"></i>Feito</span><span><i style="background:var(--warning)"></i>Em andamento</span><span><i style="background:var(--todo)"></i>A fazer</span></div>
@@ -127,6 +134,10 @@ footer { color: var(--muted); font-size: 12px; }
         <div><time>22/11</time><span>Você decidiu migrar para PWA. Versão web pronta, abre sem internet.</span></div>
         <div><time>22/11</time><span>Auditoria: 1 bloqueio (escala com IMC abaixo de 25), corrigido. Peso e Android juntados. APK recompilado.</span></div>
         <div><time>22/11</time><span>Você decidiu não publicar a versão web por enquanto. Entrega: APK + versão web pronta.</span></div>
+        <div><time>22/11</time><span>Onda 2 começou: cinco agentes no app personalizado para ela.</span></div>
+        <div><time>22/11</time><span>Painel de calorias e proteína pronto e no main.</span></div>
+        <div><time>22/11</time><span>Visão semanal no main. Pesquisa de vesícula e fígado entregue: o cardápio passa do teto de gordura e está sendo corrigido.</span></div>
+        <div><time>22/11</time><span>Protótipo da identidade visual pronto, esperando a sua aprovação.</span></div>
       </div>
     </div>
   </div>
@@ -191,6 +202,28 @@ const ETAPAS = [
     const pal = f[0].split(" ");
     pal.forEach((p, j) => el(s, "text", { x: x + 34, y: y + (pal.length === 1 ? 22 : 16 + j * 13), "text-anchor": "middle", class: "forte", style: "font-size:11px" }, p));
     comDica(r, f[0] + " · " + ROTULO[f[1]] + ". " + f[2]);
+  });
+})();
+
+/* Onda 2: frentes */
+(function () {
+  const s = document.getElementById("onda2");
+  const F = [
+    ["Pesquisa", "Vesícula e fígado", "feito", "Regras: gordura de 7 a 15 g por refeição (teto 20), refeição até ~500 kcal, sem açúcar adicionado, marcos de 5%, 7-10% e 10% para o fígado. 5 caminhos de alimentação com fontes."],
+    ["Cardápio", "Cardápio para ela", "andamento", "Hoje 7 refeições passam de 17 g de gordura e 3 dias passam de 35%: o azeite cresce com a escala. Corrigindo, e montando os caminhos como dados."],
+    ["Perfil", "Avisos para ela", "andamento", "Perguntas de vesícula, fígado e cirurgia; cartão de cólica biliar; meta de 7 a 10% para o fígado."],
+    ["Painel", "Calorias e proteína", "feito", "No main: anéis de hoje contra a meta, barras de 7 e 30 dias com a faixa de proteína, médias e dias na faixa. Botão na barra entra com o visual novo."],
+    ["Semana", "Visão semanal", "feito", "No main: semana atual aberta, anteriores resumidas, padrões como enjoo depois da aplicação. Botão entra com o visual novo."],
+    ["Visual", "Identidade nova", "andamento", "Protótipo pronto ('Ciclo de sete'): aguardando a sua aprovação para entrar no app."],
+  ];
+  const w = 1000 / F.length;
+  F.forEach((f, i) => {
+    const x = i * w;
+    el(s, "rect", { x: x + 1, y: 10, width: w - 2, height: 26, rx: 4, fill: ST[f[2]] });
+    el(s, "text", { x: x + 6, y: 60, class: "forte" }, f[0]);
+    el(s, "text", { x: x + 6, y: 78 }, f[1]);
+    el(s, "text", { x: x + 6, y: 96, style: "font-size:11px" }, ROTULO[f[2]]);
+    comDica(el(s, "rect", { x, y: 0, width: w, height: 120, class: "hit" }), f[1] + " · " + ROTULO[f[2]] + ". " + f[3]);
   });
 })();
 

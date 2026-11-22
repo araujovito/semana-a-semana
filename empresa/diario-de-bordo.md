@@ -55,3 +55,18 @@
 - 22/11 16:27 [direção] Ramo Android juntado (voltar sai do app, modo escuro, diálogos da página, versão 2, script que não cria chave sozinho). APK recompilado em main com todo o trabalho do dia. Testes verdes.
 - 22/11 16:29 [direção] Dono decidiu não publicar a versão web por enquanto. Entrega: APK de main + PWA pronta para publicar quando ele quiser.
 - 22/11 16:40 [direção] Começou a onda 2: app personalizado para ela (vesícula e fígado), painel de calorias e proteína, identidade visual nova e visão semanal.
+- 22/11 16:42 [pesquisadora de nutrição clínica] início: pesquisa vesícula+fígado+tirzepatida e conferência do cardápio (só leitura)
+- 22/11 16:42 [engenheiro de app: painel] começou a tela Painel (calorias e proteína de hoje, 7 e 30 dias) na cópia o2-painel
+- 22/11 16:42 [engenheiro de app: semana] começou a visão semanal do tratamento (linha do tempo por semana, na cópia o2-semana)
+- 22/11 16:42 [engenheiro de app: perfil e saúde] começou: perguntas de vesícula e fígado no Perfil, cartões de cuidado e aviso de ritmo de perda mais sensível (cópia o2-perfil)
+- 22/11 16:42 [designer] começou o protótipo da nova identidade visual (Hoje, painel, semana, caminhos), só em prototipo/, sem mexer no app
+- 22/11 16:46 [engenheiro de app: painel] terminou a tela Painel no ramo onda2-painel (2 commits, testes verdes): proteína e calorias de hoje em anéis, barras de 7/30 dias com dias sem registro como lacuna, médias e contagens, modo discreto sem calorias. Ainda sem botão na barra: a navegação fica com o diretor.
+- 22/11 16:48 [direção] Painel de calorias e proteína juntado em main (abre por #painel; o botão na barra entra com o visual novo). Testes verdes.
+- 22/11 16:49 [engenheiro de app: semana] terminou a visão semanal no ramo onda2-semana (2 commits, testes verdes): abre por #semana, ainda sem botão na barra; o diretor decide a navegação
+- 22/11 16:49 [pesquisadora de nutrição clínica] terminou: relatório empresa/relatorios/pesquisa-vesicula-figado.md (17 regras com força da evidência, 5 caminhos de alimentação, sinais de alerta da vesícula, conferência do cardápio: sem fritura e sem açúcar, mas o azeite escalado deixa 7 refeições acima de 17 g de gordura e a sexta com 40% da energia em gordura). Nada no código foi mexido.
+- 22/11 16:51 [direção] Visão semanal juntada em main (abre por #semana). Pesquisa de vesícula e fígado recebida: cardápio passa do teto de gordura em 7 refeições; vai para a engenharia.
+- 22/11 16:51 [engenheiro de nutrição e dados] início: onda2-cardapio (regras vesícula/fígado no cardápio e escala, conferência automática, app/caminhos.js)
+- 22/11 16:53 [designer] terminou o protótipo visual (ramo onda2-visual, pasta prototipo/): identidade.md + telas Hoje, Painel, Semana e Caminhos em claro e escuro, com capturas; app não foi mexido, testes verdes; aguarda aprovação do dono
+- 22/11 17:00 [engenheiro de app: perfil e saúde] terminou (ramo onda2-perfil, sem merge): Perfil pergunta pedra na vesícula, gordura no fígado e cirurgia; cartão de vesícula em Hoje/Plano/Perfil com sinais de crise; Guia com cólica da vesícula (limite de 6 h pendente de aval médico); aviso de ritmo continua em 1%/semana e, com vesícula, aponta os sinais e aparece no modo discreto; cartão do fígado no Plano com marcas de 5/7/10% do peso inicial. testar.sh verde.
+- 22/11 17:01 [designer] começou a revisão do protótipo pedida pelo dono: sai o caderno com serifa, entra linguagem de app chinês de saúde (topo colorido, grade de atalhos, números grandes, marcar o dia sem cobrança)
+- 22/11 17:01 [direção] Perfil da onda 2 juntado: perguntas de vesícula, fígado e cirurgia, cartão de cólica biliar, marcas de 5/7/10% para o fígado, aviso de ritmo para quem tem pedra. Testes verdes (125 de unidade).
