@@ -77,8 +77,9 @@ O APK e a pasta `build/` não entram no git.
 
 Antes de entregar uma versão nova:
 1. Suba `android:versionCode` (e `versionName`) em `android/AndroidManifest.xml`. Está em 1. O script não faz isso sozinho.
-2. Rode `bash testar.sh` e depois `bash montar-apk.sh`.
-3. Confira que o APK é novo: `unzip -l semana-a-semana.apk` deve listar `assets/nucleo.js`, `assets/inicio.js` etc. Um APK com `assets/app.js` é da versão anterior à divisão do código.
+2. Suba `VERSAO_APP` em `app/sw.js` (ano.mês.dia-n). O cache da versão web instalável leva esse nome: sem a troca, quem usa a versão instalada continua com os arquivos antigos e a faixa "Versão nova pronta" não aparece.
+3. Rode `bash testar.sh` e depois `bash montar-apk.sh`.
+4. Confira que o APK é novo: `unzip -l semana-a-semana.apk` deve listar `assets/nucleo.js`, `assets/inicio.js` etc. Um APK com `assets/app.js` é da versão anterior à divisão do código.
 
 ## Chave de assinatura (importante)
 

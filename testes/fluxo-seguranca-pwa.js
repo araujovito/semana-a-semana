@@ -1,6 +1,6 @@
 // Versão web instalável (PWA) servida por HTTP local: a Content-Security-Policy vale e não atrapalha o service worker,
 // o manifesto, os ícones e as fontes da própria origem. Depois, atualização com duas versões do sw: o servidor passa a
-// entregar a "versão 2" (CACHE v2 em sw.js e uma marca em index.html), a faixa aparece e o toque recarrega na versão nova.
+// entregar a "versão 2" (VERSAO_APP nova em sw.js e uma marca em index.html), a faixa aparece e o toque recarrega na versão nova.
 const http = require("http"), fs = require("fs"), path = require("path");
 const { ok, achar, estadoBase, CHAVE } = require("./apoio");
 const RAIZ = path.join(__dirname, "..", "app");
@@ -27,7 +27,7 @@ const ouvirViolacoes = () => { window.__violacoes = []; document.addEventListene
   let versao = 1;
   const srv = servidor((nome, corpo) => {
     if (versao === 1) return corpo;
-    if (nome === "sw.js") return String(corpo).replace('"semana-a-semana-v1"', '"semana-a-semana-v2"');
+    if (nome === "sw.js") return String(corpo).replace(/const VERSAO_APP = "([^"]+)"/, 'const VERSAO_APP = "$1-v2"');   // o cache leva a versão
     if (nome === "index.html") return String(corpo).replace('<html lang="pt-BR">', '<html lang="pt-BR" data-versao-teste="2">');
     return corpo;
   });
@@ -80,7 +80,9 @@ const ouvirViolacoes = () => { window.__violacoes = []; document.addEventListene
     await Promise.all([p.waitForNavigation(), p.click("#seg-versao-nova button")]);
     await telaPronta(p);
     ok(await p.evaluate(() => document.documentElement.dataset.versaoTeste) === "2", "o toque ativa o sw novo e recarrega já na versão nova");
-    ok(JSON.stringify(await p.evaluate(() => caches.keys())) === '["semana-a-semana-v2"]', "a versão nova apaga os arquivos guardados da anterior");
+    const v2 = "semana-a-semana-" + /const VERSAO_APP = "([^"]+)"/.exec(fs.readFileSync(path.join(RAIZ, "sw.js"), "utf8"))[1] + "-v2";
+    await p.waitForFunction(c => caches.keys().then(k => k.join() === c), v2, { timeout: 5000 }).catch(() => {});
+    ok(JSON.stringify(await p.evaluate(() => caches.keys())) === JSON.stringify([v2]), "a versão nova apaga os arquivos guardados da anterior");
     ok(await p.locator("#seg-versao-nova:not([hidden])").count() === 0, "depois de atualizar, a faixa some");
     ok(await p.evaluate(k => localStorage.getItem(k), CHAVE) === dados, "atualizar não mexe nos dados");
     await ctx.setOffline(true);

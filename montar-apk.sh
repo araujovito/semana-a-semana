@@ -29,3 +29,4 @@ python3 -c "import zipfile;zipfile.ZipFile('build/base.apk','a',zipfile.ZIP_DEFL
 "$BT/apksigner" sign --ks android/chave.keystore --ks-pass pass:semana-a-semana --key-pass pass:semana-a-semana --out semana-a-semana.apk build/alinhado.apk
 "$BT/apksigner" verify --print-certs semana-a-semana.apk | head -1
 ls -la semana-a-semana.apk
+echo "Versão do cache da versão web (app/sw.js, VERSAO_APP): $(sed -n 's/^const VERSAO_APP = \"\([^\"]*\)\".*/\1/p' app/sw.js). Suba a cada entrega (ver LEIAME)."
