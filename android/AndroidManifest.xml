@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Sem permissao de INTERNET de proposito: os registros de saude nao tem como sair do aparelho, a nao ser pelo botao Compartilhar. -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="br.semanaasemana" android:versionCode="1" android:versionName="1.0">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="br.semanaasemana" android:versionCode="2" android:versionName="1.1">
     <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="34" />
     <application android:label="@string/nome" android:icon="@mipmap/ic_launcher" android:theme="@style/Tema" android:allowBackup="true">
         <activity android:name=".MainActivity" android:exported="true" android:configChanges="orientation|screenSize|keyboardHidden|uiMode" android:windowSoftInputMode="adjustResize">
