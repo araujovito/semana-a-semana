@@ -177,7 +177,7 @@ function semanaPeriodo(s) { return br(s.de) + " a " + br(s.ate) + (s.atual ? " (
 /* ---------- tela ---------- */
 function telaSemana() {
   const h = hoje(), semanas = semanasDoTratamento(h), discreto = !!(E.perfil && E.perfil.discreto === true);
-  let out = '<h2 class="semana-topo">Semana a semana</h2>';
+  let out = '<h2 class="semana-topo">Semanas do tratamento</h2>'; // o topo do app já diz "Semana a Semana"
   if (!semanas.length) {
     return out + '<div class="cartao destaque" data-semana="vazia"><p style="margin:0">Quando você registrar a primeira aplicação, as semanas do tratamento aparecem aqui, uma a uma, com aplicação, peso, sintomas e comida.</p>' +
       '<div class="botoes"><button data-ac="ir" data-para="diario" data-sub="doses">Registrar aplicação</button></div></div>';
