@@ -128,7 +128,10 @@ function campoFaltando(f) {
   if (!c) return false;
   const rot = c.closest("label");
   const nome = rot ? (rot.firstChild && rot.firstChild.nodeType === 3 ? rot.firstChild.textContent : rot.textContent).trim() : "";
-  aviso(nome ? "Preencha o campo: " + nome + "." : "Preencha os campos obrigatórios.");
+  /* Enter (ou "próximo") no teclado, com o foco num campo do formulário, só leva ao campo vazio: o aviso antes de ela digitar
+     parecia erro (teste final do APK 2.0, M5). O aviso fica para o toque no botão de salvar. */
+  const peloTeclado = campoDeTexto(document.activeElement) && f.contains(document.activeElement);
+  if (!peloTeclado) aviso(nome ? "Preencha o campo: " + nome + "." : "Preencha os campos obrigatórios.");
   c.focus();
   return true;
 }
