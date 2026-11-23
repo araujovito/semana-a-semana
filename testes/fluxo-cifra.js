@@ -40,6 +40,8 @@ async function comCsp(t) { await t.p.addInitScript(ouvirViolacoes); await t.p.re
 const violacoes = p => p.evaluate(() => window.__violacoes || ["sem ouvinte"]);
 const armazenamento = p => p.evaluate(() => { const o = {}; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); o[k] = localStorage.getItem(k); } return o; });
 const estado = p => p.evaluate(() => JSON.stringify(E));
+// Porções guardadas (E.ui.escala) são conta refeita pelo app, não registro dela: com PIN entram no estado ao desenhar o plano.
+const estadoSemEscala = p => p.evaluate(() => { const x = JSON.parse(JSON.stringify(E)); delete x.ui.escala; return JSON.stringify(x); });
 async function entrar(p, pin) { await esperarTitulo(p, "Digite o seu PIN"); await digitar(p, "cifEntrar", pin); }
 async function esperarApp(p) { await p.waitForFunction(() => !document.querySelector(".cif-portao") && !!document.querySelector("#tela .cartao"), null, { timeout: 20000 }); }
 
@@ -68,13 +70,14 @@ async function esperarApp(p) { await p.waitForFunction(() => !document.querySele
     await comCsp(t);
     await esperarTitulo(p, "Crie um PIN");
     ok(await p.locator(".cif-portao").count() === 1 && !(await p.locator("#abas").isVisible()), "com dados: o portão aparece antes de qualquer registro");
-    const antes = await estado(p);
+    const antes = await estadoSemEscala(p);
     const cod = await criarPin(t, "cifra-b");
     await esperarApp(p);
-    ok(await estado(p) === antes, "migração: estado depois de criar o PIN igual ao de antes");
+    ok(await estadoSemEscala(p) === antes, "migração: estado depois de criar o PIN igual ao de antes");
     let g = await armazenamento(p);
     ok(!(CHAVE in g), "migração: o texto puro foi apagado depois de conferir");
     ok(["Zuleica", "nota secreta do teste", "96.2"].every(x => JSON.stringify(g).indexOf(x) < 0), "nenhum dado legível no armazenamento");
+    ok(!("semana-a-semana.escala" in g) && !!(await p.evaluate(() => E.ui.escala)), "porções guardadas: fora do texto puro, dentro dos dados cifrados");
     // registrar algo grava cifrado
     await p.evaluate(() => { E.pesos.push({ id: "p3", data: hoje(), kg: 94.8 }); salvar(); });
     await p.waitForFunction(() => !!localStorage.getItem("semana-a-semana.cifrado"));

@@ -201,11 +201,23 @@ const f2 = x => Math.round(x * 100) / 100;
    noLimite: os limites não deixaram a média da semana chegar a 7% das duas metas. */
 const MEMO_ESCALA = {};
 /* Guarda as escalas já calculadas entre aberturas do app (a primeira conta leva de 0,3 s a alguns segundos num celular fraco:
-   auditoria 2). É dado derivado: se o armazenamento falhar ou vier de outra versão do cardápio, a conta é refeita. */
+   auditoria 2). É dado derivado: se o armazenamento falhar ou vier de outra versão do cardápio, a conta é refeita.
+   Sem PIN, fica na chave CHAVE_ESCALA. Com PIN, fica em E.ui.escala e vai cifrado junto com o resto na próxima gravação: a chave
+   e os valores trazem kcal e proteína da meta, das quais dá para estimar o peso (teste final do APK, I2). Bloqueado, não guarda nada.
+   A chave em texto de antes do PIN é apagada ao carregar este arquivo e ao criar o PIN (empresa/relatorios/escala-texto-puro.md). */
 const CHAVE_ESCALA = "semana-a-semana.escala", VERSAO_ESCALA = 3 + "|" + Object.keys(A).length + "|" + JSON.stringify(C).length;
-function lerEscalasGuardadas() { try { const x = JSON.parse(localStorage.getItem(CHAVE_ESCALA)); return x && x.v === VERSAO_ESCALA ? x.e : {}; } catch (e) { return {}; } }
+const escalaComPin = () => CIF_TRANCADO || !!CIF_GRAVAR;
+function apagarEscalaEmTexto() { try { localStorage.removeItem(CHAVE_ESCALA); } catch (e) {} }
+if (CIF_TRANCADO) apagarEscalaEmTexto();
+function lerEscalasGuardadas() {
+  try { const x = escalaComPin() ? (E.ui && E.ui.escala) : JSON.parse(localStorage.getItem(CHAVE_ESCALA)); return x && x.v === VERSAO_ESCALA && x.e && typeof x.e === "object" ? x.e : {}; } catch (e) { return {}; }
+}
 function guardarEscala(chave, r) {
-  try { const e = lerEscalasGuardadas(), ks = Object.keys(e); if (ks.length > 20) delete e[ks[0]]; e[chave] = r; localStorage.setItem(CHAVE_ESCALA, JSON.stringify({ v: VERSAO_ESCALA, e })); } catch (e) { /* sem cache: só fica mais lento */ }
+  try {
+    if (CIF_TRANCADO) return;
+    const e = lerEscalasGuardadas(), ks = Object.keys(e); if (ks.length > 20) delete e[ks[0]]; e[chave] = r;
+    if (CIF_GRAVAR) { E.ui.escala = { v: VERSAO_ESCALA, e }; apagarEscalaEmTexto(); } else localStorage.setItem(CHAVE_ESCALA, JSON.stringify({ v: VERSAO_ESCALA, e }));
+  } catch (e) { /* sem cache: só fica mais lento */ }
 }
 /* protTeto: proteína média máxima aceita (g). Auditoria 2: com meta de energia alta e proteína baixa (IMC abaixo de 25), escolher
    a proteína colada na meta travava a energia no fator mínimo e o cardápio ficava até 545 kcal abaixo da meta. Agora vale

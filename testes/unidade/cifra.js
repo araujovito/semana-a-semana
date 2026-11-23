@@ -193,3 +193,31 @@ test("calibração fica entre o piso e o teto", async () => {
   const it = await app.v("cifCalibrar()");
   assert.ok(it >= 600000 && it <= 10000000 && it % 10000 === 0, String(it));
 });
+
+test("porções guardadas (semana-a-semana.escala): com PIN saem do texto puro e vão cifradas em E.ui.escala", async () => {
+  const ESC = "semana-a-semana.escala", g = {}, app = abrir(ESTADO, g);
+  app.v("planoDoDia(0)");
+  assert.ok(ESC in g, "sem PIN continua guardando em texto, como antes");
+  const velha = g[ESC];
+  await criar(app, codigo(app));
+  assert.ok(!(ESC in g), "criar o PIN apaga a chave em texto");
+  // Quem já tinha PIN e a chave em texto (APK 2.0 de teste): ao abrir, ainda trancado, a chave some.
+  g[ESC] = velha;
+  const app2 = abrir(null, g);
+  assert.ok(!(ESC in g), "abrir com PIN apaga a chave em texto antes do desbloqueio");
+  app2.v("guardarEscala('x', { dias: [1,1,1,1,1,1,1] })");
+  assert.ok(!(ESC in g), "trancado, não guarda nada");
+  assert.strictEqual(await app2.v("cifDesbloquear('" + PIN + "')"), "ok");
+  app2.v("planoDoDia(0)");
+  assert.ok(!(ESC in g), "desbloqueado, não volta para o texto");
+  assert.ok(Object.keys(app2.v("lerEscalasGuardadas()")).length >= 1, "fica em E.ui.escala");
+  assert.strictEqual(app2.v("salvar()"), true);
+  await app2.v("cifEsperarGravacoes()");
+  const metas = app2.v("String(metas().kcal) + '|' + metas().prot");
+  assert.ok(JSON.stringify(g).indexOf(metas) < 0, "a meta não aparece no armazenamento");
+  // Abrindo de novo, a escala vem dos dados cifrados e a conta não precisa ser refeita.
+  const app3 = abrir(null, g);
+  assert.strictEqual(await app3.v("cifDesbloquear('" + PIN + "')"), "ok");
+  assert.strictEqual(app3.v("JSON.stringify(lerEscalasGuardadas())"), app2.v("JSON.stringify(lerEscalasGuardadas())"));
+  assert.strictEqual(app3.v("JSON.stringify(planoDoDia(0))"), app2.v("JSON.stringify(planoDoDia(0))"), "mesmo plano");
+});

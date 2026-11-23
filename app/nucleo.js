@@ -34,7 +34,7 @@ const SEMANA = ["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
    caneta     null | objeto (doses restantes, validade, saída da geladeira)
    suplementos, exames   listas
    lembretes  { } horários dos lembretes do aparelho
-   ui         preferências de tela (aba aberta, local de treino). Também: planoNutri (planonutri.js); puPerguntas true = ela já
+   ui         preferências de tela (aba aberta, local de treino). Também: escala (só com PIN: porções guardadas, nutricao.js); planoNutri (planonutri.js); puPerguntas true = ela já
               respondeu (no primeiro uso ou no Perfil) vesícula, fígado e plano da nutricionista, mesmo com "Não sei";
               puAviso "AAAA-MM-DD" = dia em que a faixa "perguntas novas" foi respondida ou dispensada (perfil.js, auditoria 3, I7) */
 const VERSAO = 2;

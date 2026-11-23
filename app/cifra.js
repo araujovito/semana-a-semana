@@ -158,6 +158,7 @@ async function cifCriarProtecao(pin, codigo, iter) {
     if (!relido || (await cifDecifrar(m.chave, relido.iv, relido.dadosCifrados)) !== texto) throw new Error("conferência falhou");
   } catch (x) { try { localStorage.removeItem(CIF_GUARDA); } catch (y) {} throw x; }
   try { localStorage.removeItem(CHAVE); } catch (x) {}
+  if (typeof apagarEscalaEmTexto === "function") apagarEscalaEmTexto(); // porções guardadas: passam para E.ui.escala (nutricao.js)
   cifAcertou();
   cifAbrir(m.chave, m.reg, E);
   return true;
