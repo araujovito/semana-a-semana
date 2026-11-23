@@ -4,7 +4,7 @@
 function telaDiario() {
   const sub = E.ui.diario || "doses", h = hoje();
   const abas = [["doses", "Aplicações"], ["peso", "Peso"], ["sintomas", "Sintomas"], ["relatorio", "Relatório"]];
-  let out = '<div class="chips">' + abas.map(a => '<button data-ac="diario" data-v="' + a[0] + '" class="' + (sub === a[0] ? "ativa" : "") + '">' + a[1] + "</button>").join("") + "</div>";
+  let out = '<div class="chips chips-abas">' + abas.map(a => '<button data-ac="diario" data-v="' + a[0] + '" class="' + (sub === a[0] ? "ativa" : "") + '">' + a[1] + "</button>").join("") + "</div>";
   if (sub === "doses") out += subDoses();
   if (sub === "peso") out += subPeso();
   if (sub === "sintomas") out += subSintomas();

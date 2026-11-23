@@ -87,6 +87,13 @@ button.perigo { background: transparent; color: var(--alerta); border: 1px solid
 .chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 8px; }
 .chips button { flex: none; background: var(--cartao); color: var(--texto); border: 1px solid var(--linha); font-weight: 500; padding: 7px 12px; border-radius: 999px; font-size: 16px; }
 .chips button.ativa { background: var(--cor); color: var(--sobre-cor); border-color: var(--cor); }
+/* Dias do Plano e sub-abas do Diário: tudo à vista, sem faixa que rola escondida (teste final M4: em 440 px "Enjoo" ficava
+   fora da tela e nada indicava que dava para arrastar). Dias em 2 linhas de 4 (cabem com letra 1,5); sub-abas dividem a
+   linha e, se a letra crescer, quebram para a linha de baixo. */
+.chips.chips-dias { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); overflow-x: visible; }
+.chips.chips-dias button { padding: 7px 4px; }
+.chips.chips-abas { flex-wrap: wrap; overflow-x: visible; }
+.chips.chips-abas button { flex: 1 1 auto; }
 
 label { display: block; font-size: 15px; color: var(--suave); margin-top: 10px; }
 input, select, textarea { width: 100%; font: inherit; color: var(--texto); background: var(--fundo); border: 1px solid var(--linha); border-radius: 10px; padding: 10px; margin-top: 4px; }

@@ -90,14 +90,14 @@ Quando a aba tem mais de uma tela, aparecem sub-abas: Semana · Diário · Paine
 
     bash testar.sh
 
-Roda sintaxe de todos os `.js`, unidade (`node testes/unidade.js`) e ponta a ponta (`node testes/fluxo.js`, navegador sem janela, 19 arquivos `fluxo-*.js`). Termina com "TUDO VERDE" ou "HÁ FALHAS".
+Roda sintaxe de todos os `.js`, unidade (`node testes/unidade.js`) e ponta a ponta (`node testes/fluxo.js`, navegador sem janela, 21 arquivos `fluxo-*.js`). Termina com "TUDO VERDE" ou "HÁ FALHAS".
 Em `main`, em 22/11 às 18h50: TUDO VERDE, 174 testes de unidade.
 
 - Usa o `playwright-core` de outro projeto da máquina e o Chromium do cache do Playwright. Troque com `PLAYWRIGHT=... CHROMIUM=... bash testar.sh`.
 - `CAPTURAS=/pasta bash testar.sh` grava as telas.
 - Relógio fixo: sexta, 20/11/2026, 10h. Um `alert()` ou `confirm()` nativo conta como erro.
 - Os testes antigos rodam sem PIN (`window.cifTesteSemPin` antes de carregar). O PIN tem os seus: `testes/unidade/cifra.js` e `testes/fluxo-cifra.js`.
-- Há testes a 440 px (largura do celular dela), com letra grande (`fluxo-letra-grande.js`) e da versão web (`fluxo-pwa.js`, `fluxo-seguranca-pwa.js`).
+- Há testes a 440 px (largura do celular dela), com letra grande (`fluxo-letra-grande.js`; dias do Plano e sub-abas do Diário em 440 px com letra 1,0, 1,3 e 1,5 em `fluxo-letra-redmi.js`) e da versão web (`fluxo-pwa.js`, `fluxo-seguranca-pwa.js`).
 - Regra do projeto: commit só com teste verde; quem muda comportamento acrescenta verificação.
 
 Para olhar no computador: abra `app/index.html` no navegador.
@@ -206,7 +206,6 @@ Conferidas no código de `main` contra `auditoria-3.md`, `revisao-clinica-onda2.
 - Cardápio de reserva vegetariano: `conferir_cardapio.js` ainda acusa almoços acima de 500 kcal e gordura do dia acima de 35% (auditoria 3, I1). Não se sabe se ela é vegetariana.
 - Plano da nutricionista: café e jantar de algumas opções com pouca gordura, fibra abaixo de 25 g na maioria das combinações, óleo dos preparos fora da conta (`empresa/relatorios/plano-nutricionista-conferido.md`). São perguntas para a nutricionista, não erro do app.
 - Dia de enjoo ligado no meio do dia: o total do dia passa a contar só as refeições leves (nada é apagado).
-- Sub-abas do Diário e dias do Plano podem cortar com letra grande, sem sinal de que dá para arrastar.
 - Desempenho: com CPU 10 vezes mais lenta, cerca de 2 s depois de registrar peso. Não medido no celular dela.
 
 **Não testado**

@@ -46,7 +46,7 @@ function telaPlano() {
   const fr = fraseRestricoes();
   if (fr) out += '<div class="cartao destaque"><h2>O que muda com o que você não come</h2><p style="margin:0">' + esc(fr) + '</p><p class="sub" style="margin:6px 0 0">Os alimentos trocados aparecem marcados no cardápio de cada dia.</p></div>';
 
-  out += '<div class="chips">' + SEMANA.map((n, i) => '<button data-ac="diaPlano" data-i="' + i + '" class="' + (sel === i ? "ativa" : "") + '">' + n + (i === diaSemana(h) ? " ·" : "") + "</button>").join("") + '<button data-ac="diaPlano" data-i="7" class="' + (sel === 7 ? "ativa" : "") + '">Enjoo</button></div>';
+  out += '<div class="chips chips-dias">' + SEMANA.map((n, i) => '<button data-ac="diaPlano" data-i="' + i + '" class="' + (sel === i ? "ativa" : "") + '">' + n + (i === diaSemana(h) ? " ·" : "") + "</button>").join("") + '<button data-ac="diaPlano" data-i="7" class="' + (sel === 7 ? "ativa" : "") + '">Enjoo</button></div>';
 
   out += '<div class="cartao"><h2>' + esc(d.nome) + "</h2>";
   d.refeicoes.forEach(ref => {
