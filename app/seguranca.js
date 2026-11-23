@@ -6,7 +6,10 @@
      registro mais antigo, para não aparecer no primeiro dia de uso.
    - Exportação e restauração com código de verificação (SHA-256): ver "cópia verificada" abaixo.
    A data da exportação fica em E.ui.ultimaExportacao (AAAA-MM-DD): é a da cópia conferida e entregue ao compartilhar, porque o app
-   não tem como saber se ela guardou o texto. */
+   não tem como saber se ela guardou o texto.
+   Hora da última cópia conferida em E.ui.copiaConferidaHora ("HH:MM", da mesma data): no Android a folha de compartilhar cobre o aviso
+   "Cópia pronta e conferida" e, com PIN, o app ainda se tranca ao ir para segundo plano. Por isso o cartão de cópia mostra uma linha fixa
+   com data e hora da última cópia conferida, que continua lá quando ela volta da folha (teste final do APK 2.0, M6). */
 
 const SEG_DIAS_COPIA = 14;
 const SEG_TEXTO_EXPORTAR = "A cópia tem todos os seus dados de saúde: perfil, aplicações, peso, sintomas e alimentação. Quem receber o texto consegue ler tudo, e o app de mensagens pode guardar uma cópia. Uma opção é mandar só para você mesma.";
@@ -30,6 +33,15 @@ function segCartaoLembrete() {
   const frase = s.dias == null ? "Você ainda não exportou uma cópia dos seus registros." : "A última cópia dos seus registros foi exportada há " + s.dias + " dias.";
   return '<div class="cartao seg-lembrete" id="seg-lembrete-copia"><p class="sub">' + frase + ' Se quiser, dá para exportar agora.</p>' +
     '<div class="botoes"><button class="sec" data-ac="exportar">Exportar agora</button><button class="sec" data-ac="segAdiarCopia">Agora não</button></div></div>';
+}
+
+/* Linha fixa do cartão de cópia (aparelho.js): "" se nunca exportou. Cópia antiga, sem hora guardada, mostra só a data. */
+function segLinhaUltimaCopia() {
+  const ui = E.ui || {};
+  if (!dataValida(ui.ultimaExportacao)) return "";
+  const hora = /^\d{2}:\d{2}$/.test(ui.copiaConferidaHora || "") ? " às " + ui.copiaConferidaHora : "";
+  const quando = ui.ultimaExportacao === hoje() ? "hoje" : "em " + brAno(ui.ultimaExportacao);
+  return '<p class="sub" id="seg-ultima-copia" role="status"><b>Última cópia conferida: ' + quando + hora + ".</b> O app releu o texto e ele confere.</p>";
 }
 
 /* ---------- cópia verificada ----------
@@ -93,7 +105,8 @@ function segLerCopia(texto) {
 }
 /* Exporta: monta, relê pelo caminho da restauração, confere que volta igual e só então entrega ao compartilhar. */
 function segExportar() {
-  const estado = JSON.parse(JSON.stringify(E)); estado.ui.ultimaExportacao = hoje(); // a data vai junto na cópia
+  const agora = new Date(), hora = String(agora.getHours()).padStart(2, "0") + ":" + String(agora.getMinutes()).padStart(2, "0");
+  const estado = JSON.parse(JSON.stringify(E)); estado.ui.ultimaExportacao = hoje(); estado.ui.copiaConferidaHora = hora; // data e hora vão juntas na cópia
   const foto = JSON.stringify(estado);
   return segMontarCopia(JSON.parse(foto)).then(t => segLerCopia(t).then(r => {
     if (r.erro || !r.conferida || JSON.stringify(r.estado) !== JSON.stringify(migrar(JSON.parse(foto)))) {
@@ -104,7 +117,7 @@ function segExportar() {
       alerta("A cópia ficou grande demais para o Android passar para outro app (" + Math.round(t.length / 1000) + " mil caracteres; o limite é " + SEG_MAX_TEXTO / 1000 + " mil). Nada foi enviado.");
       return;
     }
-    E.ui.ultimaExportacao = estado.ui.ultimaExportacao; salvar();
+    E.ui.ultimaExportacao = estado.ui.ultimaExportacao; E.ui.copiaConferidaHora = hora; salvar();
     aviso("Cópia pronta e conferida.");
     compartilhar(t);
     render();

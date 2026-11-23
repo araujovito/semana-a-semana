@@ -84,7 +84,7 @@ ok(/dataExtractionRules="@xml\/regras_backup"/.test(MANIFESTO) && /fullBackupCon
   await p.click("[data-ac=exportar]");
   ok(/dados de saúde/.test(await t.textoDialogo() || ""), "Exportar tudo avisa, antes, que o texto tem dados de saúde");
   await t.nao();
-  ok((await p.evaluate(() => window.__enviados)).length === 0 && !(await t.ler()).ui.ultimaExportacao, "cancelar o aviso não exporta nada");
+  ok((await p.evaluate(() => window.__enviados)).length === 0 && !(await t.ler()).ui.ultimaExportacao && await p.locator("#seg-ultima-copia").count() === 0, "cancelar o aviso não exporta nada (e não aparece linha de cópia conferida)");
   await p.click("[data-ac=exportar]"); await t.sim(); await p.waitForFunction(() => window.__enviados.length === 1);
   let enviados = await p.evaluate(() => window.__enviados);
   const copia1 = JSON.parse(enviados[0] || "{}");
@@ -93,6 +93,12 @@ ok(/dataExtractionRules="@xml\/regras_backup"/.test(MANIFESTO) && /fullBackupCon
   ok(await p.evaluate(h => segSha256Js(JSON.stringify(JSON.parse(h).dados)), enviados[0]) === copia1.sha256 && await p.evaluate(() => isSecureContext && !!crypto.subtle),
     "no arquivo (file://) o código vem do WebCrypto e bate com o cálculo em JavaScript puro");
   ok((await t.ler()).ui.ultimaExportacao === d(0) && copia1.dados.ui.ultimaExportacao === d(0), "a data da exportação fica guardada (e vai junto na cópia)");
+  // M6 do teste final do APK: no Android a folha de compartilhar cobre o aviso; a confirmação precisa ficar fixa no cartão de cópia.
+  await p.evaluate(() => { document.getElementById("aviso").hidden = true; });
+  const linhaCopia = await p.locator("#seg-ultima-copia").innerText().catch(() => "");
+  const horaCopia = (await t.ler()).ui.copiaConferidaHora;
+  ok(/^\d{2}:\d{2}$/.test(horaCopia || "") && linhaCopia.includes("Última cópia conferida: hoje às " + horaCopia) && copia1.dados.ui.copiaConferidaHora === horaCopia,
+    "depois de exportar, o cartão de cópia mostra fixa a linha \"Última cópia conferida: hoje às HH:MM\", mesmo com o aviso já escondido");
   await p.click("[data-ac=compartilhar][data-de=rel]");
   ok(/relatório tem dados de saúde/.test(await t.textoDialogo() || ""), "Compartilhar o relatório avisa, antes, que o texto tem dados de saúde");
   await t.nao(); ok((await p.evaluate(() => window.__enviados)).length === 1, "cancelar não compartilha o relatório");
@@ -100,6 +106,8 @@ ok(/dataExtractionRules="@xml\/regras_backup"/.test(MANIFESTO) && /fullBackupCon
   enviados = await p.evaluate(() => window.__enviados);
   ok(enviados.length === 2 && /RELATÓRIO DE ACOMPANHAMENTO/.test(enviados[1]), "seguir compartilha o relatório");
   ok(await p.locator("#seg-lembrete-copia").count() === 0, "cópia exportada hoje: sem lembrete");
+  await p.reload(); // a ponte falsa recomeça __enviados vazio, por isso vem depois das contagens acima await p.waitForSelector("[data-ac=exportar]");
+  ok((await p.locator("#seg-ultima-copia").innerText().catch(() => "")).includes("hoje às " + horaCopia), "a linha da última cópia conferida continua depois de reabrir o app");
   await t.fechar();
 
   // Lembrete discreto: nunca exportou e usa o app há 20 dias; aparece junto do cartão de cópia, oferece exportar e pode ser adiado.
@@ -121,6 +129,8 @@ ok(/dataExtractionRules="@xml\/regras_backup"/.test(MANIFESTO) && /fullBackupCon
   ok(await p.locator("#seg-lembrete-copia").count() === 0 && (await t.ler()).ui.lembreteCopia === d(0), "\"Agora não\" esconde o lembrete e guarda a data");
   await t.semear(estadoBase(Object.assign({ ui: { diario: "relatorio", ultimaExportacao: d(10) } }, antigo))); await p.waitForSelector("[data-ac=zerar]");
   ok(await p.locator("#seg-lembrete-copia").count() === 0, "exportação há 10 dias: sem lembrete");
+  const dez = d(10).split("-").reverse().join("/");
+  ok((await p.locator("#seg-ultima-copia").innerText().catch(() => "")).includes("Última cópia conferida: em " + dez + "."), "cópia antiga, sem hora guardada: a linha mostra só a data");
   await t.fechar();
 
   // Cópia maior que o limite da ponte do Android (MAX_TEXTO em MainActivity.java, o mesmo SEG_MAX_TEXTO): avisa e não envia.
