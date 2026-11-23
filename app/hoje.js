@@ -232,7 +232,7 @@ function relAlimentacao(de) {
       (discreto ? "" : " Média de energia: " + fmt(s.media.kcal) + " kcal (" + (alvoEnergia(m).nutri ? "faixa do plano da nutricionista: " + fmt(alvoEnergia(m).min) + " a " + fmt(alvoEnergia(m).max) : "referência " + fmt(m.kcal)) + " kcal)."));
     L.push('Refeições marcadas como "nada": ' + s.nada + " de " + s.refeicoes + " registradas.");
   } else L.push("Nenhum dia com registro do que foi comido.");
-  L.push((s.diasAgua ? "Água: média de " + fmt(s.agua / 1000, 1) + " L em " + s.diasAgua + (s.diasAgua === 1 ? " dia" : " dias") + " com registro (meta " + fmt(m.agua / 1000, 1) + " L)." : "Água: sem registro.") + " Dias de enjoo: " + s.enjoo + ".");
+  L.push((s.diasAgua ? "Água: média de " + fmt(s.agua / 1000, 1) + " L em " + s.diasAgua + (s.diasAgua === 1 ? " dia" : " dias") + " com registro (meta " + fmt(m.agua / 1000, 1) + " L)." : "Água: sem registro.") + ' Dias com o cardápio leve (botão "Dia de enjoo"): ' + s.enjoo + ".");
   if (s.dias) {
     const nota = " (estimativa: só entra o que foi marcado, nos dias com registro" + (s.temExtras ? "; inclui suplementos" : "") + ")";
     const comidos = NUTRI.filter(x => s.media[x[0]] < 0.8 * m.micro[x[0]]).map(x => x[1] + " " + fmt(100 * s.media[x[0]] / m.micro[x[0]]) + "%");

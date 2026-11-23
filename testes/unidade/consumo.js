@@ -201,11 +201,12 @@ test("relatório: médias do que foi comido, nada, enjoo, água e micronutriente
   assert.ok(t.includes("Média de proteína: " + Math.round(cheio.prot / 2) + " g") && /Média de energia: [\d.]+ kcal/.test(t), t);
   assert.match(t, /Refeições marcadas como "nada": 2 de 7 registradas/);
   assert.match(t, /Água: média de 1,5 L em 2 dias com registro/);
-  assert.match(t, /Dias de enjoo: 1/);
+  assert.match(t, /Dias com o cardápio leve \(botão "Dia de enjoo"\): 1\./);
+  assert.doesNotMatch(t, /Dias de enjoo/);
   assert.match(t, /Média do que foi comido abaixo de 80% da meta \(estimativa: só entra o que foi marcado, nos dias com registro\): .*Cálcio \d+%/);
   assert.match(t, /Cardápio planejado abaixo de 80% da meta/);
   assert.ok(!/\bela\b/.test(t), "sem terceira pessoa");
-  assert.match(abrir().j("relAlimentacao(mais(hoje(), -29))").join("\n"), /Nenhum dia com registro do que foi comido\.\nÁgua: sem registro\. Dias de enjoo: 0\./);
+  assert.match(abrir().j("relAlimentacao(mais(hoje(), -29))").join("\n"), /Nenhum dia com registro do que foi comido\.\nÁgua: sem registro\. Dias com o cardápio leve \(botão "Dia de enjoo"\): 0\./);
 });
 
 test("perfil discreto: relatório e tela Hoje sem kcal", () => {

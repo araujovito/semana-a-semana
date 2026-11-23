@@ -161,7 +161,7 @@ function semanaCorpo(s, discreto, alvoProt) {
   out += item("Aplicação", s.doses.length ? s.doses.map(semanaTextoDose).join("<br>") : "nenhuma registrada", "dose");
   out += item("Peso", semanaTextoPeso(s, discreto), "peso");
   out += item("Sintomas", semanaTextoSintomas(s.sintomas), "sintomas");
-  out += item("Dias de enjoo", s.enjooMarcado ? nDias(s.enjooMarcado) + " com o cardápio de enjoo" : "nenhum marcado", "enjoo");
+  out += item("Cardápio leve", (s.enjooMarcado ? "usado em " + nDias(s.enjooMarcado) : "não usado") + ' (botão "Dia de enjoo")', "enjoo");
   out += item("Comida", semanaTextoComida(s, discreto, alvoProt), "comida");
   out += "</ul>";
   /* Dor forte na barriga marcada: caminho para os sinais de alerta do Guia (cólica biliar e pancreatite ficam lá, com fonte), sem alarde. */

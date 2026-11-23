@@ -26,13 +26,14 @@ function seisSemanas(discreto) {
   ok(/116,4 kg \(-0,6 kg na semana\)/.test(atual), "semana atual: peso e variação na semana");
   ok(/enjoo em 2 dias/.test(atual) && /refluxo em 1 dia/.test(atual), "semana atual: sintomas contados por dia");
   ok(/nenhuma dor forte registrada/.test(atual) && !/sem sinal de alerta/.test(atual) && await p.locator(".semana-atual [data-para=guia]").count() === 0, "sem dor marcada: diz só que nenhuma dor forte foi registrada");
-  ok(/1 dia com o cardápio de enjoo/.test(atual), "semana atual: dias de enjoo marcados na tela Hoje");
+  ok(/Cardápio leve\s*usado em 1 dia \(botão "Dia de enjoo"\)/.test(atual) && !/Dias de enjoo/.test(atual), "semana atual: dias com o cardápio leve (botão Dia de enjoo), separado do sintoma");
   ok(/proteína média de 67 g por dia/.test(atual) && /em 3 dias com registro/.test(atual) && /kcal/.test(atual), "semana atual: proteína média, dias com registro e energia");
   ok(/o enjoo foi maior nos 2 dias depois da aplicação/.test(atual), "semana atual: padrão de enjoo depois da aplicação");
   ok(await p.locator("#abas a.ativa[data-aba=semana]").count() === 1 && await p.locator("#subabas a.ativa[data-sub=semana]").count() === 1, "aba Semana acesa, com a sub-aba Semana");
 
   const ant = p.locator("#semana-anteriores details");
   ok(await ant.count() === 5, "5 semanas anteriores resumidas");
+  ok(/Cardápio leve\s*não usado \(botão "Dia de enjoo"\)/.test(await p.locator("#semana-anteriores").textContent()), "semana sem o botão Dia de enjoo ligado diz que o cardápio leve não foi usado");
   ok(await p.locator("#semana-anteriores details[open]").count() === 0, "as anteriores começam fechadas");
   const s5 = p.locator("#semana-anteriores details[data-semana='5']");
   ok(/Semana 5 · 5,0 mg/.test(await s5.locator("summary").innerText()), "resumo da semana 5 com a dose");
