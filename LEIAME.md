@@ -92,8 +92,8 @@ Quando a aba tem mais de uma tela, aparecem sub-abas: Semana · Diário · Paine
 
     bash testar.sh
 
-Roda sintaxe de todos os `.js`, unidade (`node testes/unidade.js`) e ponta a ponta (`node testes/fluxo.js`, navegador sem janela, 19 arquivos `fluxo-*.js`). Termina com "TUDO VERDE" ou "HÁ FALHAS".
-Em `main`, em 22/11 às 18h50: TUDO VERDE, 174 testes de unidade.
+Roda sintaxe de todos os `.js`, unidade (`node testes/unidade.js`) e ponta a ponta (`node testes/fluxo.js`, navegador sem janela, 20 arquivos `fluxo-*.js`). Termina com "TUDO VERDE" ou "HÁ FALHAS".
+Em `main` (cb9f833), em 22/11 às 23h40: TUDO VERDE, 191 testes de unidade. Com outras cópias rodando ao mesmo tempo leva mais de 8 minutos; um `timeout` curto derruba o navegador no meio e parece falha.
 
 - Usa o `playwright-core` de outro projeto da máquina e o Chromium do cache do Playwright. Troque com `PLAYWRIGHT=... CHROMIUM=... bash testar.sh`.
 - `CAPTURAS=/pasta bash testar.sh` grava as telas.
