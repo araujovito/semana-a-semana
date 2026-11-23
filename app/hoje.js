@@ -144,6 +144,26 @@ function abrirRitmo() {
     '<div class="botoes"><button class="sec" data-ac="sinaisDor">Dor na barriga: o que fazer</button><button class="sec" data-ac="ritmoPeso">Ver o peso</button></div>');
 }
 
+/* Avisos de segurança do Perfil em Hoje: uma linha e "ver" (auditoria 2, item 4 das pendências; mesmo formato do ritmo de perda).
+   Só aparecem para quem está na condição; quem não está não vê nada. Nenhum texto de saúde novo: a folha repete o texto do cartão
+   do Perfil/Plano (TEXTO_GESTANTE e TEXTO_PESO_BAIXO em perfil.js, IMC 18,5 = baixo peso na classificação da OMS).
+   Sem número de peso (modo discreto). */
+const AVISOS_CURTOS = {
+  gestante: { quando: () => { const m = metas(); return !!(m && m.gestante); }, titulo: "Gravidez e amamentação", linha: "fale com o seu médico.",
+    folha: () => [TEXTO_GESTANTE], guia: true },
+  pesoBaixo: { quando: () => { const m = metas(); return !!(m && m.abaixoDoPeso); }, titulo: "Peso abaixo da faixa de referência", linha: "fale com o seu médico sobre a dose e o peso.",
+    folha: () => [TEXTO_PESO_BAIXO] },
+};
+function avisosCurtos() {
+  return Object.keys(AVISOS_CURTOS).filter(k => AVISOS_CURTOS[k].quando()).map(k => { const a = AVISOS_CURTOS[k];
+    return '<div class="cartao alerta aviso-curto" data-aviso="' + k + '"><div class="linha"><p style="margin:0"><strong>' + a.titulo + ":</strong> " + a.linha + '</p><button class="mini sec" data-ac="verAviso" data-k="' + k + '">ver</button></div></div>';
+  }).join("");
+}
+function abrirAvisoCurto(k) {
+  const a = AVISOS_CURTOS[k]; if (!a || !a.quando()) return;
+  abrirFolha(a.titulo, a.folha().map(t => "<p>" + esc(t) + "</p>").join("") + (a.guia ? '<div class="botoes"><button class="sec" data-ac="avisoGuia">Abrir o Guia</button></div>' : ""));
+}
+
 /* ---------- atalhos: na ordem do uso e do risco (usabilidade, item 8) ---------- */
 const ATALHOS = [
   ["comida", "Comida", "i-comer", "plano"], ["agua", "Água", "i-agua", ""], ["como", "Como estou", "i-sintoma", "diario:sintomas"], ["aplic", "Aplicação", "i-caneta", "diario:doses"],
@@ -198,7 +218,7 @@ function telaHoje() {
     '<div class="cartao">' + blocoProteina(c, ref, quando, 0, r.enjoo) + "</div>";
 
   if (eHoje) {
-    out += avisoGestante() + avisoPesoBaixo() + ritmoCurto();
+    out += avisosCurtos() + ritmoCurto();
     if (riscoHipoHoje(h, new Date().getHours())) out += avisoHipoglicemia("hoje");
     const motivo = avisoComerPoucoHoje(h);
     if (motivo) out += cartaoComerPouco(motivo);
@@ -279,6 +299,8 @@ Object.assign(AC, {
   registrarDor() { AC.como({ k: "dor" }); },
   sinaisGuia() { fecharFolha(); rolarPara = "guia-alerta"; irPara("guia"); },
   verRitmo() { abrirRitmo(); },
+  verAviso(d) { abrirAvisoCurto(d.k); },
+  avisoGuia() { fecharFolha(); irPara("guia"); },
   ritmoPeso() { fecharFolha(); irPara("diario", "peso"); },
   atalho(d) { const x = String(d.para).split(":"); irPara(x[0], x[1]); },
   /* Troca o cardápio do dia selecionado (normal ou de enjoo). Nada é apagado: cada cardápio tem as suas marcas (comido e comidoEnjoo). */

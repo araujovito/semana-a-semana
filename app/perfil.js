@@ -13,10 +13,13 @@ function telaEntrada() {
     "<li>tem menos de 18 anos;</li><li>está grávida ou amamentando;</li><li>tem ou já teve transtorno alimentar;</li><li>já teve pancreatite;</li><li>tem, ou alguém da família tem, câncer medular de tireoide ou NEM2 (a bula contraindica o remédio nesses casos).</li></ul>" +
     '<div class="botoes"><button data-ac="entradaContinuar">Continuar</button></div></div>';
 }
-/* Cartão para as telas Perfil, Plano e Hoje. Devolve "" quando não se aplica. */
+/* Textos dos cartões de gravidez e de peso baixo. Os cartões inteiros ficam no Perfil e no Plano; Hoje mostra uma linha e "ver",
+   que abre este mesmo texto numa folha (hoje.js, avisosCurtos). Devolvem "" quando não se aplicam. */
+const TEXTO_GESTANTE = "O remédio não é usado na gravidez; na amamentação, quem decide é o médico. Fale com o seu médico. Enquanto esta resposta estiver marcada no Perfil, o app não calcula redução de calorias.";
+const TEXTO_PESO_BAIXO = "Pelo peso e pela altura registrados, você está abaixo da faixa de referência (IMC menor que 18,5). Fale com o seu médico sobre a dose e o peso. O app não calcula redução de calorias nesta faixa.";
 function avisoGestante() {
   const m = metas(); if (!m || !m.gestante) return "";
-  return '<div class="cartao alerta"><h2>Gravidez e amamentação</h2><p style="margin:0">O remédio não é usado na gravidez; na amamentação, quem decide é o médico. Fale com o seu médico. Enquanto esta resposta estiver marcada no Perfil, o app não calcula redução de calorias.</p></div>';
+  return '<div class="cartao alerta"><h2>Gravidez e amamentação</h2><p style="margin:0">' + TEXTO_GESTANTE + "</p></div>";
 }
 /* Mais de 65 anos. Fonte: grupo PROT-AGE (Bauer e colaboradores, J Am Med Dir Assoc 2013): perda de peso em idosos leva junto
    mais massa muscular; recomenda mais proteína e exercício de força. O app não muda a meta sozinho: encaminha a conversa. */
@@ -119,7 +122,7 @@ function relProgressoPerda() {
 
 function avisoPesoBaixo() {
   const m = metas(); if (!m || !m.abaixoDoPeso) return "";
-  return '<div class="cartao alerta"><h2>Peso abaixo da faixa de referência</h2><p style="margin:0">Pelo peso e pela altura registrados, você está abaixo da faixa de referência (IMC menor que 18,5). Fale com o seu médico sobre a dose e o peso. O app não calcula redução de calorias nesta faixa.</p></div>';
+  return '<div class="cartao alerta"><h2>Peso abaixo da faixa de referência</h2><p style="margin:0">' + TEXTO_PESO_BAIXO + "</p></div>";
 }
 
 const SIM_NAO = [["", "Prefiro não responder"], ["sim", "Sim"], ["nao", "Não"]];
