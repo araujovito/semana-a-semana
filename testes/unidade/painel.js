@@ -48,6 +48,12 @@ test("quanto falta de proteína nunca é negativo", () => {
   assert.strictEqual(a.v("painelFaltaProt(120, 100)"), 0);
 });
 
+test("tela: dia de enjoo ligado hoje não cobra a falta de proteína, como a tela Hoje", () => {
+  const html = abrir({ "2026-11-20": Object.assign(so(30), { enjoo: true }) }).v("telaPainel()");
+  assert.ok(/data-painel="falta">Dia leve: o que der, em porções pequenas\./.test(html));
+  assert.ok(!/Faltam [\d.]+ g de proteína/.test(html));
+});
+
 test("tela: resumo usa os dias antes de hoje; lacunas no gráfico; discreto esconde calorias", () => {
   const dias = { "2026-11-20": so(30), "2026-11-19": so(100), "2026-11-17": so(60) };
   const a = abrir(dias);

@@ -100,7 +100,8 @@ function telaPainel() {
   const kcal = c.total.kcal, prot = c.total.prot, falta = painelFaltaProt(prot, a.g);
   let out = '<div class="cartao painel-hoje"><h2>Hoje</h2><div class="painel-aneis' + (disc ? " so-um" : "") + '">' +
     painelAnel("Proteína", prot, a.g, "g", "prot") + (disc ? "" : painelAnel("Calorias", kcal, ae.kcal, "kcal", "kcal")) + "</div>" +
-    '<p class="painel-falta" data-painel="falta">' + (falta > 0 ? "Faltam " + fmt(falta) + " g de proteína para a meta de hoje." : "A meta de proteína de hoje já foi alcançada.") +
+    /* Dia de enjoo ligado em Hoje: a mesma frase de Hoje (blocoProteina), sem cobrar a falta. */
+    '<p class="painel-falta" data-painel="falta">' + (dia(h).enjoo ? "Dia leve: o que der, em porções pequenas." : falta > 0 ? "Faltam " + fmt(falta) + " g de proteína para a meta de hoje." : "A meta de proteína de hoje já foi alcançada.") +
     (c.registrou ? "" : " Nada registrado hoje ainda.") + "</p>" +
     '<p class="sub">' + (a.nutri ? "Faixa de proteína do plano da sua nutricionista: " + fmt(a.min) + " a " + fmt(a.max) + " g por dia; o alvo de hoje (" + fmt(a.g) + " g) é o começo da faixa, o mesmo da tela Hoje."
       : "Faixa de proteína: " + fmt(a.min) + " a " + fmt(a.max) + " g por dia.") + ' Os números vêm do que você marca na tela Hoje.</p></div>';
