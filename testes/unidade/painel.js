@@ -120,7 +120,7 @@ test("auditoria 3 (I3): dia só com proteína avulsa não vira dia de 0 kcal", (
   assert.strictEqual(r.dias, 1); assert.strictEqual(r.diasKcal, 0); assert.strictEqual(r.abaixoKcal, 0); assert.strictEqual(r.mediaKcal, null);
 });
 test("teste final (I1): com o plano da nutricionista, calorias comparam com a faixa dela e o corte é KCAL_POUCO", () => {
-  const a = abrir({ "2026-11-19": so(50) }, { peso: 120 });
+  const a = abrir({ "2026-11-19": so(50) }, { peso: 120 }); a.v("E.ui.planoNutri = true"); // respondeu Sim (perfil sem resposta fica no cardápio do app, M1)
   assert.ok(a.v("pnEmUso()"));
   const ae = a.j("alvoEnergia()");
   assert.ok(ae.nutri && ae.piso === 800 && ae.min < ae.max && ae.kcal === ae.min);

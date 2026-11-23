@@ -9,7 +9,8 @@ function relogio(inicio) {
   return R;
 }
 const PERFIL = { nome: "T", sexo: "F", nascimento: 1990, altura: 163, peso: 95.4, atividade: 1.2, metaKcal: null, metaProt: null, metaAgua: null, diabetes: null, insulinaSulf: null, pilula: null, naoCome: [], naoGosta: [] };
-const estado = ui => ({ v: 2, perfil: Object.assign({}, PERFIL), doses: [], pesos: [], sintomas: [], treinos: [], dias: {}, trocas: {}, caneta: null, suplementos: [], exames: [], lembretes: {}, ui: ui || {} });
+const estado = ui => ({ v: 2, perfil: Object.assign({}, PERFIL), doses: [], pesos: [], sintomas: [], treinos: [], dias: {}, trocas: {}, caneta: null, suplementos: [], exames: [], lembretes: {}, ui: ui || { puPerguntas: true } });
+// ui padrão = quem instalou e passou pelo primeiro uso (que grava puPerguntas) sem dizer Não ao plano: ligado.
 const SEX = "2026-11-20", QUI = "2026-11-19";
 function abrir(ui) { const app = carregar(estado(ui), { Date: relogio(SEX + "T10:00:00") }); return { app, v: app.v, j: c => JSON.parse(app.v("JSON.stringify(" + c + ")")) }; }
 const perto = (a, b, m) => assert.ok(Math.abs(a - b) < 1e-6, (m || "") + " " + a + " != " + b);
@@ -67,7 +68,7 @@ test("contas: total da opção é a soma dos itens; faixa do dia sem ceia no mí
   assert.ok(f.min.kcal < f.max.kcal && f.min.prot < f.max.prot);
 });
 
-test("interruptor: ligado quando ausente; desligado volta ao cardápio do app", () => {
+test("interruptor: ligado quando ausente depois do primeiro uso; desligado volta ao cardápio do app", () => {
   let a = abrir();
   assert.strictEqual(a.v("pnEmUso()"), true);
   assert.strictEqual(a.v("pnPlanoDaData('" + SEX + "').nutri"), true);
@@ -76,6 +77,27 @@ test("interruptor: ligado quando ausente; desligado volta ao cardápio do app", 
   assert.strictEqual(a.v("pnEmUso()"), false);
   assert.strictEqual(a.v("!!pnPlanoDaData('" + SEX + "').nutri"), false);
   assert.strictEqual(a.v("pnReferenciaDoDia(metas()).prot"), a.v("metas().prot"));
+});
+
+test("perfil de versão anterior sem resposta: alvo, lista e calorias do cardápio do app até ela responder (M1)", () => {
+  const a = abrir({});
+  const m = a.j("metas()");
+  assert.strictEqual(a.v("pnEmUso()"), false, "sem puPerguntas e sem planoNutri: desligado");
+  assert.strictEqual(a.v("!!pnPlanoDaData('" + SEX + "').nutri"), false, "a lista de refeições é o cardápio do app");
+  const ap = a.j("alvoProteina()"), ae = a.j("alvoEnergia()");
+  assert.ok(!ap.nutri && ap.g === m.prot && ap.rotulo === "meta", "alvo de proteína é a meta do app: " + JSON.stringify(ap));
+  assert.ok(!ae.nutri && ae.kcal === m.kcal, "energia é a referência do app: " + JSON.stringify(ae));
+  assert.strictEqual(a.v("pnReferenciaDoDia(metas()).prot"), m.prot);
+  assert.strictEqual(a.v("puFaltaResponder()"), true, "a faixa das perguntas novas continua aparecendo");
+  // respondeu Sim no Perfil: liga tudo junto
+  a.v("E.ui.planoNutri = true; E.ui.puPerguntas = true");
+  assert.ok(a.v("pnEmUso()") && a.v("pnPlanoDaData('" + SEX + "').nutri") && a.j("alvoProteina()").nutri && a.j("alvoEnergia()").nutri);
+  // respondeu "Não sei" (planoNutri fica ausente, puPerguntas true): padrão do app, ligado
+  a.v("delete E.ui.planoNutri");
+  assert.strictEqual(a.v("pnEmUso()"), true);
+  // sem perfil (antes do primeiro uso): padrão ligado
+  a.v("E.perfil = null; E.ui = {}");
+  assert.strictEqual(a.v("pnEmUso()"), true);
 });
 
 test("registro: escolher opção, marcar e trocar de opção depois; consumoDoDia acompanha", () => {

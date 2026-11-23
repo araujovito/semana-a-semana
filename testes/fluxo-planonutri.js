@@ -4,8 +4,8 @@ const { abrir, ok, d, estadoBase } = require("./apoio");
 const perto = (a, b) => Math.abs(a - b) < 0.01;
 const opcao = (i, nome) => ".refeicao[data-i='" + i + "'] label.opcao:has-text('" + nome + "')";
 (async () => {
-  // estado sem ui.planoNutri: é o padrão de quem instala
-  const t = await abrir({ estado: estadoBase({ ui: {} }), largura: 320 }), p = t.p;
+  // estado sem ui.planoNutri, com puPerguntas: é o padrão de quem instala e responde o primeiro uso com "Não sei" (perfil antigo sem resposta: M1, em fluxo-perfil.js)
+  const t = await abrir({ estado: estadoBase({ ui: { puPerguntas: true } }), largura: 320 }), p = t.p;
   const consumo = () => p.evaluate(x => { const c = consumoDoDia(x); return { prot: c.comida.prot, kcal: c.comida.kcal, refeicoes: c.refeicoes }; }, d(0));
   const opc = (i, o) => p.evaluate(x => { const s = pnTotalDaOpcao(PN_REFEICOES[x[0]].opcoes[x[1]]); return { prot: s.prot, kcal: s.kcal }; }, [i, o]);
   const topo = async v => parseInt((await p.locator("#tela [data-v=" + v + "]").first().textContent()).replace(/\./g, ""), 10);

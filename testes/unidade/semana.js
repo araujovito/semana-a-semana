@@ -166,7 +166,7 @@ test("histórico do dia habitual: a migração limpa entradas inválidas e põe 
 
 test("comida da semana usa o alvo único de proteína: o do plano da nutricionista quando em uso, senão a meta do app", () => {
   const dias = { "2026-11-16": { comido: [{ q: 1, itens: [["ovo", 100]] }] } };
-  const com = base({ doses: [dose("2026-11-16", 2.5)], dias, ui: {} });
+  const com = base({ doses: [dose("2026-11-16", 2.5)], dias, ui: { planoNutri: true } });
   const alvo = com.v("alvoProteina().g");
   assert.ok(com.v("alvoProteina().nutri"));
   assert.match(com.v("telaSemana()"), new RegExp("\\(alvo do plano da nutricionista: " + alvo + " g\\)"));

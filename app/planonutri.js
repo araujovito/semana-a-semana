@@ -101,8 +101,16 @@ function pnFaixaDia() {
 }
 
 /* ---------- uso no dia ---------- */
-/* Interruptor da tela Plano. E.ui.planoNutri === false desliga; qualquer outro valor (inclusive ausente) é ligado. */
-function pnEmUso() { return !(E.ui && E.ui.planoNutri === false); }
+/* Interruptor da tela Plano. true liga, false desliga. Ausente: ligado (padrão do app), menos para o perfil de versão anterior
+   que ainda não respondeu a pergunta "Segue um plano de uma nutricionista?" (perfil existe e E.ui.puPerguntas não é true;
+   teste final do APK, M1). Sem essa exceção, o alvo de proteína e energia virava o do plano dela antes da resposta, enquanto a
+   lista de refeições continuava no cardápio do app. Quem instala de novo passa pelo primeiro uso, que obriga a responder e grava
+   puPerguntas: com "Não sei", fica no padrão (ligado). Alvo, lista e calorias usam só esta função. */
+function pnEmUso() {
+  const ui = E.ui || {};
+  if (ui.planoNutri === true || ui.planoNutri === false) return ui.planoNutri;
+  return !(E.perfil && ui.puPerguntas !== true);
+}
 /* Qual plano normal vale num dia (r = dia(data)): o que já tem marca naquele dia; sem marca, o interruptor.
    Assim, mudar o interruptor nunca apaga o que já foi contado (dias passados e marcas de hoje, inclusive as de quem vem da
    versão 1); vale para os dias ainda sem marca. data fica na assinatura para uma regra por data, se for preciso. */

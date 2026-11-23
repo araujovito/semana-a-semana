@@ -75,6 +75,12 @@ const { abrir, ok, d, CHAVE } = require("./apoio");
 
   // Auditoria 3, I7: quem já tinha perfil e nunca respondeu vesícula, fígado e plano da nutricionista vê uma faixa em Hoje.
   ok(await p.locator("[data-cartao=pu-novas]").count() === 1 && /três perguntas/.test(await p.locator("[data-cartao=pu-novas]").innerText()), "perfil antigo: faixa das perguntas novas em Hoje");
+  // Teste final do APK, M1: antes de responder, alvo, lista e calorias são todos do cardápio do app (nada do plano da nutricionista).
+  const protHoje = await p.locator(".hoje-topo .hoje-prot").textContent();
+  ok(/meta \d/.test(protHoje) && !/nutricionista/.test(protHoje) && await p.locator("text=Plano da sua nutricionista").count() === 0 && await p.locator("select[data-mud=pnOpcao]").count() === 0,
+    "perfil antigo sem resposta: Hoje mostra a meta do app e o cardápio do app, sem o alvo do plano da nutricionista");
+  ok(await p.evaluate(() => !pnEmUso() && !alvoProteina().nutri && !alvoEnergia().nutri && !pnPlanoDaData(iso(new Date())).nutri),
+    "perfil antigo sem resposta: alvo de proteína, energia e lista pelo mesmo interruptor, desligado");
   await t.alvosDeToque("hoje com a faixa das perguntas novas");
   ok(await p.evaluate(() => { const f = document.querySelector("[data-cartao=pu-novas]"), topo = document.querySelector(".hoje-topo"); return !!f && (!topo || !!(topo.compareDocumentPosition(f) & Node.DOCUMENT_POSITION_FOLLOWING)); }),
     "a faixa fica depois do topo da Hoje, sem quebrá-lo");
