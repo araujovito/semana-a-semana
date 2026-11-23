@@ -91,7 +91,7 @@ function semanasDoTratamento(h) {
     let dc = 0, dk = 0, prot = 0, kcal = 0;
     /* Auditoria 3 (I3): dia só com proteína avulsa entra na proteína, não nas calorias. */
     dias.forEach(x => { if (!E.dias[x]) return; const c = consumoDoDia(x); if (!c.registrou) return; dc++; prot += c.total.prot; if (c.refeicoes > 0) { dk++; kcal += c.total.kcal; } });
-    s.comida = { dias: dc, prot: dc ? prot / dc : null, kcal: dk ? kcal / dk : null };
+    s.comida = { dias: dc, diasKcal: dk, prot: dc ? prot / dc : null, kcal: dk ? kcal / dk : null };
     /* padrão de enjoo da semana: precisa de aplicação, de registro nos 2 dias depois e de 2 dias com registro fora deles */
     const dose = s.doses.length ? s.doses[s.doses.length - 1].data : null;
     s.janela = dose ? semanaJanelaEnjoo(dose, dias, porDia) : { dentro: [], fora: [] };
@@ -143,7 +143,7 @@ function semanaTextoSintomas(x) {
 function semanaTextoComida(s, discreto, alvo) {
   const c = s.comida, a = typeof alvo === "number" ? { g: alvo, rotulo: "meta", nutri: false } : alvo;
   if (!c.dias) return "sem registro";
-  return "proteína média de " + fmt(c.prot) + " g por dia (" + a.rotulo + (a.nutri ? ": " : " ") + fmt(a.g) + " g)" + (discreto ? "" : ", energia média de " + fmt(c.kcal) + " kcal") +
+  return "proteína média de " + fmt(c.prot) + " g por dia (" + a.rotulo + (a.nutri ? ": " : " ") + fmt(a.g) + " g)" + (discreto || c.kcal == null ? "" : ", energia média de " + fmt(c.kcal) + " kcal" + (c.diasKcal < c.dias ? " (em " + nDias(c.diasKcal) + " com refeição marcada)" : "")) +
     ", em " + nDias(c.dias) + " com registro";
 }
 /* Fatos que viram destaque na semana (os "padrões" de uma semana). */

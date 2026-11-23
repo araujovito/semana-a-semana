@@ -102,18 +102,22 @@ function consumoDoDia(data) {
 }
 /* Resumo de um período (datas inclusive), para o relatório.
    dias: dias com registro de comida; media: média do total desses dias; refeicoes e nada: somas no período;
+   diasRef: dias com refeição marcada. Dia só com proteína avulsa entra na média de proteína, mas não na de energia e
+   micronutrientes, que não são conhecidos nele (auditoria 3, I3, como no Painel e na Semana): media.prot divide por dias, o resto por diasRef.
    diasAgua e agua (ml): dias com água anotada e a média neles; enjoo: dias marcados como dia de enjoo. */
 function resumoConsumo(de, ate) {
-  const s = { dias: 0, refeicoes: 0, nada: 0, enjoo: 0, diasAgua: 0, agua: 0, media: zeros(), temExtras: false };
+  const s = { dias: 0, diasRef: 0, refeicoes: 0, nada: 0, enjoo: 0, diasAgua: 0, agua: 0, media: zeros(), temExtras: false };
   Object.keys(E.dias).filter(d => d >= de && d <= ate).forEach(d => {
     const r = dia(d), c = consumoDoDia(d);
     if (r.enjoo) s.enjoo++;
     if (r.agua > 0) { s.diasAgua++; s.agua += r.agua; }
     if (!c.registrou) return;
     s.dias++; s.refeicoes += c.refeicoes; s.nada += c.nada; if (c.temExtras) s.temExtras = true;
-    CAMPOS.forEach(k => { s.media[k] += c.total[k]; });
+    s.media.prot += c.total.prot;
+    if (c.refeicoes > 0) { s.diasRef++; CAMPOS.forEach(k => { if (k !== "prot") s.media[k] += c.total[k]; }); }
   });
-  if (s.dias) CAMPOS.forEach(k => { s.media[k] /= s.dias; });
+  if (s.dias) s.media.prot /= s.dias;
+  if (s.diasRef) CAMPOS.forEach(k => { if (k !== "prot") s.media[k] /= s.diasRef; });
   if (s.diasAgua) s.agua /= s.diasAgua;
   return s;
 }

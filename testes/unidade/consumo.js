@@ -212,6 +212,17 @@ test("relatório: médias do que foi comido, nada, enjoo, água e micronutriente
   assert.match(abrir().j("relAlimentacao(mais(hoje(), -29))").join("\n"), /Nenhum dia com registro do que foi comido\.\nÁgua: sem registro\. Dias de enjoo: 0\./);
 });
 
+test("relatório: dia só com proteína avulsa (ex.: enjoo ligado, nada marcado) entra na proteína, não vira dia de 0 kcal", () => {
+  const dias = { "2026-11-14": diaCom(1, 5), [SEG]: { enjoo: true, comido: [], comidoEnjoo: [], agua: 0, protExtra: 20, caminhada: 0 } };
+  const a = abrir({ dias }), s = a.j("resumoConsumo(mais(hoje(), -29), hoje())"), cheio = a.j("consumoDoDia('2026-11-14').total");
+  assert.deepStrictEqual([s.dias, s.diasRef], [2, 1]);
+  perto(s.media.prot, (cheio.prot + 20) / 2); perto(s.media.kcal, cheio.kcal); perto(s.media.ca, cheio.ca);
+  const t = a.j("relAlimentacao(mais(hoje(), -29))").join("\n");
+  assert.ok(t.includes("Média de energia: " + a.v("fmt(" + cheio.kcal + ")") + " kcal") && /em 1 dia com refeição marcada/.test(t), t);
+  const so = abrir({ dias: { [SEG]: dias[SEG] } }).j("relAlimentacao(mais(hoje(), -29))").join("\n");
+  assert.ok(/Média de proteína: 20 g/.test(so) && !/Média de energia/.test(so) && !/Média do que foi comido/.test(so), so);
+});
+
 test("perfil discreto: relatório e tela Hoje sem kcal", () => {
   const a = abrir({ dias: { "2026-11-15": diaCom(1, 5), [SEG]: diaCom(0.5, 3) }, perfil: Object.assign({}, PERFIL, { discreto: true }) });
   const t = a.j("relAlimentacao(mais(hoje(), -29))").join("\n"), tela = a.v("telaHoje()");

@@ -197,7 +197,7 @@ Conferidas no código de `main` contra `auditoria-3.md`, `revisao-clinica-onda2.
 
 **Dependem de aval clínico** (lista em `empresa/PARA-O-MEDICO.md`): divisão 192 / pronto-socorro / médico e o limite de "1 ou 2 horas"; aviso de ritmo de 1% por semana; frase do fígado e da cirurgia; números de gordura por refeição. Ninguém com formação clínica revisou os textos. A bula brasileira não foi conferida.
 
-**Já corrigido desde os relatórios:** meta de proteína informada respeitada (auditoria 3, B1); Painel, Semana e Caminhos com caminho na barra (B2); crise de vesícula sem "6 horas" e sem "próximos dias" (revisão clínica, B1); dia só com proteína avulsa não vira dia de 0 kcal (I3); cache da versão web com a versão no nome (I5); restaurar na primeira tela; Hoje com aplicação e proteína no topo.
+**Já corrigido desde os relatórios:** meta de proteína informada respeitada (auditoria 3, B1); Painel, Semana e Caminhos com caminho na barra (B2); crise de vesícula sem "6 horas" e sem "próximos dias" (revisão clínica, B1); dia só com proteína avulsa não vira dia de 0 kcal (I3); Dia de enjoo ligado no meio do dia não tira do total o que já foi comido, e dia só com proteína avulsa não vira 0 kcal na Semana nem no relatório (`empresa/relatorios/dia-de-enjoo-plano-nutri.md`); cache da versão web com a versão no nome (I5); restaurar na primeira tela; Hoje com aplicação e proteína no topo.
 
 **Ainda abertos**
 - Aviso de ritmo de perda só em Diário > Peso e no relatório, não em Hoje. Só aparece com uma pesagem de 14 a 28 dias antes.
@@ -205,7 +205,6 @@ Conferidas no código de `main` contra `auditoria-3.md`, `revisao-clinica-onda2.
 - O relatório mostra quantos dias de dor forte, mas não as datas, e não cita vesícula, fígado nem cirurgia.
 - Cardápio de reserva vegetariano: `conferir_cardapio.js` ainda acusa almoços acima de 500 kcal e gordura do dia acima de 35% (auditoria 3, I1). Não se sabe se ela é vegetariana.
 - Plano da nutricionista: café e jantar de algumas opções com pouca gordura, fibra abaixo de 25 g na maioria das combinações, óleo dos preparos fora da conta (`empresa/relatorios/plano-nutricionista-conferido.md`). São perguntas para a nutricionista, não erro do app.
-- Dia de enjoo ligado no meio do dia: o total do dia passa a contar só as refeições leves (nada é apagado).
 - Sub-abas do Diário e dias do Plano podem cortar com letra grande, sem sinal de que dá para arrastar.
 - Desempenho: com CPU 10 vezes mais lenta, cerca de 2 s depois de registrar peso. Não medido no celular dela.
 

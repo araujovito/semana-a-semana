@@ -27,7 +27,7 @@ function seisSemanas(discreto) {
   ok(/enjoo em 2 dias/.test(atual) && /refluxo em 1 dia/.test(atual), "semana atual: sintomas contados por dia");
   ok(/nenhuma dor forte registrada/.test(atual) && !/sem sinal de alerta/.test(atual) && await p.locator(".semana-atual [data-para=guia]").count() === 0, "sem dor marcada: diz só que nenhuma dor forte foi registrada");
   ok(/1 dia com o cardápio de enjoo/.test(atual), "semana atual: dias de enjoo marcados na tela Hoje");
-  ok(/proteína média de 67 g por dia/.test(atual) && /em 3 dias com registro/.test(atual) && /kcal/.test(atual), "semana atual: proteína média, dias com registro e energia");
+  ok(/proteína média de 67 g por dia/.test(atual) && /em 3 dias com registro/.test(atual) && !/kcal/.test(atual), "semana atual: proteína média e dias com registro; dias só com proteína avulsa não inventam energia");
   ok(/o enjoo foi maior nos 2 dias depois da aplicação/.test(atual), "semana atual: padrão de enjoo depois da aplicação");
   ok(await p.locator("#abas a.ativa[data-aba=semana]").count() === 1 && await p.locator("#subabas a.ativa[data-sub=semana]").count() === 1, "aba Semana acesa, com a sub-aba Semana");
 

@@ -64,7 +64,8 @@ test("sintomas contados por dia; dias de enjoo marcados e comida da semana", () 
   assert.strictEqual(a.v('semanaTextoSintomas(semanasDoTratamento("' + H + '")[0].sintomas)'), "enjoo em 1 dia, vômito em 1 dia, intestino preso em 1 dia; nenhuma dor forte registrada");
   // calorias só sem o modo discreto
   assert.doesNotMatch(a.v('semanaTextoComida(semanasDoTratamento("' + H + '")[0], true, 90)'), /kcal/);
-  assert.match(a.v('semanaTextoComida(semanasDoTratamento("' + H + '")[0], false, 90)'), /^proteína média de 40 g por dia \(meta 90 g\), energia média de .* kcal, em 2 dias com registro$/);
+  // dias só com proteína avulsa: calorias desconhecidas, não "0 kcal"
+  assert.strictEqual(a.v('semanaTextoComida(semanasDoTratamento("' + H + '")[0], false, 90)'), "proteína média de 40 g por dia (meta 90 g), em 2 dias com registro");
 });
 
 test("padrão de enjoo: maior nos 2 dias depois da aplicação só quando os registros mostram", () => {
