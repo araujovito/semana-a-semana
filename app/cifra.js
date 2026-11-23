@@ -273,7 +273,8 @@ function cifTela() {
   }
   return "";
 }
-function cifTempo(s) { return s >= 60 ? Math.ceil(s / 60) + (s >= 120 ? " minutos" : " minuto") : s + " segundos"; }
+/* Arredonda para cima em minutos a partir de 60 s. O plural vem do número mostrado (90 s = "2 minutos", não "2 minuto"). */
+function cifTempo(s) { if (s < 60) return s + " segundos"; const m = Math.ceil(s / 60); return m + (m > 1 ? " minutos" : " minuto"); }
 
 /* Chamado por render(). Devolve true se desenhou o portão (e o app não deve desenhar a tela pedida). */
 function cifDesenharPortao() {
