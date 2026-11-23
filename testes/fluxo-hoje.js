@@ -189,8 +189,12 @@ const diaVazio = extra => Object.assign({ enjoo: false, comido: [], agua: 0, pro
   ok(/Sem fome/.test((await t.ler()).sintomas[0].nota) && await p.locator("[data-ac=como][data-k=semFome].ativa").count() === 1, "Sem fome fica anotado no registro de hoje");
   await p.click("[data-ac=como][data-k=dor]"); await p.waitForSelector("#folha:not([hidden])");
   const folha = (await p.locator("#folha").innerText()).replace(/\s+/g, " ");
-  ok((await t.ler()).sintomas[0].dor === true && /Registrado no seu dia: dor na barriga/.test(folha) && /Ligue 192 agora.*Pronto-socorro hoje.*Avise o médico no mesmo dia ou no seguinte/.test(folha), "Dor na barriga grava a dor e abre os sinais: 192, pronto-socorro hoje, avisar o médico");
+  let sd = (await t.ler()).sintomas[0];
+  ok(sd.dor === false && /Dor na barriga\./.test(sd.nota) && /Registrado no seu dia: dor na barriga\./.test(folha) && /Ligue 192 agora.*Pronto-socorro hoje.*Avise o médico no mesmo dia ou no seguinte/.test(folha), "Dor na barriga anota a dor (sem marcar como forte) e abre os sinais: 192, pronto-socorro hoje, avisar o médico");
   await t.alvosDeToque("folha de dor na barriga");
+  await p.click("#folha [data-ac=dorForte]"); await p.waitForSelector("#folha:not([hidden])");
+  sd = (await t.ler()).sintomas[0];
+  ok(sd.dor === true && !/Dor na barriga\./.test(sd.nota) && /dor forte na barriga/.test((await p.locator("#folha").innerText())), "'Foi dor forte' marca a dor forte de propósito");
   await p.click("#folha [data-ac=fecharFolha]");
   await p.click("[data-ac=como][data-k=bem]");
   ss = (await t.ler()).sintomas;

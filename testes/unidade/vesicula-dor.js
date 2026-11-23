@@ -10,7 +10,8 @@ const estado = (perfil, resto) => Object.assign({ v: 2, perfil: Object.assign({ 
 test("Dor na barriga: a folha diz a data quando o registro é de outro dia", () => {
   const a = carregar(estado({ vesicula: true }));
   assert.match(a.v('htmlSinaisDor("' + dia(3) + '")'), new RegExp("Registrado em " + br(dia(3)) + ": dor forte na barriga\\."));
-  assert.match(a.v('htmlSinaisDor("' + dia(0) + '")'), /Registrado no seu dia: dor na barriga\./);
+  assert.match(a.v('htmlSinaisDor("' + dia(0) + '")'), /Registrado no seu dia: dor forte na barriga\./);
+  assert.match(a.v('htmlSinaisDor("leve")'), /Registrado no seu dia: dor na barriga\..*Foi dor forte/);
   assert.match(a.v("htmlSinaisDor(true)"), /Registrado no seu dia/);
   assert.doesNotMatch(a.v("htmlSinaisDor(false)"), /data-registrou/);
 });

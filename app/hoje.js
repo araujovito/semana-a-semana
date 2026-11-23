@@ -84,11 +84,13 @@ function blocoProteina(c, ref, quando, planoRest, enjoo) {
    "Enjoo forte" pergunta se troca as refeições pelas leves (o dia de enjoo). "Dor na barriga" grava a dor e abre os sinais. */
 const COMO = [["bem", "Bem"], ["leve", "Enjoo leve"], ["forte", "Enjoo forte"], ["semFome", "Sem fome"], ["dor", "Dor na barriga"]];
 const NOTA_SEM_FOME = "Sem fome.";
+/* Teste final do APK (I3): "Dor na barriga" em Como está hoje grava só a anotação; "dor forte" (s.dor) é marcada de propósito na folha. */
+const NOTA_DOR = "Dor na barriga.";
 function sintomaDeHoje() { const h = hoje(); return E.sintomas.find(s => s.data === h) || null; }
 function comoAtivo(s, k) {
   if (!s) return false;
   const semFome = String(s.nota || "").indexOf(NOTA_SEM_FOME) >= 0;
-  return k === "bem" ? !s.enjoo && !s.dor && !s.vomito && !semFome : k === "leve" ? s.enjoo === 1 || s.enjoo === 2 : k === "forte" ? s.enjoo === 3 : k === "semFome" ? semFome : !!s.dor;
+  return k === "bem" ? !s.enjoo && !s.dor && !s.vomito && !semFome : k === "leve" ? s.enjoo === 1 || s.enjoo === 2 : k === "forte" ? s.enjoo === 3 : k === "semFome" ? semFome : (!!s.dor || String(s.nota || "").indexOf(NOTA_DOR) >= 0);
 }
 function cartaoComo() {
   const s = sintomaDeHoje();
@@ -105,13 +107,13 @@ function cartaoComo() {
    AVAL MÉDICO (revisao-clinica-onda2.md). */
 /* registrou: true (gravado hoje), a data do registro (de Diário > Sintomas, que pode ser de outro dia) ou falso (só consulta). */
 function htmlSinaisDor(registrou) {
-  const outroDia = typeof registrou === "string" && registrou !== hoje();
-  return (registrou ? '<p class="sub" data-registrou>' + (outroDia ? "Registrado em " + esc(brAno(registrou)) + ": dor forte na barriga." : "Registrado no seu dia: dor na barriga.") + "</p>" : "") +
+  const leve = registrou === "leve", outroDia = typeof registrou === "string" && !leve && registrou !== hoje();
+  return (registrou ? '<p class="sub" data-registrou>' + (outroDia ? "Registrado em " + esc(brAno(registrou)) + ": dor forte na barriga." : leve ? "Registrado no seu dia: dor na barriga." : "Registrado no seu dia: dor forte na barriga.") + "</p>" : "") +
     '<div class="sinal s192"><h3>Ligue 192 agora</h3><p>Dor com febre e pele amarela e também confusão, desmaio ou muita fraqueza. Inchaço no rosto, lábios ou garganta, ou falta de ar.</p></div>' +
     '<div class="sinal sps"><h3>Pronto-socorro hoje</h3><p>Dor forte e contínua no alto da barriga, que pode ir para as costas (pode ser pâncreas). Dor que dura mais de 1 ou 2 horas, ou vem com enjoo e vômito; se for muito forte, vá logo. ' +
     "Febre, mesmo baixa, ou calafrio. Pele ou olhos amarelados, urina escura ou fezes claras. Vômito em que você não consegue segurar nem água.</p></div>" +
     '<div class="sinal smed"><h3>Avise o médico no mesmo dia ou no seguinte</h3><p>Uma crise curta que passou sozinha, sem febre, sem vômito e sem pele amarela.</p></div>' +
-    '<div class="botoes">' + (registrou ? "" : '<button class="sec" data-ac="registrarDor">Registrar dor na barriga hoje</button>') + '<button class="sec" data-ac="sinaisGuia">Todos os sinais no Guia</button></div>';
+    '<div class="botoes">' + (registrou === "leve" ? '<button class="sec" data-ac="dorForte">Foi dor forte: registrar assim</button>' : registrou ? "" : '<button class="sec" data-ac="registrarDor">Registrar dor na barriga hoje</button>') + '<button class="sec" data-ac="sinaisGuia">Todos os sinais no Guia</button></div>';
 }
 function abrirSinaisDor(registrou) { abrirFolha("Dor na barriga: o que fazer", htmlSinaisDor(registrou)); }
 /* Cartão curto da vesícula em Hoje (2 linhas e um botão). O cartão completo, com a bula, os sinais e a cirurgia, fica no Plano e no
@@ -257,20 +259,23 @@ Object.assign(AC, {
   como(d) {
     const h = hoje(), k = d.k; let s = sintomaDeHoje(); const novo = !s;
     if (!s) s = { id: novoId(), data: h, enjoo: 0, intestino: "Normal", vomito: false, refluxo: false, tontura: false, cansaco: false, dor: false, nota: "" };
-    s = Object.assign({}, s); const ativo = !novo && comoAtivo(s, k), tirarSemFome = () => { s.nota = String(s.nota || "").replace(NOTA_SEM_FOME, "").trim(); };
+    s = Object.assign({}, s); const ativo = !novo && comoAtivo(s, k), tirarSemFome = () => { s.nota = String(s.nota || "").replace(NOTA_SEM_FOME, "").trim(); }, tirarDor = () => { s.nota = String(s.nota || "").replace(NOTA_DOR, "").trim(); };
     let perguntaLeve = false;
-    if (k === "bem") { s.enjoo = 0; s.dor = false; s.vomito = false; tirarSemFome(); }
+    if (k === "bem") { s.enjoo = 0; s.dor = false; s.vomito = false; tirarSemFome(); tirarDor(); }
     else if (k === "leve") s.enjoo = ativo ? 0 : 1;
     else if (k === "forte") { s.enjoo = ativo ? 0 : 3; perguntaLeve = !ativo && !dia(h).enjoo; }
     else if (k === "semFome") { if (ativo) tirarSemFome(); else s.nota = (String(s.nota || "").trim() + " " + NOTA_SEM_FOME).trim(); }
-    else if (k === "dor") s.dor = true;
+    else if (k === "dor") { if (String(s.nota || "").indexOf(NOTA_DOR) < 0 && !s.dor) s.nota = (String(s.nota || "").trim() + " " + NOTA_DOR).trim(); }
+    else if (k === "dorForte") { s.dor = true; tirarDor(); }
     if (novo) E.sintomas.push(s); else E.sintomas = E.sintomas.map(x => (x.id === s.id ? s : x));
     salvar(); render();
-    if (k === "dor") abrirSinaisDor(true);
+    if (k === "dor") abrirSinaisDor(s.dor ? true : "leve");
+    else if (k === "dorForte") { abrirSinaisDor(true); }
     else if (perguntaLeve) confirmar("Enjoo forte registrado. Trocar as refeições de hoje pelas leves?", function () { const r = arrumarDia(dia(h)); r.enjoo = true; gravarDia(h, r); render(); }, "Trocar pelas leves");
     else aviso("Registrado.");
   },
-  sinaisDor() { const s = sintomaDeHoje(); abrirSinaisDor(!!(s && s.dor)); },
+  sinaisDor() { const s = sintomaDeHoje(); abrirSinaisDor(s && s.dor ? true : s && String(s.nota || "").indexOf(NOTA_DOR) >= 0 ? "leve" : false); },
+  dorForte() { fecharFolha(); AC.como({ k: "dorForte" }); },
   registrarDor() { AC.como({ k: "dor" }); },
   sinaisGuia() { fecharFolha(); irPara("guia"); },
   verRitmo() { abrirRitmo(); },
