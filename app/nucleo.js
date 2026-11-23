@@ -156,13 +156,27 @@ function barrasMicro(t, m) {
 /* ---------- compartilhar e copiar ---------- */
 function novoId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 function texto(id) { const el = document.getElementById(id); return el ? el.value : ""; }
+/* A ponte do Android (MainActivity.java) devolve true quando passou o texto adiante e false quando recusou: texto acima de
+   MAX_TEXTO (250 mil caracteres, o mesmo SEG_MAX_TEXTO de seguranca.js) ou erro do sistema. Antes o retorno era ignorado:
+   copiar dizia "Copiado." e compartilhar não dizia nada, mesmo sem nada ter saído do app. */
+function ponteAndroid(funcao, t) { try { return window.Android[funcao](t) === true; } catch (e) { return false; } }
+function textoGrandeDemais(t) { return typeof t === "string" && t.length > SEG_MAX_TEXTO ? " O texto tem " + Math.round(t.length / 1000) + " mil caracteres e o limite do Android é " + SEG_MAX_TEXTO / 1000 + " mil." : ""; }
+/* Devolve false só quando a ponte do Android recusou (ela já viu o aviso); nos outros caminhos, undefined. */
 function compartilhar(t) {
-  if (window.Android && window.Android.compartilhar) { window.Android.compartilhar(t); return; }
+  if (window.Android && window.Android.compartilhar) {
+    if (ponteAndroid("compartilhar", t)) return true;
+    alerta("Não foi possível compartilhar. Nada foi enviado." + textoGrandeDemais(t));
+    return false;
+  }
   if (navigator.share) { navigator.share({ text: t }).catch(() => {}); return; }
   copiar(t);
 }
 function copiar(t) {
-  if (window.Android && window.Android.copiar) { window.Android.copiar(t); aviso("Copiado."); return; }
+  if (window.Android && window.Android.copiar) {
+    if (ponteAndroid("copiar", t)) aviso("Copiado.");
+    else alerta("Não foi possível copiar." + textoGrandeDemais(t) + " Se o texto estiver na tela, selecione e copie manualmente.");
+    return;
+  }
   if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(t).then(() => aviso("Copiado."), () => aviso("Selecione o texto e copie manualmente.")); return; }
   aviso("Selecione o texto e copie manualmente.");
 }

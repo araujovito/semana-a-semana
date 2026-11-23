@@ -18,8 +18,18 @@ const trecho = (JAVA.match(/evaluateJavascript\("(.*?)", r ->/) || [])[1];
 const saida = (JAVA.match(/"\\"(\w+)\\""\.equals\(r\)/) || [])[1];
 ok(trecho && saida === "sair", "MainActivity sai do app quando a página responde \"sair\" (encontrado: " + saida + ")");
 
-// Ponte falsa do Android: grava as datas pedidas ao calendario; window.__calendarioAbre decide a resposta.
-const ponte = () => { window.__pedidos = []; window.__calendarioAbre = true; window.Android = { calendario: x => { window.__pedidos.push(x); return window.__calendarioAbre; }, compartilhar() {}, copiar() {} }; };
+// Compartilhar e copiar no Java: depois de conferir o tamanho, erro do sistema vira false (nao derruba o app pela ponte).
+ok(/compartilhar\(String texto\) \{[\s\S]*?try \{[\s\S]*?return true;\s*\} catch \(Exception e\) \{\s*return false;/.test(JAVA) &&
+  /copiar\(String texto\) \{[\s\S]*?try \{[\s\S]*?return true;\s*\} catch \(Exception e\) \{\s*return false;/.test(JAVA),
+  "Android: compartilhar e copiar devolvem false quando o sistema falha, sem derrubar o app");
+
+// Ponte falsa do Android, que devolve o que o Java devolveria: grava as datas pedidas ao calendario e os textos enviados;
+// window.__calendarioAbre e window.__ponteAceita decidem a resposta (false = o Java recusou).
+const ponte = () => {
+  window.__pedidos = []; window.__enviados = []; window.__calendarioAbre = true; window.__ponteAceita = true;
+  window.Android = { calendario: x => { window.__pedidos.push(x); return window.__calendarioAbre; },
+    compartilhar: x => { window.__enviados.push(x); return window.__ponteAceita; }, copiar: x => { window.__enviados.push(x); return window.__ponteAceita; } };
+};
 
 (async () => {
   // Sem a ponte (navegador), o cartao nao existe.
@@ -59,6 +69,28 @@ const ponte = () => { window.__pedidos = []; window.__calendarioAbre = true; win
   await p.addInitScript(ponte); await p.reload(); await p.waitForSelector("form[data-form=perfil]");
   ok(await p.locator("#cartao-calendario").count() === 0, "mais de 14 dias sem aplicação: sem cartão do calendário");
   await t.fechar();
+
+  // Relatorio: copiar so diz "Copiado." quando a ponte aceitou; recusa (texto grande demais ou erro) avisa num dialogo.
+  t = await abrir({ estado: estadoBase({ doses: [{ id: "a1", data: d(3), mg: 2.5, local: "Coxa esquerda", obs: "" }], ui: { diario: "relatorio" } }), aba: "diario" }); p = t.p;
+  await p.addInitScript(ponte); await p.reload(); await p.waitForSelector("[data-ac=copiar][data-de=rel]");
+  await p.click("[data-ac=copiar][data-de=rel]");
+  ok(/Copiado/.test(await p.locator("#aviso").innerText()) && await t.textoDialogo() === null, "copiar aceito pela ponte: \"Copiado.\"");
+  await p.evaluate(() => { document.getElementById("aviso").hidden = true; window.__ponteAceita = false; });
+  await p.click("[data-ac=copiar][data-de=rel]");
+  ok(/Não foi possível copiar/.test(await t.textoDialogo() || "") && !(await p.locator("#aviso").isVisible()), "copiar recusado pela ponte: avisa e não diz \"Copiado.\"");
+  await t.nao();
+  await p.click("[data-ac=compartilhar][data-de=rel]"); await t.sim(); // primeiro o aviso de dados de saúde
+  ok(/Não foi possível compartilhar. Nada foi enviado/.test(await t.textoDialogo() || ""), "compartilhar recusado pela ponte: avisa que nada foi enviado");
+  await t.nao();
+  // Exportar recusado pela ponte (depois da conferência de tamanho): não diz "Cópia pronta" nem marca como exportada.
+  await p.click("[data-ac=exportar]"); await t.sim(); await p.waitForFunction(() => window.__enviados.length === 4);
+  await p.waitForSelector("#dialogo:not([hidden])");
+  ok(/Não foi possível compartilhar/.test(await t.textoDialogo() || "") && !(await t.ler()).ui.ultimaExportacao, "exportar recusado pela ponte: avisa e não marca a cópia como feita");
+  await t.nao();
+  // Texto acima do limite (o Java recusa): o aviso diz o tamanho e o limite.
+  const grande = await p.evaluate(() => { window.__enviados = []; copiar("x".repeat(SEG_MAX_TEXTO + 1)); return SEG_MAX_TEXTO; });
+  ok(new RegExp("limite do Android é " + grande / 1000 + " mil").test(await t.textoDialogo() || ""), "texto grande demais: o aviso diz o limite");
+  await t.nao(); await t.fechar();
 
   // Copia de seguranca: apagar e restaurar perguntam num dialogo da pagina (nao no confirm() do navegador).
   t = await abrir({ estado: estadoBase({ doses: [{ id: "a1", data: d(3), mg: 2.5, local: "Coxa esquerda", obs: "" }], ui: { diario: "relatorio" } }), aba: "diario" }); p = t.p;

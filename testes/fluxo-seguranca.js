@@ -9,7 +9,7 @@ const RAIZ = path.join(__dirname, "..", "app");
 // Não depende do texto de nenhuma tela (hoje.js está sendo reorganizado).
 const telaPronta = (p, ms) => p.waitForFunction(() => { const t = document.getElementById("tela"), a = document.getElementById("abas"); return t && t.children.length > 0 && a && !a.hidden; }, null, { timeout: ms || 30000 });
 const ouvirViolacoes = () => { window.__violacoes = []; document.addEventListener("securitypolicyviolation", e => window.__violacoes.push(e.violatedDirective + " " + e.blockedURI)); };
-const ponte = () => { window.__enviados = []; window.Android = { compartilhar: x => window.__enviados.push(x), copiar() {} }; };
+const ponte = () => { window.__enviados = []; window.Android = { compartilhar: x => { window.__enviados.push(x); return true; }, copiar: () => true }; }; // true, como o Java quando passa o texto adiante
 const violacoes = p => p.evaluate(() => window.__violacoes.splice(0));
 
 // Casca Android com menor privilégio (conferência do código, porque o APK não roda aqui).

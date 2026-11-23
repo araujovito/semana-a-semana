@@ -104,9 +104,9 @@ function segExportar() {
       alerta("A cópia ficou grande demais para o Android passar para outro app (" + Math.round(t.length / 1000) + " mil caracteres; o limite é " + SEG_MAX_TEXTO / 1000 + " mil). Nada foi enviado.");
       return;
     }
+    if (compartilhar(t) === false) return; // a ponte do Android recusou: já avisou e a cópia não conta como feita
     E.ui.ultimaExportacao = estado.ui.ultimaExportacao; salvar();
     aviso("Cópia pronta e conferida.");
-    compartilhar(t);
     render();
   }));
 }

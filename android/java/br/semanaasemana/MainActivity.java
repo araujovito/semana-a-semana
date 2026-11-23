@@ -130,25 +130,35 @@ public class MainActivity extends Activity {
     /**
      * Funções que o JavaScript chama como window.Android.compartilhar(...), window.Android.copiar(...) e window.Android.calendario(...).
      * Só estas três têm @JavascriptInterface (é a anotação que as deixa visíveis para a página); nada mais da Activity fica exposto.
-     * Cada uma confere o argumento e devolve false quando recusa.
+     * Cada uma confere o argumento e devolve false quando recusa ou quando o sistema falha; app/nucleo.js avisa a usuária.
      */
     private class Ponte {
         @JavascriptInterface
         public boolean compartilhar(String texto) {
             if (!textoAceito(texto)) return false;
-            Intent i = new Intent(Intent.ACTION_SEND);
-            i.setType("text/plain");
-            i.putExtra(Intent.EXTRA_TEXT, texto);
-            startActivity(Intent.createChooser(i, "Compartilhar"));
-            return true;
+            // Exceção aqui (texto que o sistema recusa no Intent, por exemplo) não pode derrubar o app: devolve false e a página avisa.
+            try {
+                Intent i = new Intent(Intent.ACTION_SEND);
+                i.setType("text/plain");
+                i.putExtra(Intent.EXTRA_TEXT, texto);
+                startActivity(Intent.createChooser(i, "Compartilhar"));
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
         }
 
         @JavascriptInterface
         public boolean copiar(String texto) {
             if (!textoAceito(texto)) return false;
-            ClipboardManager c = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-            c.setPrimaryClip(ClipData.newPlainText("Semana a Semana", texto));
-            return true;
+            try {
+                ClipboardManager c = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                if (c == null) return false;
+                c.setPrimaryClip(ClipData.newPlainText("Semana a Semana", texto));
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
         }
 
         /**
