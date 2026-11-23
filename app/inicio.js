@@ -39,6 +39,9 @@ AC.ilegivelRecomecar = function () {
 
 /* diaDesenhado: a data em que a tela foi desenhada pela última vez. Se o dia virou com o app aberto, a tela é refeita antes de qualquer gravação. */
 let diaDesenhado = null;
+/* rolarPara: id de um elemento para mostrar no próximo desenho, logo abaixo do cabeçalho fixo (ex.: "Todos os sinais no Guia"
+   abre o Guia já nos Sinais de alerta; teste final do APK 2.0, M3). Vale uma vez. */
+let rolarPara = null;
 function render(topo) {
   const h = atual();
   diaDesenhado = hoje();
@@ -51,6 +54,10 @@ function render(topo) {
   document.getElementById("btn-perfil").hidden = !E.perfil || ILEGIVEL != null;
   document.getElementById("erro-salvar").hidden = !FALHA_SALVAR;
   if (topo) window.scrollTo(0, 0);
+  if (rolarPara) {
+    const el = document.getElementById(rolarPara), cab = document.getElementById("topo"); rolarPara = null;
+    if (el) window.scrollTo(0, Math.max(0, el.getBoundingClientRect().top + window.pageYOffset - (cab ? cab.offsetHeight : 0) - 8));
+  }
 }
 /* Verdadeiro se o dia virou desde o último desenho: redesenha, avisa e quem chamou desiste da ação (para nunca gravar no dia errado). */
 function virouODia() {

@@ -50,6 +50,8 @@ const comPerfil = (extra, resto) => estadoBase(Object.assign({ perfil: Object.as
     await p.click("#folha [data-ac=sinaisGuia]");
     ok(await p.waitForSelector("#tela summary:has-text('Sinais de alerta')", { timeout: 3000 }).then(() => true, () => false) &&
       /dura mais de 1 ou 2 horas.*passou sozinha/.test(await tela(p)), "dos sinais, um toque abre o Guia com os sinais de alerta" + nome);
+    ok(await p.evaluate(() => { const r = document.getElementById("guia-alerta").getBoundingClientRect(); return r.top >= 0 && r.top < innerHeight / 2; }),
+      "o Guia abre já com os Sinais de alerta na tela, sem rolar" + nome);
     await p.click("#btn-perfil"); await p.waitForSelector("form[data-form=perfil]");
     ok(/Pedra na vesícula.*bula da tirzepatida.*conte ao seu médico que você tem pedra.*Pronto-socorro hoje se a dor durar mais de 1 ou 2 horas.*Ligue 192.*Avise o médico/.test(await texto(p, "[data-aviso=vesicula]")), "cartão completo da vesícula no Perfil" + nome);
     await p.click("#abas [data-aba=comer]");

@@ -277,7 +277,7 @@ Object.assign(AC, {
   sinaisDor() { const s = sintomaDeHoje(); abrirSinaisDor(s && s.dor ? true : s && String(s.nota || "").indexOf(NOTA_DOR) >= 0 ? "leve" : false); },
   dorForte() { fecharFolha(); AC.como({ k: "dorForte" }); },
   registrarDor() { AC.como({ k: "dor" }); },
-  sinaisGuia() { fecharFolha(); irPara("guia"); },
+  sinaisGuia() { fecharFolha(); rolarPara = "guia-alerta"; irPara("guia"); },
   verRitmo() { abrirRitmo(); },
   ritmoPeso() { fecharFolha(); irPara("diario", "peso"); },
   atalho(d) { const x = String(d.para).split(":"); irPara(x[0], x[1]); },
