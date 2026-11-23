@@ -94,7 +94,9 @@ test("registro: escolher opção, marcar e trocar de opção depois; consumoDoDi
   perto(c.comida.kcal, tot(0, 1).kcal + tot(1, 1).kcal / 2, "almoço com peixe pela metade");
   // dia de enjoo continua com o cardápio do app e não apaga as marcas do plano
   a.v("AC.enjoo({ dia: '" + SEX + "' })");
-  assert.strictEqual(a.j("consumoDoDia('" + SEX + "').refeicoes"), 0);
+  assert.strictEqual(a.j("consumoDoDia('" + SEX + "').refeicoes"), 2, "ligar o enjoo depois de comer não tira do total o que foi comido");
+  perto(a.j("consumoDoDia('" + SEX + "')").comida.kcal, c.comida.kcal);
+  assert.deepStrictEqual(a.j("consumoOutroPlano('" + SEX + "')").nutri, true);
   assert.ok(!a.v("pnPlanoDaData('" + SEX + "').nutri"));
   a.v("AC.enjoo({ dia: '" + SEX + "' })");
   perto(a.j("consumoDoDia('" + SEX + "')").comida.kcal, c.comida.kcal, "marcas do plano voltam");

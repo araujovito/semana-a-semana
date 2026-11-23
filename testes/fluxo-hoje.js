@@ -57,12 +57,15 @@ const diaVazio = extra => Object.assign({ enjoo: false, comido: [], agua: 0, pro
   const antes = await consumo(d(0));
   await p.click("[data-ac=enjoo]");
   await p.waitForSelector("text=Voltar ao normal");
-  ok(await p.locator("[data-mud=refeicao]:checked").count() === 0 && (await consumo(d(0))).refeicoes === 0, "dia de enjoo mostra o outro cardápio, sem marcas");
+  ok(await p.locator("[data-mud=refeicao]:checked").count() === 0 && perto((await consumo(d(0))).prot, antes.prot), "dia de enjoo mostra o outro cardápio, sem marcas, e o que já foi comido continua no total");
+  ok(/Também conta no total do dia: 3 refeições marcadas no cardápio normal/.test(await p.locator(".hoje-marcar [data-outro]").innerText()), "Hoje diz que as marcas do cardápio normal contam");
   await p.click(opcao(0, "metade"));
+  const leve = await p.evaluate(() => somarItens(planoDoDia(7).refeicoes[0].itens).prot / 2);
   await p.click("[data-ac=enjoo]");
   await p.waitForSelector("text=Dia de enjoo");
   c = await consumo(d(0));
-  ok(perto(c.prot, antes.prot) && c.refeicoes === 3 && await p.locator("[data-mud=refeicao]:checked").count() === 3, "desligar o enjoo traz de volta tudo o que estava marcado");
+  ok(perto(c.prot, antes.prot + leve) && c.refeicoes === 4 && await p.locator("[data-mud=refeicao]:checked").count() === 3, "desligar o enjoo traz de volta tudo o que estava marcado, e a refeição leve continua no total");
+  ok(/1 refeição marcada nas refeições leves/.test(await p.locator(".hoje-marcar [data-outro]").innerText()), "Hoje diz que a refeição leve conta");
   await p.click("[data-ac=enjoo]");
   ok(await p.locator(".refeicao[data-i='0'][data-q='0.5']").count() === 1, "ligar de novo traz a marca feita no dia de enjoo");
   await p.click("[data-ac=enjoo]");
@@ -110,7 +113,7 @@ const diaVazio = extra => Object.assign({ enjoo: false, comido: [], agua: 0, pro
   await p.waitForSelector("#rel");
   const rel = await p.locator("#rel").inputValue();
   ok(/Dias com registro do que foi comido: 2 de 30\. Média de proteína: \d+ g \(meta \d+ g\)\. Média de energia: [\d.]+ kcal/.test(rel), "relatório traz a média do que foi comido");
-  ok(/Refeições marcadas como "nada": 0 de 4 registradas/.test(rel) && /Água: média de 0,6 L em 2 dias/.test(rel) && /Média do que foi comido/.test(rel) && /estimativa/.test(rel), "relatório traz nada, água e micronutrientes como estimativa");
+  ok(/Refeições marcadas como "nada": 0 de 5 registradas/.test(rel) && /Água: média de 0,6 L em 2 dias/.test(rel) && /Média do que foi comido/.test(rel) && /estimativa/.test(rel), "relatório traz nada, água e micronutrientes como estimativa");
   await t.fechar();
 
   // aviso neutro de comer pouco: os tres gatilhos, e no maximo uma vez por dia

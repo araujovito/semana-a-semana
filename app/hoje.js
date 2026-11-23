@@ -162,6 +162,10 @@ function cartaoMarcar(card, regs, d, r, m, eHoje, marca) {
   const copos = Math.round(r.agua / 200), meta = Math.max(1, Math.round(m.agua / 200));
   let out = '<div class="cartao hoje-marcar"><div class="linha"><h2 style="margin:0">' + titulo + '</h2><button class="mini sec" data-ac="enjoo"' + marca + ">" + (r.enjoo ? "Voltar ao normal" : "Dia de enjoo") + "</button></div>" +
     '<p class="hoje-nota">Um toque em cada. O que você não marcar fica em branco, sem cobrança.</p>';
+  /* Marcas do outro cardápio do dia (ligou ou desligou o enjoo depois de marcar): continuam no total, e a tela diz isso. */
+  const outro = consumoOutroPlano(d);
+  if (outro.refeicoes) out += '<p class="hoje-nota" data-outro>Também conta no total do dia: ' + (outro.refeicoes === 1 ? "1 refeição marcada" : outro.refeicoes + " refeições marcadas") +
+    (r.enjoo ? (outro.nutri ? " no plano da nutricionista" : " no cardápio normal") : " nas refeições leves") + " (" + fmt(outro.prot) + " g de proteína).</p>";
   /* TEXTO DE SAÚDE (revisão clínica de 22/11, B2): gordura na medida, nunca "pouca gordura". Fonte: regra R3 do cardápio
      (REGRAS_CARDAPIO.gordMinPrincipal em cardapio.js; Gebhard 1996, Festi 1998, Stokes 2014): refeição quase sem gordura deixa a
      vesícula parada e favorece pedra nova durante a perda de peso; refeição muito gordurosa pode disparar a cólica (MSD, NIDDK). */

@@ -76,21 +76,24 @@ test("outros, proteína avulsa (protExtra) e suplementos entram na soma", () => 
   assert.strictEqual(b.j("E.dias['" + SEG + "'].protExtra"), 0);
 });
 
-test("ligar e desligar o dia de enjoo não apaga o que foi marcado", () => {
+test("ligar e desligar o dia de enjoo não apaga o que foi marcado e o total junta os dois cardápios", () => {
   const a = abrir();
   marcar(a, SEG, 0, 1); marcar(a, SEG, 2, 0.5);
   const normal = a.j("consumoDoDia('" + SEG + "').comida.prot");
   a.v("AC.enjoo({ dia: '" + SEG + "' })");
   assert.strictEqual(a.j("E.dias['" + SEG + "'].enjoo"), true);
-  assert.strictEqual(a.j("consumoDoDia('" + SEG + "').refeicoes"), 0, "o plano de enjoo começa sem marcas");
+  assert.strictEqual(a.j("registrosDoDia(dia('" + SEG + "'), '" + SEG + "').filter(Boolean).length"), 0, "o cardápio de enjoo aparece sem marcas");
+  perto(a.j("consumoDoDia('" + SEG + "').comida.prot"), normal, "o que já foi comido continua no total ao ligar o enjoo");
+  assert.deepStrictEqual(a.j("consumoOutroPlano('" + SEG + "')").refeicoes, 2, "a tela sabe que há 2 marcas no cardápio normal");
   marcar(a, SEG, 1, 1);
-  const enjoo = a.j("consumoDoDia('" + SEG + "').comida.prot");
-  perto(enjoo, a.j("somarItens(planoDoDia(7).refeicoes[1].itens).prot"), "conta a refeição do plano de enjoo");
+  const leve = a.j("somarItens(planoDoDia(7).refeicoes[1].itens).prot");
+  perto(a.j("consumoDoDia('" + SEG + "').comida.prot"), normal + leve, "soma o cardápio normal e a refeição leve");
+  assert.strictEqual(a.j("consumoDoDia('" + SEG + "').refeicoes"), 3);
   a.v("AC.enjoo({ dia: '" + SEG + "' })");
-  perto(a.j("consumoDoDia('" + SEG + "').comida.prot"), normal, "as marcas do plano normal voltam");
+  perto(a.j("consumoDoDia('" + SEG + "').comida.prot"), normal + leve, "desligar não tira a refeição leve do total");
   assert.strictEqual(a.j("E.dias['" + SEG + "'].comido[2].q"), 0.5);
-  a.v("AC.enjoo({ dia: '" + SEG + "' })");
-  perto(a.j("consumoDoDia('" + SEG + "').comida.prot"), enjoo, "as do plano de enjoo também");
+  assert.strictEqual(a.j("E.dias['" + SEG + "'].comidoEnjoo[1].q"), 1);
+  perto(a.j("consumoOutroPlano('" + SEG + "')").prot, leve, "com o enjoo desligado, o outro cardápio é o leve");
 });
 
 test("dado antigo: dia de enjoo sem comidoEnjoo tinha as marcas em comido", () => {
@@ -100,7 +103,8 @@ test("dado antigo: dia de enjoo sem comidoEnjoo tinha as marcas em comido", () =
   a.v("AC.enjoo({ dia: '" + SEG + "' })");
   const d = a.j("E.dias['" + SEG + "']");
   assert.deepStrictEqual([d.enjoo, d.comido, d.comidoEnjoo.length], [false, [], 3], "as marcas vão para comidoEnjoo, não viram marcas do plano normal");
-  assert.strictEqual(a.j("consumoDoDia('" + SEG + "').refeicoes"), 0);
+  const c2 = a.j("consumoDoDia('" + SEG + "')");
+  assert.strictEqual(c2.refeicoes, 2, "e continuam no total, uma vez só"); perto(c2.comida.prot, p[0] + p[2]);
 });
 
 test("virada do dia: o toque nunca grava no dia errado", () => {

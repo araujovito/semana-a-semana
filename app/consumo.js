@@ -4,8 +4,9 @@
    Como o registro do dia (E.dias[data], formato no topo de nucleo.js) é usado aqui:
    - comido[i]       registro da refeição i do plano NORMAL daquele dia da semana.
    - comidoEnjoo[i]  registro da refeição i do plano do DIA DE ENJOO. Campo novo: os dois planos têm registros separados
-                     para que ligar e desligar o "Dia de enjoo" não apague nada. A soma do dia usa só o do plano em vigor
-                     (enjoo ligado: comidoEnjoo; desligado: comido).
+                     para que ligar e desligar o "Dia de enjoo" não apague nada. A tela Hoje mostra só as marcas do plano em
+                     vigor (registrosDoDia), mas a SOMA do dia junta as duas listas (listasDoDia): quem come o café e o almoço
+                     do plano e liga o enjoo à tarde comeu as duas coisas (teste do dia de enjoo, 22/11).
    - comidoNutri[i]  registro da refeição i do PLANO DA NUTRICIONISTA (app/planonutri.js), com op = opção escolhida.
                      opNutri[i] guarda a opção escolhida antes de marcar. Qual plano normal vale no dia: pnDiaUsaNutri().
      Dado antigo não tem comidoEnjoo. Nele, um dia com enjoo ligado guardava em `comido` as marcas do plano de enjoo:
@@ -49,20 +50,31 @@ function consumoDaRefeicao(c, itensPlano) {
   return t;
 }
 /* O que foi comido no dia.
-   comida     nutrientes do que foi marcado nas refeições do plano em vigor, mais a proteína avulsa (protExtra)
+   comida     nutrientes do que foi marcado nas refeições (plano normal e dia de enjoo, ver listasDoDia), mais a proteína avulsa (protExtra)
    extras     nutrientes que não vêm da comida (suplementos), de somarExtras(data)
    total      comida + extras
    registrou  true se há refeição registrada ou proteína avulsa
    refeicoes  quantas refeições têm registro; comidas: com tudo, metade ou um pouco; pouco: com "um pouco"; nada: com "nada"
    temExtras  true se algum valor de extras é maior que zero */
-function consumoDoDia(data) {
-  const r = dia(data), comida = zeros();
+/* As duas listas de marcas do dia que entram na soma: a do plano normal (nutricionista ou cardápio do app) e a do dia de enjoo,
+   cada uma com o plano que serve de porção a registro antigo sem foto ({ q: 1 }). Dado antigo com o enjoo ligado e sem
+   comidoEnjoo guardava as marcas do enjoo em `comido` (ver o topo): aí `comido` é a lista do enjoo, não a do plano normal. */
+function listasDoDia(r, data) {
+  const antigo = r.enjoo && !Array.isArray(r.comidoEnjoo), nutri = !antigo && pnDiaUsaNutri(data, r);
+  return {
+    normal: { regs: (antigo ? r.comidoNutri : nutri ? r.comidoNutri : r.comido) || [], plano: () => (nutri ? pnPlanoDoDia(data) : planoDoDia(diaSemana(data))), nutri: antigo || nutri },
+    enjoo: { regs: (antigo ? r.comido : r.comidoEnjoo) || [], plano: () => planoDoDia(7) },
+  };
+}
+/* Soma de uma lista de marcas: { comida, refeicoes, comidas, pouco, nada }. */
+function somarLista(lista) {
+  const comida = zeros();
   let plano = null, refeicoes = 0, comidas = 0, pouco = 0, nada = 0;
-  registrosDoDia(r, data).forEach((c, i) => {
+  lista.regs.forEach((c, i) => {
     if (!c) return;
     const q = Number(c.q) || 0;
     let itensPlano = null;
-    if (q > 0 && !Array.isArray(c.itens)) { plano = plano || planoDaData(data); itensPlano = plano.refeicoes[i] ? plano.refeicoes[i].itens : []; }
+    if (q > 0 && !Array.isArray(c.itens)) { plano = plano || lista.plano(); itensPlano = plano.refeicoes[i] ? plano.refeicoes[i].itens : []; }
     const t = consumoDaRefeicao(c, itensPlano);
     CAMPOS.forEach(k => { comida[k] += t[k]; });
     refeicoes++;
@@ -70,6 +82,18 @@ function consumoDoDia(data) {
     if (q === 0.25) pouco++;
     if (q === 0) nada++;
   });
+  return { comida, refeicoes, comidas, pouco, nada };
+}
+/* Marcas do plano que NÃO está na tela agora (com o enjoo ligado, as do plano normal; desligado, as do enjoo).
+   Entram no total do dia; a tela Hoje avisa que contam. { refeicoes, prot, nutri (o outro é o plano da nutricionista) }. */
+function consumoOutroPlano(data) {
+  const r = dia(data), l = listasDoDia(r, data), outra = r.enjoo ? l.normal : l.enjoo, s = somarLista(outra);
+  return { refeicoes: s.refeicoes, prot: s.comida.prot, nutri: !!(r.enjoo && outra.nutri) };
+}
+function consumoDoDia(data) {
+  const r = dia(data), l = listasDoDia(r, data), a = somarLista(l.normal), b = somarLista(l.enjoo), comida = zeros();
+  CAMPOS.forEach(k => { comida[k] = a.comida[k] + b.comida[k]; });
+  const refeicoes = a.refeicoes + b.refeicoes, comidas = a.comidas + b.comidas, pouco = a.pouco + b.pouco, nada = a.nada + b.nada;
   const protExtra = Number(r.protExtra) || 0;
   comida.prot += protExtra;
   const extras = somarExtras(data), total = zeros();
