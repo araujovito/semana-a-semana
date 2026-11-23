@@ -137,6 +137,16 @@ function alvoProteina(m) {
   if (pnEmUso()) { const f = pnFaixaDia(); return { g: Math.round(f.min.prot), min: Math.round(f.min.prot), max: Math.round(f.max.prot), nutri: true, rotulo: "alvo do plano da nutricionista" }; }
   return { g: m.prot, min: m.protMin, max: m.protMax, nutri: false, rotulo: "meta" };
 }
+/* Alvo único de energia (teste final do APK, I1): com o plano da nutricionista em uso, a referência é a faixa do plano dela e o
+   corte de "comeu pouco" é KCAL_POUCO (consumo.js, o mesmo do aviso da tela Hoje), não o piso do cardápio do app, que fica abaixo
+   do plano dela em quase metade das combinações. Sem o plano, vale a meta e o piso do app. */
+function alvoEnergia(m) {
+  m = m || metas();
+  if (pnEmUso()) { const f = pnFaixaDia(); return { kcal: Math.round(f.min.kcal), min: Math.round(f.min.kcal), max: Math.round(f.max.kcal), piso: KCAL_POUCO, nutri: true,
+    rotulo: "faixa do plano da nutricionista", notaPiso: fmt(KCAL_POUCO) + " kcal é o ponto em que o app sugere conversar com a sua nutricionista. Se isso se repetir, leve à consulta." }; }
+  return { kcal: m.kcal, min: null, max: null, piso: m.pisoDia == null ? PISO_DIA : m.pisoDia, nutri: false, rotulo: "referência",
+    notaPiso: fmt(m.pisoDia == null ? PISO_DIA : m.pisoDia) + " kcal é o mínimo por dia que o cardápio do app usa. Se isso se repetir, vale levar ao médico ou ao nutricionista." };
+}
 /* Referência do cartão de proteína e energia da tela Hoje. Com o plano da nutricionista em uso, a referência é a faixa do plano
    dela (a barra enche no mínimo da faixa) e a meta calculada pelo app não aparece. */
 function pnReferenciaDoDia(m) {

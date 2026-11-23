@@ -226,7 +226,7 @@ function relAlimentacao(de) {
   if (s.dias) {
     const ap = alvoProteina(m);
     L.push("Dias com registro do que foi comido: " + s.dias + " de " + periodo + ". Média de proteína: " + fmt(s.media.prot) + " g (" + ap.rotulo + (ap.nutri ? ": " : " ") + ap.g + " g)." +
-      (discreto ? "" : " Média de energia: " + fmt(s.media.kcal) + " kcal (referência " + m.kcal + " kcal)."));
+      (discreto ? "" : " Média de energia: " + fmt(s.media.kcal) + " kcal (" + (alvoEnergia(m).nutri ? "faixa do plano da nutricionista: " + fmt(alvoEnergia(m).min) + " a " + fmt(alvoEnergia(m).max) : "referência " + fmt(m.kcal)) + " kcal)."));
     L.push('Refeições marcadas como "nada": ' + s.nada + " de " + s.refeicoes + " registradas.");
   } else L.push("Nenhum dia com registro do que foi comido.");
   L.push((s.diasAgua ? "Água: média de " + fmt(s.agua / 1000, 1) + " L em " + s.diasAgua + (s.diasAgua === 1 ? " dia" : " dias") + " com registro (meta " + fmt(m.agua / 1000, 1) + " L)." : "Água: sem registro.") + " Dias de enjoo: " + s.enjoo + ".");

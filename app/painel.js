@@ -96,10 +96,10 @@ function painelDiaSemana(data) { return ["domingo", "segunda", "terça", "quarta
 function telaPainel() {
   const m = metas(), h = hoje(), disc = m.discreto, c = consumoDoDia(h), a = alvoProteina(m);
   /* Alvo único de proteína (alvoProteina, planonutri.js): o mesmo de Hoje e do relatório; a faixa é a do plano dela, se em uso. */
-  const mp = Object.assign({}, m, { prot: a.g, protMin: a.min, protMax: a.max });
+  const ae = alvoEnergia(m), mp = Object.assign({}, m, { prot: a.g, protMin: a.min, protMax: a.max, pisoDia: ae.piso });
   const kcal = c.total.kcal, prot = c.total.prot, falta = painelFaltaProt(prot, a.g);
   let out = '<div class="cartao painel-hoje"><h2>Hoje</h2><div class="painel-aneis' + (disc ? " so-um" : "") + '">' +
-    painelAnel("Proteína", prot, a.g, "g", "prot") + (disc ? "" : painelAnel("Calorias", kcal, m.kcal, "kcal", "kcal")) + "</div>" +
+    painelAnel("Proteína", prot, a.g, "g", "prot") + (disc ? "" : painelAnel("Calorias", kcal, ae.kcal, "kcal", "kcal")) + "</div>" +
     '<p class="painel-falta" data-painel="falta">' + (falta > 0 ? "Faltam " + fmt(falta) + " g de proteína para a meta de hoje." : "A meta de proteína de hoje já foi alcançada.") +
     (c.registrou ? "" : " Nada registrado hoje ainda.") + "</p>" +
     '<p class="sub">' + (a.nutri ? "Faixa de proteína do plano da sua nutricionista: " + fmt(a.min) + " a " + fmt(a.max) + " g por dia; o alvo de hoje (" + fmt(a.g) + " g) é o começo da faixa, o mesmo da tela Hoje."
@@ -109,7 +109,7 @@ function telaPainel() {
   const chip = (v, t) => '<button class="' + (n === v ? "ativa" : "") + '" data-ac="painelPeriodo" data-n="' + v + '" aria-pressed="' + (n === v) + '">' + t + "</button>";
   out += '<div class="cartao painel-periodo"><div class="linha"><h2>Por dia</h2><div class="chips painel-chips">' + chip(7, "7 dias") + chip(30, "30 dias") + "</div></div>" +
     '<h3>Proteína (g)</h3>' + painelGrafico(serie, "prot", a.g, "g", [a.min, a.max], h) + painelTabela(serie, "prot", "g", h) +
-    (disc ? "" : "<h3>Calorias (kcal)</h3>" + painelGrafico(serie, "kcal", m.kcal, "kcal", null, h) + painelTabela(serie, "kcal", "kcal", h)) +
+    (disc ? "" : "<h3>Calorias (kcal)</h3>" + painelGrafico(serie, "kcal", ae.kcal, "kcal", ae.nutri ? [ae.min, ae.max] : null, h) + painelTabela(serie, "kcal", "kcal", h)) +
     '<p class="painel-leitura" data-painel="leitura" aria-live="polite">Toque numa barra ou arraste o dedo para ver o valor do dia.</p>' +
     '<p class="sub painel-legenda"><span class="leg coluna"></span>registrado <span class="leg vazio"></span>sem registro <span class="leg meta"></span>meta' + ' <span class="leg faixa"></span>faixa de proteína</p></div>';
 
@@ -121,11 +121,11 @@ function telaPainel() {
       '<div><div class="sub">Média de proteína</div><div class="painel-num" data-v="mediaProt">' + fmt(r.mediaProt) + " <small>g</small></div></div>" +
       (disc ? "" : '<div><div class="sub">Média de calorias</div><div class="painel-num" data-v="mediaKcal">' + fmt(r.mediaKcal) + " <small>kcal</small></div></div>") +
       '<div><div class="sub">Proteína na faixa</div><div class="painel-num" data-v="naFaixa">' + r.naFaixa + " <small>de " + r.dias + "</small></div></div>" +
-      (disc ? "" : '<div><div class="sub">Abaixo de ' + fmt(m.pisoDia) + ' kcal</div><div class="painel-num" data-v="abaixoKcal">' + r.abaixoKcal + " <small>de " + r.diasKcal + "</small></div></div>") +
+      (disc ? "" : '<div><div class="sub">Abaixo de ' + fmt(ae.piso) + ' kcal</div><div class="painel-num" data-v="abaixoKcal">' + r.abaixoKcal + " <small>de " + r.diasKcal + "</small></div></div>") +
       "</div>";
   }
   out += '<p class="sub" data-v="diasRegistro">Dias com registro: ' + r.dias + " de " + r.total + ". Médias e contagens usam só os dias com registro; hoje fica de fora porque ainda não acabou." +
-    (disc ? "" : " " + fmt(m.pisoDia) + " kcal é o mínimo por dia que o cardápio do app usa. Se isso se repetir, vale levar ao médico ou ao nutricionista.") + "</p></div>";
+    (disc ? "" : " " + ae.notaPiso) + "</p></div>";
   return out;
 }
 

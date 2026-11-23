@@ -75,11 +75,12 @@ test("texto neutro: sem parabéns nem falhou", () => {
 
 test("corte de calorias vem de metas().pisoDia: meta do médico abaixo de 1.200 vira o corte", () => {
   const serie = [{ registrou: true, kcal: 1100, prot: 90 }, { registrou: true, kcal: 950, prot: 90 }];
-  const padrao = abrir();
+  // Corte do cardápio do app: vale com o plano da nutricionista desligado (ligado, o corte é o do teste do I1, mais abaixo).
+  const padrao = abrir(); padrao.v("E.ui.planoNutri = false");
   assert.strictEqual(padrao.v("metas().pisoDia"), 1200);
   assert.strictEqual(padrao.j("painelResumo(" + JSON.stringify(serie) + ", metas())").abaixoKcal, 2);
   assert.ok(/Abaixo de 1\.200 kcal/.test(padrao.v("E.dias['2026-11-19'] = { enjoo: false, comido: [], agua: 0, protExtra: 50, caminhada: 0 }, telaPainel()")));
-  const medico = abrir({ "2026-11-19": so(50) }, { metaKcal: 1000 });
+  const medico = abrir({ "2026-11-19": so(50) }, { metaKcal: 1000 }); medico.v("E.ui.planoNutri = false");
   assert.strictEqual(medico.v("metas().pisoDia"), 1000);
   assert.strictEqual(medico.j("painelResumo(" + JSON.stringify(serie) + ", metas())").abaixoKcal, 1, "só 950 fica abaixo de 1.000");
   const html = medico.v("telaPainel()");
@@ -117,4 +118,14 @@ test("auditoria 3 (I3): dia só com proteína avulsa não vira dia de 0 kcal", (
     doses: [], pesos: [], sintomas: [], treinos: [], dias: { "2026-11-18": { enjoo: false, protExtra: 10, agua: 0, caminhada: 0 } }, trocas: {}, caneta: null, suplementos: [], exames: [], lembretes: {}, ui: { usarPlanoNutri: false } });
   const r = JSON.parse(a.v("JSON.stringify(painelResumo(painelSerie('2026-11-19', 7), metas()))"));
   assert.strictEqual(r.dias, 1); assert.strictEqual(r.diasKcal, 0); assert.strictEqual(r.abaixoKcal, 0); assert.strictEqual(r.mediaKcal, null);
+});
+test("teste final (I1): com o plano da nutricionista, calorias comparam com a faixa dela e o corte é KCAL_POUCO", () => {
+  const a = abrir({ "2026-11-19": so(50) }, { peso: 120 });
+  assert.ok(a.v("pnEmUso()"));
+  const ae = a.j("alvoEnergia()");
+  assert.ok(ae.nutri && ae.piso === 800 && ae.min < ae.max && ae.kcal === ae.min);
+  const html = a.v("telaPainel()");
+  assert.match(html, /Abaixo de 800 kcal/);
+  assert.match(html, /meta 1\.009 kcal/);
+  assert.ok(!/1\.550|mínimo por dia que o cardápio do app usa/.test(html), "a meta do app não aparece com o plano dela em uso");
 });
