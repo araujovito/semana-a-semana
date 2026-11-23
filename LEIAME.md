@@ -36,6 +36,7 @@ Quando a aba tem mais de uma tela, aparecem sub-abas: Semana · Diário · Paine
   - "Como está hoje?": Bem, Enjoo leve, Enjoo forte, Sem fome, Dor na barriga. Grava no registro de sintomas do dia. "Enjoo forte" pergunta se troca pelas refeições leves. "Dor na barriga" grava a dor e abre os sinais em três níveis (192, pronto-socorro hoje, avisar o médico).
   - Com pedra na vesícula: cartão curto com o botão "Dor na barriga: o que fazer".
   - Gravidez ou amamentação marcada, ou IMC abaixo de 18,5: uma linha e "ver", que abre numa folha o mesmo texto do cartão do Perfil e do Plano. Sem número de peso. Quem não está nessas condições não vê nada.
+  - Quem marcou que usa pílula: uma linha "Pílula anticoncepcional" antes da primeira aplicação registrada e nos 28 dias depois da primeira dose ou de um aumento de dose; "ver" abre os dois parágrafos do Guia ("Anticoncepcional e gravidez"). Não aparece com gravidez marcada.
   - Atalhos: Comida, Água, Como estou, Aplicação, Dor na barriga, Para a consulta, Painel, Peso.
   - "Ainda hoje": próxima refeição do plano e caminhada opcional.
   - Navegação por dia: até 60 dias para trás.

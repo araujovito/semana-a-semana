@@ -146,13 +146,25 @@ function abrirRitmo() {
 
 /* Avisos de segurança do Perfil em Hoje: uma linha e "ver" (auditoria 2, item 4 das pendências; mesmo formato do ritmo de perda).
    Só aparecem para quem está na condição; quem não está não vê nada. Nenhum texto de saúde novo: a folha repete o texto do cartão
-   do Perfil/Plano (TEXTO_GESTANTE e TEXTO_PESO_BAIXO em perfil.js, IMC 18,5 = baixo peso na classificação da OMS).
-   Sem número de peso (modo discreto). */
+   do Perfil/Plano (TEXTO_GESTANTE e TEXTO_PESO_BAIXO em perfil.js, IMC 18,5 = baixo peso na classificação da OMS) ou o artigo
+   "Anticoncepcional e gravidez" do Guia (conteudo.js; bula e Febrasgo), lido do próprio Guia. Sem número de peso (modo discreto).
+   Pílula: o Guia fala em 4 semanas depois da primeira dose e de cada aumento de dose; a linha aparece antes da primeira aplicação
+   registrada e nos 28 dias depois da primeira dose ou de uma dose maior que a anterior. Não aparece com gravidez marcada (o cartão
+   de gravidez já leva ao mesmo artigo) nem no perfil masculino. */
+function artigoPilula() { return G.find(a => a.titulo === "Anticoncepcional e gravidez"); }
+function pilulaNaDoseNova() {
+  const p = E.perfil || {}, m = metas(); if (p.pilula !== true || p.sexo === "M" || !m || m.gestante || !artigoPilula()) return false;
+  const ds = dosesAte(E.doses, hoje()); if (!ds.length) return true;
+  let i = ds.length - 1; while (i > 0 && ds[i - 1].mg === ds[i].mg) i--;
+  return (i === 0 || ds[i].mg > ds[i - 1].mg) && entre(ds[i].data, hoje()) < 28;
+}
 const AVISOS_CURTOS = {
   gestante: { quando: () => { const m = metas(); return !!(m && m.gestante); }, titulo: "Gravidez e amamentação", linha: "fale com o seu médico.",
     folha: () => [TEXTO_GESTANTE], guia: true },
   pesoBaixo: { quando: () => { const m = metas(); return !!(m && m.abaixoDoPeso); }, titulo: "Peso abaixo da faixa de referência", linha: "fale com o seu médico sobre a dose e o peso.",
     folha: () => [TEXTO_PESO_BAIXO] },
+  pilula: { quando: pilulaNaDoseNova, titulo: "Pílula anticoncepcional", linha: "o remédio pode reduzir o efeito dela. Veja o que fazer nestas semanas.",
+    folha: () => artigoPilula().corpo.slice(0, 2), guia: true },
 };
 function avisosCurtos() {
   return Object.keys(AVISOS_CURTOS).filter(k => AVISOS_CURTOS[k].quando()).map(k => { const a = AVISOS_CURTOS[k];
