@@ -144,7 +144,8 @@ footer { color: var(--muted); font-size: 12px; }
         <div><time>22/11</time><span>Cardápio de reserva com regras de vesícula no main (131 testes).</span></div>
         <div><time>22/11</time><span>Equipe ampliada para 10 agentes. Paleta rosa, lilás e azul aprovada.</span></div>
         <div><time>22/11</time><span>No main: plano da nutricionista, caminhos, visual etapa 1, correções clínicas e das auditorias. 157 testes de unidade.</span></div>
-        <div><time>22/11</time><span>Faltam: segurança (juntando), PIN, tela Hoje nova, APK final e guias.</span></div>
+        <div><time>22/11</time><span>Você saiu e autorizou concluir. No main: segurança, PIN com cifra e a tela Hoje nova (174 testes).</span></div>
+        <div><time>22/11</time><span>Faltam: primeiro uso numa tela, ícone, alvo único de proteína, teste final no Android, APK e guias.</span></div>
       </div>
     </div>
   </div>
@@ -219,11 +220,11 @@ const ETAPAS = [
     ["Pesquisa", "Vesícula e fígado", "feito", "Regras: gordura de 7 a 15 g por refeição (teto 20), refeição até ~500 kcal, sem açúcar adicionado, marcos de 5%, 7-10% e 10% para o fígado. 5 caminhos de alimentação com fontes."],
     ["Cardápio", "Reserva + regras", "feito", "No main: gordura máxima 15 g por refeição (era 20,7), maior refeição 499 kcal (era 629), 0 problemas no conferidor. Virou reserva: o principal é o plano da nutricionista."],
     ["Nutri", "Plano da nutricionista", "feito", "No main: opções do plano prescrito (1.009 a 1.392 kcal, 91 a 146 g de proteína), escolha e registro na Hoje, metas dela no Plano."],
-    ["Segurança", "Segurança e PIN", "andamento", "Pronto: aviso antes de exportar, cópia conferida, CSP, navegador interno trancado. Juntando. PIN com cifra em andamento."],
+    ["Segurança", "Segurança e PIN", "feito", "No main: aviso antes de exportar, cópia com código de verificação, CSP, navegador interno trancado, PIN de 6 dígitos com dados cifrados e código de recuperação."],
     ["Perfil", "Avisos para ela", "feito", "No main: perguntas de vesícula, fígado e cirurgia; cartão de cólica biliar em Hoje, Plano e Perfil; marcas de 5, 7 e 10% para o fígado com o quanto falta."],
     ["Painel", "Calorias e proteína", "feito", "No main: anéis de hoje contra a meta, barras de 7 e 30 dias com a faixa de proteína, médias e dias na faixa. Botão na barra entra com o visual novo."],
     ["Semana", "Visão semanal", "feito", "No main: semana atual aberta, anteriores resumidas, padrões como enjoo depois da aplicação. Botão entra com o visual novo."],
-    ["Visual", "Identidade nova", "andamento", "Etapa 1 no main (rosa e azul, Zilla Slab, barra nova). Etapa 2: tela Hoje reorganizada, em andamento."],
+    ["Visual", "Identidade nova", "andamento", "No main: rosa e azul, Zilla Slab, barra nova e a tela Hoje reorganizada. Faltam ícone na paleta nova e alvo único de proteína."],
   ];
   const w = 1000 / F.length;
   F.forEach((f, i) => {
