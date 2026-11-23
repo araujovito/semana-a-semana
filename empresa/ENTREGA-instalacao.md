@@ -3,12 +3,14 @@
 Guia para quem vai instalar. O celular dela é um Xiaomi Redmi Note 13 Pro (MIUI 14 ou HyperOS).
 Leva uns 15 minutos se o celular não barrar. Leia o passo 5 antes de começar.
 
+**Instalação do zero.** O celular dela não tem versão anterior do Semana a Semana. Ela começa criando o PIN e preenchendo a tela de boas-vindas.
+
 **Limite deste guia:** nada foi testado num Xiaomi de verdade. A equipe testou num celular virtual com Android puro, na medida da tela dela.
 Os nomes dos menus da Xiaomi mudam entre MIUI 14 e HyperOS e entre atualizações. Onde houver dúvida, o guia diz "pode variar".
 
 ## O que você precisa
 
-- O arquivo `semana-a-semana.apk`, compilado na versão nova (ver `LEIAME.md`, "Compilar"). O da raiz de 22/11 às 16h27 é antigo: não tem PIN nem o plano da nutricionista.
+- O arquivo `semana-a-semana.apk` na versão 2.1 (versionCode 4), compilado como diz o `LEIAME.md`, "Compilar o APK". O que estava na raiz em 22/11 às 22h46 é a 2.0 e não tem as últimas correções (botão "Dor na barriga", calorias do Painel pela faixa da nutricionista e outras).
 - O celular dela, destravado e com bateria.
 - Papel e caneta, para o código de recuperação do PIN.
 - Se der problema no passo 5: o computador e um cabo USB.
@@ -87,7 +89,7 @@ Depois:
 - PIN errado várias vezes: o app pede para esperar (30 s, 1 min, 5 min). Nada é apagado.
 - Trocar o PIN: no Perfil, no fim, "Trocar PIN".
 
-Em seguida vem a tela "Antes de começar" e o formulário curto. O resto é com ela (`ENTREGA-primeiros-passos.md`).
+Em seguida vem a tela "Antes de começar" e o formulário curto. Para o app usar o plano da nutricionista e os avisos da vesícula e do fígado, ela responde Sim nas perguntas que valem para ela. O resto é com ela (`ENTREGA-primeiros-passos.md`).
 
 ## 7. Depois de instalar
 
@@ -109,9 +111,9 @@ O Xiaomi tem um app **Segurança** com **Limpeza** (limpador) e sugestões de li
 - Instale o arquivo novo **por cima**, repetindo os passos 1 a 4. **Não desinstale** o antigo: desinstalar apaga os registros.
 - Só funciona se:
   - a versão nova vier assinada com a **mesma chave** (`android/chave.keystore`);
-  - o **número da versão (versionCode) for maior** que o do instalado. Isso é com quem compila (`LEIAME.md`). O APK de 22/11 tem 2; o próximo precisa de 3 ou mais.
+  - o **número da versão (versionCode) for maior** que o do instalado. Isso é com quem compila (`LEIAME.md`). A versão entregue em 23/11 tem 4; a próxima precisa de 5 ou mais.
 - Se a chave se perder, não há como atualizar: só desinstalar, perdendo o que não tiver cópia. **Guarde uma cópia da chave fora do computador**, com a senha (está em `montar-apk.sh`).
-- Quem já usava uma versão sem PIN: na primeira abertura depois da atualização, o app pede para criar o PIN. Os registros são cifrados e conferidos; o texto antigo só é apagado depois que a conferência bate.
+- Versão sem PIN (1.x) atualizada por cima: não é o caso dela, que instala do zero. Se acontecer, o app pede para criar o PIN e cifra os registros. O texto antigo pode ficar no armazenamento interno do app até o sistema compactar o arquivo (lido só com root ou pela cópia do Google). Detalhe no `LEIAME.md`, "Pendências", I2.
 - Se em 2027 a regra de verificação valer para tudo, atualizar vai exigir a opção A, B ou C do passo 5.
 
 ## Cópia de segurança dos dados
