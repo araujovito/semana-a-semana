@@ -76,7 +76,7 @@ function blocoProteina(c, ref, quando, planoRest, enjoo) {
   const a = alvoProteina(), falta = Math.max(0, Math.round(a.g - c.total.prot));
   const alvo = a.rotulo + (a.nutri ? ": " : " ") + a.g + " g";
   return '<div class="hoje-prot"><div class="rot">Proteína ' + quando + '</div><div class="hoje-num"><span data-v="prot">' + fmt(c.total.prot) + "</span><small> g</small></div>" +
-    '<div class="hoje-falta">' + (enjoo ? "Dia leve: o que der, em porções pequenas." : falta > 0 ? "Faltam " + falta + " g" : "Chegou ao alvo de hoje") + "</div>" +
+    '<div class="hoje-falta">' + (enjoo ? "Dia leve: o que der, em porções pequenas." : falta > 0 ? "Faltam " + falta + " g" : (quando === "hoje" ? "Chegou ao alvo de hoje" : "Chegou ao alvo do dia")) + "</div>" +
     '<div class="hoje-nota">' + alvo + (!enjoo && falta > 0 && planoRest > 0 ? ". As refeições sem marca do plano têm cerca de " + fmt(planoRest) + " g." : ".") + "</div></div>";
 }
 

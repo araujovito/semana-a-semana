@@ -59,7 +59,7 @@ Object.assign(AC, {
   importar() {
     segLerCopia(texto("imp")).then(function (r) {
       if (r.erro) { if (/Texto inválido/.test(r.erro)) aviso(r.erro); else alerta(r.erro); return; }
-      const restaurar = function () { E = r.estado; salvar(); aviso("Dados restaurados."); irPara("hoje"); };
+      const restaurar = function () { E = r.estado; diaSel = null; salvar(); aviso("Dados restaurados."); irPara("hoje"); }; // diaSel: a Hoje volta para hoje (teste final, M7)
       const semCodigo = r.conferida ? "" : " Esta cópia é de uma versão anterior do app e não tem código de verificação: confira os registros depois.";
       // Sem perfil não há o que substituir (celular novo ou dados apagados): restaura direto, a não ser que a cópia seja antiga.
       if (!E.perfil && r.conferida) { restaurar(); return; }
