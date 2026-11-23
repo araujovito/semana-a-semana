@@ -59,9 +59,10 @@ details.por-que p { font-size: 15px; margin: 0; }
 /* Fora do topo (dia passado), o bloco de proteína é um cartão comum. */
 .cartao .hoje-prot { background: none; padding: 0; margin: 0; }
 
-/* Marcar o dia: a refeição já marcada encolhe; as quatro marcas continuam à mão para corrigir. */
-.hoje-marcar .refeicao.feita-r .tit { font-size: 15px; font-weight: 500; color: var(--suave); }
-.hoje-marcar .refeicao.feita-r .pn-opcao { display: none; }
+/* Marcar o dia: a refeição já marcada fica mais apagada, sem mudar de altura. Antes ela encolhia e o seletor da opção sumia:
+   a tela pulava cerca de 150 px, o toque seguinte caía em outra refeição e não dava para trocar a opção depois de marcar
+   (teste final do APK 2.0, M2). As quatro marcas continuam à mão para corrigir. */
+.hoje-marcar .refeicao.feita-r .tit { font-weight: 500; color: var(--suave); }
 /* A nota da refeição (texto do plano) fica na tela Plano; em Hoje o título do que vai comer cabe em 2 linhas. */
 .hoje-marcar select.pn-opcao + .sub { display: none; }
 .hoje-marcar .refeicao .tit { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
