@@ -21,7 +21,7 @@ O app acompanha o tratamento com tirzepatida de uma paciente com colelitíase e 
 
 ## 2. Ritmo de perda de peso
 
-- Com pedra na vesícula marcada, se a perda média passar de **1% do peso por semana** (média de 2 a 4 semanas, nunca uma pesagem só), o app mostra: "Perda de peso rápida aumenta o risco de pedra na vesícula. É um assunto para levar ao seu médico." Aparece mesmo no modo sem números.
+- Com pedra na vesícula marcada, se a perda média passar de **1% do peso por semana** (média de 2 a 4 semanas, nunca uma pesagem só), o app mostra: "Perda de peso rápida aumenta o risco de pedra na vesícula. É um assunto para levar ao seu médico." Aparece no registro de peso, na tela inicial (Hoje) e na visão semanal, mesmo no modo sem números.
 - O app não manda comer mais nem mexer na dose.
 - Fontes: bula americana do Zepbound, seção 5.4 (eventos de vesícula associados à redução de peso), https://pi.lilly.com/us/zepbound-uspi.pdf; Weinsier RL et al., Am J Med 1995;98:115 (risco sobe acima de 1,5 kg por semana), https://pubmed.ncbi.nlm.nih.gov/7847427/. O estudo foi feito em pessoas sem pedra: o uso para quem já tem é extrapolação.
 
@@ -54,7 +54,9 @@ Fontes: Gebhard RL et al., Hepatology 1996;24:544; Festi D et al., Int J Obes 19
 
 A conferência do plano prescrito (sem corrigir nada) achou: café e jantar de algumas opções abaixo de 7 g de gordura; fibra abaixo de 25 g em boa parte das combinações; óleo dos preparos fora da conta, porque o plano não dá a quantidade. Detalhe em `empresa/relatorios/plano-nutricionista-conferido.md`.
 
-**Pergunta:** esses números valem para ela? Quanto óleo ou azeite nos preparos?
+Com o plano da nutricionista em uso, o Painel compara as calorias do dia com a faixa do plano (cerca de 1.009 a 1.392 kcal, estimativa do app a partir das opções prescritas). Um dia abaixo de **800 kcal** marcadas conta como "comeu pouco", e o app sugere levar à consulta se isso se repetir. O número de 800 é escolha da equipe, sem fonte clínica.
+
+**Pergunta:** esses números valem para ela? Quanto óleo ou azeite nos preparos? O corte de 800 kcal serve, ou prefere outro?
 
 ## Limites
 
