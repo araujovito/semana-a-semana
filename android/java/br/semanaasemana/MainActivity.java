@@ -52,6 +52,7 @@ public class MainActivity extends Activity {
         s.setAllowUniversalAccessFromFileURLs(false);
         s.setGeolocationEnabled(false);
         s.setSaveFormData(false);
+        s.setTextZoom(Math.round(getResources().getConfiguration().fontScale * 100)); // letra do sistema; ver onConfigurationChanged
         web.setWebViewClient(new WebViewClient() {
             // Nada navega para fora dos arquivos do app. Link http/https (hoje não há nenhum) abre no navegador, fora do app;
             // qualquer outro esquema (intent:, javascript:, content:, file: fora da pasta) é recusado.
@@ -87,13 +88,16 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * O sistema trocou entre modo claro e escuro com o app aberto. A Activity não é recriada (configChanges tem uiMode),
-     * para a tela não recarregar no meio de um formulário; as cores da janela são reaplicadas aqui. As cores vêm de
-     * values/ e values-night/, e a página troca sozinha pelo CSS (prefers-color-scheme).
+     * O sistema trocou o modo claro/escuro, o tamanho da letra ou a densidade da tela com o app aberto. A Activity não é
+     * recriada (configChanges tem uiMode, fontScale e density): recriar recarregaria a página no meio de um formulário e,
+     * com o PIN, pediria o PIN de novo (teste final do APK 2.0, M8). A WebView só lê o tamanho da letra ao ser criada,
+     * então ele é reaplicado aqui. As cores da janela também; elas vêm de values/ e values-night/, e a página troca
+     * sozinha pelo CSS (prefers-color-scheme).
      */
     @Override
     public void onConfigurationChanged(Configuration nova) {
         super.onConfigurationChanged(nova);
+        web.getSettings().setTextZoom(Math.round(nova.fontScale * 100));
         Window w = getWindow();
         w.setStatusBarColor(getColor(R.color.barra_status));
         w.setNavigationBarColor(getColor(R.color.barra_navegacao));

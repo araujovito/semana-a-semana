@@ -6,7 +6,7 @@
     <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="34" />
     <application android:label="@string/nome" android:icon="@mipmap/ic_launcher" android:theme="@style/Tema" android:allowBackup="true"
         android:dataExtractionRules="@xml/regras_backup" android:fullBackupContent="@xml/backup_antigo" android:usesCleartextTraffic="false">
-        <activity android:name=".MainActivity" android:exported="true" android:configChanges="orientation|screenSize|keyboardHidden|uiMode" android:windowSoftInputMode="adjustResize">
+        <activity android:name=".MainActivity" android:exported="true" android:configChanges="orientation|screenSize|keyboardHidden|uiMode|fontScale|density" android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
