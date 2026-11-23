@@ -9,7 +9,7 @@ function telaDiario() {
   if (sub === "peso") out += subPeso();
   if (sub === "sintomas") out += subSintomas();
   if (sub === "relatorio") {
-    out += '<div class="cartao"><h2>Relatório para a consulta</h2><p class="sub" style="margin:0">Resumo dos últimos 30 dias, em texto, para mandar por WhatsApp ou mostrar ao médico.</p><textarea id="rel" readonly style="min-height:260px;font-size:13px">' + esc(relatorio()) + '</textarea><div class="botoes"><button data-ac="compartilhar" data-de="rel">Compartilhar</button><button class="sec" data-ac="copiar" data-de="rel">Copiar</button></div></div>';
+    out += '<div class="cartao"><h2>Relatório para a consulta</h2><p class="sub" style="margin:0">Resumo dos últimos 30 dias, em texto, para mandar por WhatsApp ou mostrar ao médico.</p><textarea id="rel" readonly aria-label="Texto do relatório" style="min-height:260px;font-size:13px">' + esc(relatorio()) + '</textarea><div class="botoes"><button data-ac="compartilhar" data-de="rel">Compartilhar</button><button class="sec" data-ac="copiar" data-de="rel">Copiar</button></div></div>';
     out += cartaoCopia();
   }
   return out;

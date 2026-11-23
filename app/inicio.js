@@ -83,9 +83,11 @@ AC.tentarSalvar = function () { if (salvar()) aviso("Salvo."); render(); };
    Fecha também com toque fora dela e com o botão Fechar. render() não fecha a folha: quem escolheu chama fecharFolha(). */
 function abrirFolha(titulo, html) {
   const f = document.getElementById("folha");
-  f.querySelector(".folha-corpo").innerHTML = '<div class="linha"><h2 style="margin:0">' + esc(titulo) + '</h2><button class="sec" data-ac="fecharFolha">Fechar</button></div>' + html;
+  f.querySelector(".folha-corpo").innerHTML = '<div class="linha"><h2 id="folha-titulo" style="margin:0">' + esc(titulo) + '</h2><button class="sec" data-ac="fecharFolha">Fechar</button></div>' + html;
   f.querySelectorAll("form").forEach(x => { x.noValidate = true; });
   f.hidden = false; f.querySelector(".folha-corpo").scrollTop = 0;
+  /* Leitor de tela: o foco entra na folha (no Fechar), senão continua no botão que ficou atrás dela. */
+  f.querySelector("[data-ac=fecharFolha]").focus();
 }
 function fecharFolha() { document.getElementById("folha").hidden = true; }
 function folhaAberta() { return !document.getElementById("folha").hidden; }
