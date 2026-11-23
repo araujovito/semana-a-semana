@@ -111,7 +111,13 @@ async function cifMontar(pin, codigo, texto, iter) {
 function cifTentativas() { try { const x = JSON.parse(localStorage.getItem(CIF_TENTATIVAS)); if (x && Number.isInteger(x.n) && typeof x.ate === "number") return x; } catch (e) {} return { n: 0, ate: 0 }; }
 const cifEsperaDepoisDe = n => (n < 5 ? 0 : CIF_ESPERAS[Math.min(n - 5, CIF_ESPERAS.length - 1)]);
 /* Segundos que ainda faltam esperar (0 = pode tentar). */
-function cifFaltaEsperar() { return Math.max(0, Math.ceil((cifTentativas().ate - Date.now()) / 1000)); }
+/* Se o relógio do celular voltou depois do erro (ajuste de hora, fuso), a espera recomeça de agora com a duração daquele erro,
+   em vez de durar o tempo que o relógio voltou (antes: relógio um dia atrás = "Espere 1440 minutos"). */
+function cifFaltaEsperar() {
+  const t = cifTentativas(), max = cifEsperaDepoisDe(t.n) * 1000;
+  if (t.ate - Date.now() > max) { t.ate = Date.now() + max; try { localStorage.setItem(CIF_TENTATIVAS, JSON.stringify(t)); } catch (e) {} }
+  return Math.max(0, Math.ceil((t.ate - Date.now()) / 1000));
+}
 function cifErrou() { const t = cifTentativas(); t.n++; t.ate = Date.now() + cifEsperaDepoisDe(t.n) * 1000; try { localStorage.setItem(CIF_TENTATIVAS, JSON.stringify(t)); } catch (e) {} return t; }
 function cifAcertou() { try { localStorage.removeItem(CIF_TENTATIVAS); } catch (e) {} }
 
