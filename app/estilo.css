@@ -15,6 +15,7 @@
    estilo-*.css usam esses nomes. Contraste AA conferido para todo texto sobre fundo, cartão, --cor-clara e o degradê. */
 :root {
   --fundo: #f6f5fb; --cartao: #ffffff; --texto: #1d2129; --suave: #646a73; --linha: #e6e4ee;
+  --borda-campo: #868b95;   /* contorno dos campos de texto e listas: 3,4:1 com o cartão e 3,1:1 com o fundo do campo (WCAG 1.4.11). --linha (1,3:1) fica para divisórias */
   --cor: #5f3dc4; --cor-clara: #efeaff; --sobre-cor: #ffffff;          /* primária azul-violeta: 7,1:1 com branco */
   --ok: #2b7a3b; --falta: #b45309; --alerta: #c92a2a; --alerta-fundo: #fff0f0;  /* alerta: só sinais de alerta */
   --topo-rosa: #ffb8dc; --topo-lilas: #d9c6ff; --topo-azul: #a8d0ff; --topo-base: #f3e8ff;
@@ -33,6 +34,7 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --fundo: #101119; --cartao: #1c1d24; --texto: #e9eaec; --suave: #9ea3ab; --linha: #2c2d38;
+    --borda-campo: #70757f;   /* 3,6:1 com o cartão, 4,1:1 com o fundo do campo */
     --cor: #b197fc; --cor-clara: #2a2244; --sobre-cor: #160b3a;
     --ok: #69db7c; --falta: #ffd43b; --alerta: #ff8787; --alerta-fundo: #2c1a1c;
     --topo-rosa: #6b1f55; --topo-lilas: #2e2470; --topo-azul: #123a7a; --topo-base: #0e1430;
@@ -89,7 +91,7 @@ button.perigo { background: transparent; color: var(--alerta); border: 1px solid
 .chips button.ativa { background: var(--cor); color: var(--sobre-cor); border-color: var(--cor); }
 
 label { display: block; font-size: 15px; color: var(--suave); margin-top: 10px; }
-input, select, textarea { width: 100%; font: inherit; color: var(--texto); background: var(--fundo); border: 1px solid var(--linha); border-radius: 10px; padding: 10px; margin-top: 4px; }
+input, select, textarea { width: 100%; font: inherit; color: var(--texto); background: var(--fundo); border: 1px solid var(--borda-campo); border-radius: 10px; padding: 10px; margin-top: 4px; }
 textarea { min-height: 90px; }
 input[type=checkbox] { width: 22px; height: 22px; margin: 0; flex: none; accent-color: var(--cor); }
 .marcas { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 6px; }
