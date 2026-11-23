@@ -187,31 +187,53 @@ Decisões de 20/11 (detalhes em `empresa/decisoes.md`):
 Adiados: medidas caseiras de tabela publicada, leitor de tela.
 Os caminhos B e C citam no código recursos que não existem ("prato dividido", "contador de bebida"), mas esse campo não aparece na tela.
 
-## Pendências conhecidas em 22/11 à noite
+## Pendências conhecidas na entrega (23/11)
 
-Conferidas no código de `main` contra `auditoria-3.md`, `revisao-clinica-onda2.md`, `teste-android-onda2.md` e `usabilidade-onda2.md`.
+Conferidas no código de `main` (até cb9f833, 22/11 às 23h10) contra o `git log` e contra `empresa/relatorios/teste-final-apk.md` (APK 2.0 no emulador). As siglas I e M são as desse relatório.
 
 **Antes da entrega**
-- Compilar o APK de novo, com `versionCode` 3 (ver "Compilar").
-- Juntar o ramo `onda2-uso` (primeiro uso numa tela, histórico do dia habitual, faixa das perguntas novas) com testes verdes.
+- Compilar o APK de novo, na versão 2.1 (ver "Compilar o APK"). O `semana-a-semana.apk` da raiz é de 22/11 às 22h46: não tem as correções de 22h45 em diante.
+- A instalação no celular dela é do zero: ninguém usa versão anterior (decisão da direção).
 
-**Dependem de aval clínico** (lista em `empresa/PARA-O-MEDICO.md`): divisão 192 / pronto-socorro / médico e o limite de "1 ou 2 horas"; aviso de ritmo de 1% por semana; frase do fígado e da cirurgia; números de gordura por refeição. Ninguém com formação clínica revisou os textos. A bula brasileira não foi conferida.
+**Dependem de aval clínico** (lista em `empresa/PARA-O-MEDICO.md`): divisão 192 / pronto-socorro / médico e o limite de "1 ou 2 horas"; aviso de ritmo de 1% por semana; frase do fígado e da cirurgia; números de gordura por refeição; corte de 800 kcal (`KCAL_POUCO`) que, com o plano da nutricionista em uso, conta um dia como "comeu pouco" no Painel (escolha da engenharia, acrescentada à seção 4 da página). Ninguém com formação clínica revisou os textos. A bula brasileira não foi conferida.
 
-**Já corrigido desde os relatórios:** meta de proteína informada respeitada (auditoria 3, B1); Painel, Semana e Caminhos com caminho na barra (B2); crise de vesícula sem "6 horas" e sem "próximos dias" (revisão clínica, B1); dia só com proteína avulsa não vira dia de 0 kcal (I3); cache da versão web com a versão no nome (I5); restaurar na primeira tela; Hoje com aplicação e proteína no topo.
+**Corrigido em 22/11, depois dos relatórios**
+- Ritmo de perda acima de 1% por semana aparece em Hoje (linha com "ver") e na Semana, para quem marcou pedra na vesícula (b18fb1b).
+- Dor forte registrada em Diário > Sintomas abre a folha "Dor na barriga: o que fazer", com os sinais da vesícula, para quem tem pedra (8882d03).
+- Relatório da consulta começa por "PARA COMEÇAR": condições do perfil, datas de dor forte e marcas de 5, 7 e 10% (ae95538).
+- I1: Painel e relatório comparam calorias com a faixa do plano da nutricionista; com o plano em uso, o corte de "comeu pouco" é 800 kcal (dd350eb).
+- I3: "Dor na barriga" em "Como está hoje?" grava a anotação "Dor na barriga.", não dor forte. A folha tem "Foi dor forte: registrar assim" (40a301c).
+- M2: refeição marcada fica só mais apagada, na mesma altura, e o seletor da opção continua visível (cb9f833).
+- M3: "Todos os sinais no Guia" abre o Guia já rolado até os Sinais de alerta (c3e2a2e).
+- M5: Enter no formulário curto só passa ao campo seguinte, sem aviso de campo obrigatório (68378d0).
+- M7: depois de restaurar, a Hoje volta para hoje; em dia passado o texto é "alvo do dia" (593e50f).
+- M8: mudar o tamanho da letra ou a densidade não recarrega o app nem pede o PIN (1077e30; conferido no emulador de 1,0 para 1,3).
+- O ramo `onda2-uso` já está em `main` (primeiro uso numa tela, dia habitual por época, faixa das perguntas novas).
+- Antes disso: meta de proteína informada respeitada (auditoria 3, B1); Painel, Semana e Caminhos com caminho na barra (B2); crise de vesícula sem "6 horas" e sem "próximos dias" (revisão clínica, B1); dia só com proteína avulsa não vira dia de 0 kcal; cache da versão web com a versão no nome (I5).
 
-**Ainda abertos**
-- Aviso de ritmo de perda só em Diário > Peso e no relatório, não em Hoje. Só aparece com uma pesagem de 14 a 28 dias antes.
-- O alerta de Diário > Sintomas (dor forte) usa o texto geral, sem os sinais da vesícula. O botão "Dor na barriga" de Hoje já usa os três níveis.
-- O relatório mostra quantos dias de dor forte, mas não as datas, e não cita vesícula, fígado nem cirurgia.
-- Cardápio de reserva vegetariano: `conferir_cardapio.js` ainda acusa almoços acima de 500 kcal e gordura do dia acima de 35% (auditoria 3, I1). Não se sabe se ela é vegetariana.
-- Plano da nutricionista: café e jantar de algumas opções com pouca gordura, fibra abaixo de 25 g na maioria das combinações, óleo dos preparos fora da conta (`empresa/relatorios/plano-nutricionista-conferido.md`). São perguntas para a nutricionista, não erro do app.
+**Limitação conhecida, aceita**
+- I2: quem atualizar por cima de uma 1.x com registros fica com o texto antigo desses registros no armazenamento interno da WebView (`app_webview/Default/Local Storage/leveldb`, arquivo `.log` do LevelDB) até o LevelDB compactar, o que pode demorar muito. A chave em texto é apagada; o resto do arquivo não. Ler exige root ou extrair a cópia do Google (as regras de backup levam essa pasta). Decisão da direção: aceito, porque ninguém usa a versão antiga e a instalação no celular dela é do zero. Numa instalação nova não há texto puro (conferido no emulador).
+- A chave `semana-a-semana.escala` fica em texto em toda instalação e guarda as metas calculadas (calorias e proteína). Dá para estimar o peso a partir delas.
+
+**Ainda abertos** (a direção ajusta esta lista no fim da noite)
+- M1: perfil vindo de versão anterior usa o alvo de proteína da nutricionista antes de responder as perguntas novas. Não afeta instalação do zero.
+- M4: a faixa de dias do Plano corta "Enjoo" na medida do Redmi com letra 1,0; o cardápio de reserva diz "Ovo cozido: 100 g" com preparo "ovos mexidos".
+- M6: "Cópia pronta e conferida" some atrás da folha de compartilhar do Android em menos de 1 s.
+- Textos que confundem: "Dias de enjoo: nenhum marcado" (Semana) e "Dias de enjoo: 0" (relatório) falam do botão "Dia de enjoo", ao lado de "enjoo em 1 dia", que é o sintoma. "As refeições sem marca do plano têm cerca de X g" em Hoje é difícil de entender.
+- Avisos de peso baixo e de gravidez só aparecem fora de Hoje.
+- Cardápio de reserva vegetariano: `conferir_cardapio.js` ainda acusa almoços acima de 500 kcal e gordura do dia acima de 35% (auditoria 3). Não se sabe se ela é vegetariana.
+- Desempenho: com CPU 10 vezes mais lenta, cerca de 2 s depois de registrar peso. No emulador, abertura a frio de 0,57 a 0,77 s e Hoje de 1,0 a 2,0 s depois do PIN. Não medido no celular dela.
+- Letra 1,5 não testada no APK. Com letra grande, sub-abas do Diário e dias do Plano podem cortar sem sinal de que dá para arrastar.
+- Xiaomi real: ver "Não testado".
+
+**Para a nutricionista, não erro do app**
+- Plano dela: café e jantar de algumas opções com pouca gordura, fibra abaixo de 25 g na maioria das combinações, óleo dos preparos fora da conta (`empresa/relatorios/plano-nutricionista-conferido.md`).
 - Dia de enjoo ligado no meio do dia: o total do dia passa a contar só as refeições leves (nada é apagado).
-- Sub-abas do Diário e dias do Plano podem cortar com letra grande, sem sinal de que dá para arrastar.
-- Desempenho: com CPU 10 vezes mais lenta, cerca de 2 s depois de registrar peso. Não medido no celular dela.
 
 **Não testado**
-- Nada no Xiaomi Redmi Note 13 Pro real nem em MIUI/HyperOS: WebView da Xiaomi, limpador do sistema, tema escuro forçado, economia de bateria.
-- Atualização por cima de uma versão instalada com dados, no aparelho dela.
-- Restauração pela cópia do Google.
+- Nada no Xiaomi Redmi Note 13 Pro real nem em MIUI/HyperOS: WebView da Xiaomi, avisos de instalação, limpador do sistema, tema escuro forçado, economia de bateria.
+- Restauração pela cópia do Google e transferência entre celulares.
 - Instalação por arquivo com a regra de verificação de desenvolvedores (desde 30/09/2026 no Brasil). Ver `empresa/ENTREGA-instalacao.md`.
+- No APK 2.0: troca de PIN pelo Perfil, espera depois de 5 PINs errados, "Pôr no calendário", Dia de enjoo com o plano da nutricionista, compartilhar por app de mensagens.
+- A atualização por cima da 1.1 com dados foi testada só no emulador (teste final, roteiro A); no celular dela a instalação é do zero.
 - Ninguém representou a usuária nos testes: a usabilidade é avaliação de especialista.
