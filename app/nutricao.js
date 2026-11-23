@@ -296,8 +296,13 @@ function metas() {
   const pisoDia = p.metaKcal && p.metaKcal < PISO_DIA ? p.metaKcal : PISO_DIA;
   /* Auditoria 3 (B1): o teto de 1,6 g/kg só vale para a meta calculada pelo app; meta de proteína informada pelo médico ou
      pela nutricionista é respeitada (teto = a própria meta + 3%, dentro de calcularEscala). */
-  const esc = calcularEscala(kcal, prot, restricoesDoPerfil(), pisoDia, p.metaProt ? 0 : Math.round(1.6 * pesoRef));
-  return {
+  /* A escala só é calculada quando alguém lê um dos campos dela (fatorProt, fatorEnergia, fatorDias, fator, escalaNoLimite,
+     planoKcal, planoProt). Com o plano da nutricionista em uso, Hoje, Semana e Painel não leem: depois de um peso novo que muda a
+     meta, a conta (vários segundos num celular lento, empresa/relatorios/desempenho.md) fica para quando o cardápio do app aparecer. */
+  const R = restricoesDoPerfil(), protTeto = p.metaProt ? 0 : Math.round(1.6 * pesoRef);
+  let escCalc = null;
+  const esc = () => escCalc || (escCalc = calcularEscala(kcal, prot, R, pisoDia, protTeto));
+  const m = {
     peso, idade, imc, tmb, gasto, piso, kcalCalc, kcal, pesoRef, protCalc, prot,
     semDeficit, abaixoDoPeso, gestante, discreto: p.discreto === true, pisoDia,
     /* Respostas do bloco Saúde do Perfil usadas pelos avisos de vesícula e fígado (perfil.js). aguardaCirurgia só vale com vesícula. */
@@ -305,8 +310,6 @@ function metas() {
     protMin: Math.round(1.2 * pesoRef), protMax: Math.round(1.6 * pesoRef), gord, carb,
     fibra: masc ? (idade > 50 ? 30 : 38) : (idade > 50 ? 21 : 25),
     agua: p.metaAgua || 2000,
-    /* Escala das porções (ver calcularEscala). fator fica por compatibilidade e vale o mesmo que fatorEnergia. */
-    fatorProt: esc.prot, fatorEnergia: esc.energia, fatorDias: esc.dias, fator: esc.energia, escalaNoLimite: esc.noLimite, planoKcal: esc.kcalMedia, planoProt: esc.protMedia,
     micro: {
       ca: ((!masc && idade > 50) || idade > 70) ? 1200 : 1000, fe: (!masc && idade <= 50) ? 18 : 8,
       mg: masc ? (idade <= 30 ? 400 : 420) : (idade <= 30 ? 310 : 320), zn: masc ? 11 : 8, k: masc ? 3400 : 2600,
@@ -314,4 +317,8 @@ function metas() {
       vitd: idade > 70 ? 20 : 15, vite: 15, vitk: masc ? 120 : 90,
     },
   };
+  /* Escala das porções (ver calcularEscala). fator fica por compatibilidade e vale o mesmo que fatorEnergia. */
+  [["fatorProt", "prot"], ["fatorEnergia", "energia"], ["fatorDias", "dias"], ["fator", "energia"], ["escalaNoLimite", "noLimite"], ["planoKcal", "kcalMedia"], ["planoProt", "protMedia"]]
+    .forEach(c => Object.defineProperty(m, c[0], { get: () => esc()[c[1]], enumerable: true }));
+  return m;
 }

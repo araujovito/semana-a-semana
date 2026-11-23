@@ -96,7 +96,8 @@ function painelDiaSemana(data) { return ["domingo", "segunda", "terça", "quarta
 function telaPainel() {
   const m = metas(), h = hoje(), disc = m.discreto, c = consumoDoDia(h), a = alvoProteina(m);
   /* Alvo único de proteína (alvoProteina, planonutri.js): o mesmo de Hoje e do relatório; a faixa é a do plano dela, se em uso. */
-  const ae = alvoEnergia(m), mp = Object.assign({}, m, { prot: a.g, protMin: a.min, protMax: a.max, pisoDia: ae.piso });
+  /* mp herda de m em vez de copiar: copiar leria os campos da escala de metas() e faria a conta da escala sem precisar. */
+  const ae = alvoEnergia(m), mp = Object.assign(Object.create(m), { prot: a.g, protMin: a.min, protMax: a.max, pisoDia: ae.piso });
   const kcal = c.total.kcal, prot = c.total.prot, falta = painelFaltaProt(prot, a.g);
   let out = '<div class="cartao painel-hoje"><h2>Hoje</h2><div class="painel-aneis' + (disc ? " so-um" : "") + '">' +
     painelAnel("Proteína", prot, a.g, "g", "prot") + (disc ? "" : painelAnel("Calorias", kcal, ae.kcal, "kcal", "kcal")) + "</div>" +
