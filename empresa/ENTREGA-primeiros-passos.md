@@ -19,14 +19,17 @@ Seus registros ficam no celular, protegidos pelo PIN. Só saem quando você toca
 - **Água:** "+ 1 copo", "+ 500 ml" ou "− 1 copo".
 - **Dia de enjoo:** troca as refeições do dia por leves. "Voltar ao normal" desfaz.
 - **Como está hoje?** Um toque: Bem, Enjoo leve, Enjoo forte, Sem fome ou Dor na barriga. Fica no registro e no relatório.
-- **Dor na barriga:** mostra o que fazer em três níveis: ligar 192, ir ao pronto-socorro hoje, ou avisar o médico. Também registra a dor.
+- **Dor na barriga** (em "Como está hoje?"): anota "dor na barriga" no seu dia e mostra o que fazer em três níveis: ligar 192, ir ao pronto-socorro hoje, ou avisar o médico.
+  - Se foi dor forte, toque em **Foi dor forte: registrar assim**. A data entra no relatório da consulta como dor forte.
+  - O botão "Dor na barriga: o que fazer" do cartão da vesícula e o atalho "Dor na barriga" só mostram os sinais. Para anotar, toque em "Registrar dor na barriga hoje".
+- **Ritmo de perda:** com pedra na vesícula, se o peso cair mais de 1% por semana, aparece uma linha "Ritmo de perda". Toque em **ver**. É um assunto para levar ao médico.
 - **Esqueceu de marcar?** "‹ Anterior" volta até 60 dias.
 
 ## Aba Semana
 
 - **Semana:** cada semana do tratamento, com aplicação, peso, sintomas e comida.
 - **Diário:** registrar aplicação (data, dose, local), peso (uma vez por semana basta) e sintomas. Registro errado: apagar e registrar de novo.
-- **Painel:** proteína e calorias de hoje e dos últimos 7 ou 30 dias. Toque numa barra para ver o dia.
+- **Painel:** proteína e calorias de hoje e dos últimos 7 ou 30 dias, comparadas com a faixa do plano da sua nutricionista. Toque numa barra para ver o dia.
   Quer esconder calorias e peso? No Perfil, marque "Não mostrar calorias nem peso em destaque".
 
 ## Aba Comer
@@ -36,7 +39,7 @@ Seus registros ficam no celular, protegidos pelo PIN. Só saem quando você toca
 
 ## Para a consulta
 
-Na tela Hoje, toque em **Para a consulta**. Aparece o resumo dos últimos 30 dias. Toque em **Compartilhar** para mandar ao médico ou à nutricionista, ou mostre na tela.
+Na tela Hoje, toque em **Para a consulta**. Aparece o resumo dos últimos 30 dias. Ele começa pelo que você respondeu sobre vesícula, fígado e cirurgia e pelas datas de dor forte. Toque em **Compartilhar** para mandar ao médico ou à nutricionista, ou mostre na tela.
 O app avisa antes que o texto tem dados de saúde.
 
 ## Cópia dos seus dados
