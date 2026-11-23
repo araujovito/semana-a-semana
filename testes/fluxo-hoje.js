@@ -23,6 +23,11 @@ const diaVazio = extra => Object.assign({ enjoo: false, comido: [], agua: 0, pro
   ok(await topo("prot") === Math.round(pl[0].prot), "o topo mostra a proteína do que foi comido");
   const meta = await p.evaluate(() => pnReferenciaDoDia(metas()).prot);
   ok((await p.locator(".hoje-topo .hoje-falta").innerText()).trim() === "Faltam " + Math.round(meta - pl[0].prot) + " g", "a proteína é dita como quanto falta para o alvo único do dia");
+  // nota: o que já comeu + o que as refeições obrigatórias sem marca somam (o número é o total a que ela chega, não o resto)
+  const chega = await p.evaluate(() => { const card = planoDaData(dataSel()), regs = consumoDoDia(dataSel()).total.prot;
+    return Math.round(regs + card.refeicoes.reduce((s, x, i) => s + (i === 0 || (card.nutri && PN_REFEICOES[i].opcional) ? 0 : somarItens(x.itens).prot), 0)); });
+  const nota = await p.locator(".hoje-topo .hoje-prot .hoje-nota").innerText();
+  ok(nota.includes("Se comer as refeições do plano que faltam, chega a cerca de " + chega + " g.") && !/sem marca/.test(nota), "a nota da proteína diz aonde ela chega se comer o resto, em linguagem simples");
   ok(await p.locator("#tela [data-v=kcal]").count() === 0 && !/kcal|calorias|energia/i.test(await p.locator("#tela").innerText()), "calorias ficam fora de Hoje (vão para o Painel)");
   await p.click(opcao(2, "metade"));
   c = await consumo(d(0));

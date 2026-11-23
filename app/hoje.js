@@ -71,13 +71,14 @@ function blocoDose() {
     (s.estado === "hoje" || s.estado === "atrasada" ? botao() : s.estado === "pular" ? botao("sec") : "") + "</div>";
 }
 /* Proteína dita como quanto falta, com um alvo só: a referência do dia (pnReferenciaDoDia: o mínimo da faixa do plano da
-   nutricionista quando ele está em uso; senão a meta do app). planoRest: proteína das refeições obrigatórias ainda sem marca. */
+   nutricionista quando ele está em uso; senão a meta do app). planoRest: proteína das refeições obrigatórias ainda sem marca; a nota soma ao que já foi comido
+   para dizer aonde ela chega se comer o resto. */
 function blocoProteina(c, ref, quando, planoRest, enjoo) {
   const a = alvoProteina(), falta = Math.max(0, Math.round(a.g - c.total.prot));
   const alvo = a.rotulo + (a.nutri ? ": " : " ") + a.g + " g";
   return '<div class="hoje-prot"><div class="rot">Proteína ' + quando + '</div><div class="hoje-num"><span data-v="prot">' + fmt(c.total.prot) + "</span><small> g</small></div>" +
     '<div class="hoje-falta">' + (enjoo ? "Dia leve: o que der, em porções pequenas." : falta > 0 ? "Faltam " + falta + " g" : (quando === "hoje" ? "Chegou ao alvo de hoje" : "Chegou ao alvo do dia")) + "</div>" +
-    '<div class="hoje-nota">' + alvo + (!enjoo && falta > 0 && planoRest > 0 ? ". As refeições sem marca do plano têm cerca de " + fmt(planoRest) + " g." : ".") + "</div></div>";
+    '<div class="hoje-nota">' + alvo + (!enjoo && falta > 0 && planoRest > 0 ? ". Se comer as refeições do plano que faltam, chega a cerca de " + fmt(c.total.prot + planoRest) + " g." : ".") + "</div></div>";
 }
 
 /* ---------- "Como está hoje?": um toque grava em sintomas (o registro de hoje; cria se não houver) ----------
