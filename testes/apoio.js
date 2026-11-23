@@ -37,12 +37,15 @@ async function abrir(opcoes) {
   const b = await chromium.launch({ executablePath: a.exe });
   const p = await b.newPage({ viewport: { width: o.largura || 390, height: o.altura || 800 }, deviceScaleFactor: 2, colorScheme: o.escuro ? "dark" : "light" });
   agoraDoTeste = o.agora || AGORA;
-  await p.addInitScript(fixo => {
+  // { relogioSobrevive: true }: a hora mudada com relogio() continua depois de recarregar ou fechar/reabrir a página
+  // (o desvio fica no sessionStorage). Sem isso, cada carga volta para o instante de abrir().
+  await p.addInitScript(([fixo, sobrevive]) => {
     const Real = Date; let desvio = new Real(fixo).getTime() - Real.now();
+    if (sobrevive) { try { const x = sessionStorage.getItem("__desvioRelogio"); if (x != null) desvio = Number(x); } catch (e) {} }
     class Relogio extends Real { constructor(...a) { if (a.length === 0) super(Real.now() + desvio); else super(...a); } static now() { return Real.now() + desvio; } }
     window.Date = Relogio;
-    window.__relogio = quando => { desvio = new Real(quando).getTime() - Real.now(); };
-  }, agoraDoTeste);
+    window.__relogio = quando => { desvio = new Real(quando).getTime() - Real.now(); if (sobrevive) { try { sessionStorage.setItem("__desvioRelogio", String(desvio)); } catch (e) {} } };
+  }, [agoraDoTeste, !!o.relogioSobrevive]);
   // PIN (app/cifra.js): os testes que não são sobre o PIN rodam sem ele (sem dados cifrados, o app segue em texto como antes).
   // Os testes do PIN abrem com { comPin: true }.
   if (!o.comPin) await p.addInitScript(() => { window.cifTesteSemPin = true; });

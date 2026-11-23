@@ -390,7 +390,10 @@ function cifIniciar(telas) {
   if (CIF_TRANCADO) cifPasso = !cifTemSubtle() ? "semCifra" : cifLerGuardado() ? "pin" : "danificado";
   const perfil = telas.perfil;
   telas.perfil = function () { return perfil() + (E.perfil ? cifCartaoPerfil() : ""); };
-  const bloquearAgora = () => { if (cifBloquear()) { if (typeof fecharFolha === "function") fecharFolha(); if (typeof fecharDialogo === "function") fecharDialogo(); render(true); return true; } return false; };
+  // fecharFolha/fecharDialogo só escondem: o conteúdo (registros, PIN digitado na troca) é apagado da página também.
+  const bloquearAgora = () => { if (cifBloquear()) { if (typeof fecharFolha === "function") fecharFolha(); if (typeof fecharDialogo === "function") fecharDialogo();
+    ["#folha .folha-corpo", "#dialogo .dialogo-corpo"].forEach(s => { const el = document.querySelector(s); if (el) el.innerHTML = ""; });
+    render(true); return true; } return false; };
   const inativo = () => cifChave && Date.now() - cifUltimoUso > CIF_INATIVO_MS;
   window.cifConferirInatividade = () => (inativo() ? bloquearAgora() : false);
   document.addEventListener("visibilitychange", () => { if (document.hidden) bloquearAgora(); }, true);
