@@ -27,7 +27,7 @@ function fraseRestricoes() {
 }
 function linhaItem(it) {
   const md = medida(it.k, it.g);
-  let t = "<li>" + esc(A[it.k].nome) + ": <strong>" + it.g + " g</strong>" + (md ? ' <span class="sub">(' + esc(md) + ")</span>" : "");
+  let t = "<li>" + esc(it.nome || A[it.k].nome) + ": <strong>" + it.g + " g</strong>" + (md ? ' <span class="sub">(' + esc(md) + ")</span>" : "");
   if (it.de) t += '<div class="troca">no lugar de ' + esc(A[it.de].nome) + (it.outroGrupo ? " (não sobrou alimento permitido do mesmo grupo; entra um feijão com a mesma proteína)" : "") + "</div>";
   return t + "</li>";
 }

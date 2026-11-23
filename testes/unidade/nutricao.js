@@ -214,3 +214,18 @@ test("auditoria 3 (B1): meta de proteína informada pelo médico ou nutricionist
   const m = j(app({ altura: 163, peso: 95, metaProt: 80 }), "metas()");
   assert.ok(m.planoProt <= 80 * 1.03 * 1.07, "proteína do cardápio perto de 80 g, não no teto de 1,6 g/kg: " + Math.round(m.planoProt));
 });
+test("teste final M4: ovo em receita de ovos mexidos ou omelete não aparece como 'Ovo cozido'; a conta continua pela chave", () => {
+  const a = app({});
+  let vistos = 0;
+  for (let i = 0; i < 8; i++) j(a, "planoDoDia(" + i + ")").refeicoes.forEach(r => r.itens.forEach(it => {
+    if (it.k !== "ovo" || !/mexid|omelete/i.test(r.titulo + " " + r.preparo)) return;
+    vistos++;
+    assert.ok(it.nome && /mexido|omelete/i.test(it.nome), r.titulo + ": " + it.nome);
+  }));
+  assert.strictEqual(vistos, 5, "as cinco receitas com ovo mexido ou omelete (quatro dias e o jantar do dia de enjoo)");
+  // a conta usa só chave e gramas: o item com nome de exibição soma o mesmo que o alimento da base
+  const p = j(a, "planoDoDia(0)"), ovo = p.refeicoes[0].itens.find(it => it.k === "ovo");
+  assert.strictEqual(a.v("somarItens([{ k: 'ovo', g: " + ovo.g + ", nome: 'Ovo mexido' }]).prot"), a.v("A.ovo.prot") * ovo.g / 100);
+  // sem ovo, o item que entra no lugar mostra o nome dele, não o nome da receita
+  j(app({ naoCome: ["ovo"] }), "planoDoDia(0)").refeicoes.forEach(r => r.itens.forEach(it => { if (it.de) assert.ok(!it.nome, it.k); }));
+});

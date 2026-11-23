@@ -96,7 +96,8 @@ function substituto(k, g, R, doDia) {
 }
 /* Cardápio do dia i (0 a 6 = segunda a domingo, 7 = dia de enjoo) com as trocas automáticas resolvidas, ainda na porção base.
    Ordem: item original (se você come) > troca automática > o item sai.
-   Cada item: { k, gb, g0 (gramas base do original), papel (grupo do original, que decide a escala), pos, de, motivo, outroGrupo }.
+   Cada item: { k, gb, g0 (gramas base do original), papel (grupo do original, que decide a escala), pos, de, motivo, outroGrupo, nome }.
+   nome: texto da lista vindo do cardápio (3º elemento do item), só no item original; item trocado mostra o nome do alimento.
    A troca manual (E.trocas) ainda não existe nas telas e por isso não é lida aqui. */
 function resolverDia(i, R) {
   const d = i === 7 ? C.nausea : C.dias[i], doDia = [];
@@ -105,7 +106,7 @@ function resolverDia(i, R) {
     const itens = [], fora = [];
     r.itens.forEach((it, pos) => {
       const k = it[0], g0 = it[1], papel = A[k].grupo;
-      if (podeComer(k, R)) itens.push({ k, gb: g0, g0, papel, pos });
+      if (podeComer(k, R)) itens.push(it[2] ? { k, gb: g0, g0, papel, pos, nome: it[2] } : { k, gb: g0, g0, papel, pos });
       else {
         const s = substituto(k, g0, R, doDia);
         if (s) itens.push({ k: s.k, gb: s.gb, g0, papel, pos, de: k, motivo: "restricao", outroGrupo: s.outroGrupo });
@@ -187,6 +188,7 @@ function escalar(res, esc) {
     const er = fatorDaRefeicao(r.itens, esc, REGRAS_CARDAPIO.principais.indexOf(r.tipo) >= 0);
     const itens = r.itens.map(it => {
       const o = { k: it.k, g: gramasFinais(it, er), pos: it.pos };
+      if (it.nome) o.nome = it.nome;
       if (it.de) { o.de = it.de; o.motivo = it.motivo; if (it.outroGrupo) o.outroGrupo = true; }
       return o;
     });

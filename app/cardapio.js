@@ -1,9 +1,11 @@
-// Cardapio base de 7 dias. Cada item: [chave do alimento, gramas na porcao base].
+// Cardapio base de 7 dias. Cada item: [chave do alimento, gramas na porcao base, nome na lista (opcional)].
+// O nome opcional so troca o texto da lista quando o preparo da receita muda o nome do alimento (o ovo vem como
+// "Ovo cozido" de alimentos.js, mas na omelete e nos ovos mexidos nao e cozido). A conta usa sempre a chave.
 // As porcoes sao multiplicadas pelo fator do perfil (ver metas em app.js).
 window.CARDAPIO = {
  dias: [
   { nome: "Segunda", refeicoes: [
-   { tipo: "Café da manhã", titulo: "Ovos mexidos, pão integral e mamão", preparo: "Mexa os ovos em frigideira antiaderente com 1 colher de chá de azeite. Comece pelos ovos.", itens: [["ovo",100],["pao_integral",25],["mamao",100],["azeite",3]] },
+   { tipo: "Café da manhã", titulo: "Ovos mexidos, pão integral e mamão", preparo: "Mexa os ovos em frigideira antiaderente com 1 colher de chá de azeite. Comece pelos ovos.", itens: [["ovo",100,"Ovo mexido"],["pao_integral",25],["mamao",100],["azeite",3]] },
    { tipo: "Lanche da manhã", titulo: "Iogurte desnatado com aveia e linhaça", preparo: "Misture tudo no pote. A linhaça triturada é melhor aproveitada que a inteira.", itens: [["iogurte_desn",170],["aveia",20],["linhaca",10]] },
    { tipo: "Almoço", titulo: "Frango grelhado, arroz, feijão e brócolis", preparo: "Coma primeiro o frango, depois os vegetais, por último arroz e feijão. Azeite cru por cima.", itens: [["frango_peito",120],["arroz_integral",75],["feijao_carioca",80],["brocolis",100],["tomate",80],["azeite",8]] },
    { tipo: "Lanche da tarde", titulo: "Pão integral com queijo minas e laranja", preparo: "A laranja inteira (com o bagaço) tem mais fibra que o suco.", itens: [["pao_integral",25],["queijo_minas",30],["laranja",130]] },
@@ -17,7 +19,7 @@ window.CARDAPIO = {
    { tipo: "Jantar", titulo: "Frango desfiado com abóbora, espinafre e arroz integral", preparo: "Abóbora cozida amassada ou em cubos, espinafre refogado, frango desfiado por cima. O espinafre refogado já tem óleo: só um fio de azeite.", itens: [["frango_peito",100],["abobora",120],["espinafre",50],["tomate",80],["arroz_integral",50],["azeite",6]] },
   ]},
   { nome: "Quarta", refeicoes: [
-   { tipo: "Café da manhã", titulo: "Cuscuz com ovos e ricota", preparo: "Cuscuz no vapor, ovos mexidos ou cozidos, ricota por cima.", itens: [["cuscuz",80],["ovo",100],["ricota",30]] },
+   { tipo: "Café da manhã", titulo: "Cuscuz com ovos e ricota", preparo: "Cuscuz no vapor, ovos mexidos ou cozidos, ricota por cima.", itens: [["cuscuz",80],["ovo",100,"Ovo mexido ou cozido"],["ricota",30]] },
    { tipo: "Lanche da manhã", titulo: "Goiaba e queijo minas", preparo: "Goiaba com casca, bem lavada. Meia goiaba cobre a vitamina C do dia.", itens: [["goiaba",85],["queijo_minas",30]] },
    { tipo: "Almoço", titulo: "Tilápia grelhada, batata, brócolis e salada", preparo: "Peixe grelhado ou assado com limão. Batata cozida, sem fritura.", itens: [["tilapia",130],["batata",160],["brocolis",75],["cenoura_coz",50],["alface",30],["azeite",8]] },
    { tipo: "Lanche da tarde", titulo: "Iogurte desnatado com mamão, aveia e linhaça", preparo: "Misture o leite em pó no iogurte. Mamão e linhaça ajudam o intestino, que tende a ficar preso.", itens: [["iogurte_desn",170],["leite_po_desn",10],["mamao",100],["aveia",15],["linhaca",10]] },
@@ -31,7 +33,7 @@ window.CARDAPIO = {
    { tipo: "Jantar", titulo: "Salada de atum com grão-de-bico e batata-doce", preparo: "Atum em água, drenado; grão-de-bico cozido, rúcula e tomate. Tempere com limão e pouco azeite.", itens: [["atum",90],["grao_bico",60],["batata_doce",40],["rucula",30],["tomate",80],["azeite",6]] },
   ]},
   { nome: "Sexta", refeicoes: [
-   { tipo: "Café da manhã", titulo: "Omelete de espinafre com pão integral, mamão", preparo: "Dois ovos batidos com espinafre refogado, em frigideira antiaderente.", itens: [["ovo",100],["espinafre",40],["pao_integral",25],["mamao",100]] },
+   { tipo: "Café da manhã", titulo: "Omelete de espinafre com pão integral, mamão", preparo: "Dois ovos batidos com espinafre refogado, em frigideira antiaderente.", itens: [["ovo",100,"Ovo batido, para a omelete"],["espinafre",40],["pao_integral",25],["mamao",100]] },
    { tipo: "Lanche da manhã", titulo: "Iogurte desnatado com morango e linhaça", preparo: "", itens: [["iogurte_desn",170],["leite_po_desn",10],["morango",100],["linhaca",10]] },
    { tipo: "Almoço", titulo: "Músculo cozido com mandioca e legumes", preparo: "Cozido de panela de pressão: músculo, chuchu e cenoura. Feijão-preto à parte. Um fio de azeite no prato.", itens: [["carne_musculo",110],["mandioca",80],["chuchu",80],["cenoura_coz",50],["feijao_preto",80],["azeite",6]] },
    { tipo: "Lanche da tarde", titulo: "Pão integral com queijo minas e goiaba", preparo: "Goiaba com casca, bem lavada.", itens: [["pao_integral",25],["queijo_minas",30],["goiaba",85]] },
@@ -45,7 +47,7 @@ window.CARDAPIO = {
    { tipo: "Jantar", titulo: "Frango grelhado com abóbora, feijão e couve", preparo: "Um fio de azeite no prato.", itens: [["frango_peito",110],["abobora",120],["feijao_carioca",80],["couve",40],["tomate",80],["azeite",6]] },
   ]},
   { nome: "Domingo", refeicoes: [
-   { tipo: "Café da manhã", titulo: "Pão francês com ovos mexidos, melão", preparo: "Ovos mexidos dentro do pão, em frigideira antiaderente com 1 colher de chá de azeite.", itens: [["pao_frances",50],["ovo",100],["melao",90],["azeite",3]] },
+   { tipo: "Café da manhã", titulo: "Pão francês com ovos mexidos, melão", preparo: "Ovos mexidos dentro do pão, em frigideira antiaderente com 1 colher de chá de azeite.", itens: [["pao_frances",50],["ovo",100,"Ovo mexido"],["melao",90],["azeite",3]] },
    { tipo: "Lanche da manhã", titulo: "Goiaba, castanha-do-pará e leite", preparo: "", itens: [["goiaba",85],["castanha_brasil",4],["leite_desn",200],["leite_po_desn",10]] },
    { tipo: "Almoço", titulo: "Merluza assada, batata, feijão e salada", preparo: "Merluza assada com tomate e cebola. Rúcula e tomate com azeite.", itens: [["merluza",130],["batata",120],["feijao_carioca",80],["rucula",30],["tomate",80],["azeite",10]] },
    { tipo: "Lanche da tarde", titulo: "Iogurte com manga, aveia e linhaça", preparo: "", itens: [["iogurte",170],["manga",60],["aveia",15],["linhaca",10]] },
@@ -57,7 +59,7 @@ window.CARDAPIO = {
    { tipo: "Lanche da manhã", titulo: "Iogurte desnatado com banana", preparo: "Gelado, em colheradas pequenas.", itens: [["iogurte_desn",170],["banana",70]] },
    { tipo: "Almoço", titulo: "Canja: frango, arroz, cenoura e chuchu", preparo: "Bem cozida, pouca gordura, sem temperos fortes. Se não couber tudo, priorize o frango.", itens: [["frango_peito",100],["arroz_branco",100],["cenoura_coz",50],["chuchu",60]] },
    { tipo: "Lanche da tarde", titulo: "Maçã e água de coco", preparo: "Água de coco em goles pequenos ao longo da tarde.", itens: [["maca",110],["agua_coco",200]] },
-   { tipo: "Jantar", titulo: "Ovos mexidos com purê de batata e abobrinha", preparo: "Purê só com a batata e um pouco de leite, sem manteiga.", itens: [["ovo",100],["batata",120],["abobrinha",60]] },
+   { tipo: "Jantar", titulo: "Ovos mexidos com purê de batata e abobrinha", preparo: "Purê só com a batata e um pouco de leite, sem manteiga.", itens: [["ovo",100,"Ovo mexido"],["batata",120],["abobrinha",60]] },
  ]},
 };
 
