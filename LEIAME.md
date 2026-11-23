@@ -97,7 +97,7 @@ Em `main`, em 22/11 às 18h50: TUDO VERDE, 174 testes de unidade.
 - `CAPTURAS=/pasta bash testar.sh` grava as telas.
 - Relógio fixo: sexta, 20/11/2026, 10h. Um `alert()` ou `confirm()` nativo conta como erro.
 - Os testes antigos rodam sem PIN (`window.cifTesteSemPin` antes de carregar). O PIN tem os seus: `testes/unidade/cifra.js` e `testes/fluxo-cifra.js`.
-- Há testes a 440 px (largura do celular dela), com letra grande (`fluxo-letra-grande.js`) e da versão web (`fluxo-pwa.js`, `fluxo-seguranca-pwa.js`).
+- Há testes a 440 px (largura do celular dela), com letra grande (`fluxo-letra-grande.js`; letra 1,5 em todas as telas, claro e escuro, em `fluxo-letra-15.js`) e da versão web (`fluxo-pwa.js`, `fluxo-seguranca-pwa.js`).
 - Regra do projeto: commit só com teste verde; quem muda comportamento acrescenta verificação.
 
 Para olhar no computador: abra `app/index.html` no navegador.

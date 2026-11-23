@@ -29,12 +29,33 @@ function estadoBase(extra) {
     diabetes: null, insulinaSulf: null, pilula: null, naoCome: [], naoGosta: [] },
     doses: [], pesos: [], sintomas: [], treinos: [], dias: {}, trocas: {}, caneta: null, suplementos: [], exames: [], lembretes: {}, ui: { planoNutri: false } }, extra || {});
 }
-// Abre o app. opcoes: { estado: objeto gravado antes de abrir, largura, altura, escuro: true, aba: "plano" }
+// Letra do sistema (abrir({ letra: 1.5 })). No APK, a casca aplica o tamanho de letra do Android como textZoom da WebView
+// (MainActivity.java), que aumenta a letra de todo texto, inclusive a definida em px. O navegador sem janela não tem esse ajuste, então
+// a simulação multiplica pelo fator, nas folhas de estilo já carregadas (CSSOM), todo font-size e line-height em px; põe o fator no
+// font-size do html (o que está em rem cresce junto) e nos atributos style com font-size em px que o app desenhar depois.
+// Texto de gráfico SVG em px fica como está. É o pior caso: o textZoom de verdade pode deixar algum texto menor do que isto, nunca maior.
+function letraDoSistema(fator) {
+  const px = (st, pr) => { const m = /^([\d.]+)px$/.exec((st.getPropertyValue(pr) || "").trim()); if (m) st.setProperty(pr, (m[1] * fator) + "px", st.getPropertyPriority(pr)); };
+  const regras = rs => { for (const r of rs) { if (r.cssRules && !r.style) regras(r.cssRules); else if (r.style && !/svg/.test(r.selectorText || "")) { px(r.style, "font-size"); px(r.style, "line-height"); } } };
+  const feitos = new WeakSet();
+  const inline = raiz => { if (raiz.querySelectorAll) [raiz, ...raiz.querySelectorAll("[style*=font-size]")].forEach(el => { if (el.style && el.style.fontSize && !feitos.has(el) && !el.closest("svg")) { feitos.add(el); px(el.style, "font-size"); } }); };
+  document.addEventListener("DOMContentLoaded", () => {
+    document.documentElement.style.setProperty("font-size", (fator * 100) + "%");
+    // body usa o atalho font com var() (font: 17px/1.45 var(--fonte)); no CSSOM a regra não mostra o font-size, então vai no atributo.
+    const corpo = parseFloat(getComputedStyle(document.body).fontSize);
+    for (const s of document.styleSheets) { try { regras(s.cssRules); } catch (x) { /* folha de outra origem */ } }
+    document.body.style.setProperty("font-size", (corpo * fator) + "px"); feitos.add(document.body);
+    inline(document.body);
+    new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(inline))).observe(document.body, { childList: true, subtree: true });
+  });
+}
+// Abre o app. opcoes: { estado: objeto gravado antes de abrir, largura, altura, escuro: true, aba: "plano", letra: 1.5 (ver letraDoSistema) }
 // Devolve { p (pagina), erros, foto(nome), ler() (estado salvo), semear(estado), fechar() }. fechar() confere que nao houve erro no console.
 async function abrir(opcoes) {
   const o = opcoes || {}, a = achar();
   const { chromium } = require(a.pw);
-  const b = await chromium.launch({ executablePath: a.exe });
+  // Por file://, o Chromium trata cada folha de estilo como de outra origem e esconde as regras; a simulação da letra precisa lê-las.
+  const b = await chromium.launch({ executablePath: a.exe, args: o.letra ? ["--allow-file-access-from-files"] : [] });
   const p = await b.newPage({ viewport: { width: o.largura || 390, height: o.altura || 800 }, deviceScaleFactor: 2, colorScheme: o.escuro ? "dark" : "light" });
   agoraDoTeste = o.agora || AGORA;
   await p.addInitScript(fixo => {
@@ -46,6 +67,7 @@ async function abrir(opcoes) {
   // PIN (app/cifra.js): os testes que não são sobre o PIN rodam sem ele (sem dados cifrados, o app segue em texto como antes).
   // Os testes do PIN abrem com { comPin: true }.
   if (!o.comPin) await p.addInitScript(() => { window.cifTesteSemPin = true; });
+  if (o.letra) await p.addInitScript(letraDoSistema, o.letra);
   const erros = []; p.on("pageerror", e => erros.push(String(e))); p.on("console", m => { if (m.type() === "error") erros.push(m.text()); });
   p.on("dialog", x => { erros.push("diálogo do navegador (use confirmar/alerta da página): " + x.message()); x.accept(); });
   const semear = async estado => { await p.goto(URL_APP); await p.evaluate(x => localStorage.setItem(x[0], JSON.stringify(x[1])), [CHAVE, estado]); await p.goto(URL_APP + "#" + (o.aba || "hoje")); await p.reload(); };
