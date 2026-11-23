@@ -96,16 +96,19 @@ function substituto(k, g, R, doDia) {
 }
 /* Cardápio do dia i (0 a 6 = segunda a domingo, 7 = dia de enjoo) com as trocas automáticas resolvidas, ainda na porção base.
    Ordem: item original (se você come) > troca automática > o item sai.
-   Cada item: { k, gb, g0 (gramas base do original), papel (grupo do original, que decide a escala), pos, de, motivo, outroGrupo }.
+   Cada item: { k, gb, g0 (gramas base do original), papel (grupo do original, que decide a escala; na troca vegetariana escrita no cardápio, o grupo do próprio alimento), pos, de, motivo, outroGrupo }.
    A troca manual (E.trocas) ainda não existe nas telas e por isso não é lida aqui. */
 function resolverDia(i, R) {
-  const d = i === 7 ? C.nausea : C.dias[i], doDia = [];
+  const d = i === 7 ? C.nausea : C.dias[i], doDia = [], semCarne = R.marcas.indexOf("carne") >= 0;
   d.refeicoes.forEach(r => r.itens.forEach(it => { doDia.push(it[0]); }));
   return { indice: i, nome: d.nome, refeicoes: d.refeicoes.map(r => {
     const itens = [], fora = [];
     r.itens.forEach((it, pos) => {
-      const k = it[0], g0 = it[1], papel = A[k].grupo;
+      const k = it[0], g0 = it[1], papel = A[k].grupo, veg = semCarne && it[2] && it[2].semCarne;
       if (podeComer(k, R)) itens.push({ k, gb: g0, g0, papel, pos });
+      /* Vegetariana: a carne sai pela troca escrita no cardápio (semCarne, em app/cardapio.js), montada para caber nas regras da
+         vesícula. Cada alimento que entra escala pelo próprio grupo. Se outra restrição vetar algum deles, vale a troca automática. */
+      else if (veg && veg.every(v => podeComer(v[0], R))) veg.forEach(v => { itens.push({ k: v[0], gb: v[1], g0: v[1], papel: A[v[0]].grupo, pos, de: k, motivo: "restricao" }); });
       else {
         const s = substituto(k, g0, R, doDia);
         if (s) itens.push({ k: s.k, gb: s.gb, g0, papel, pos, de: k, motivo: "restricao", outroGrupo: s.outroGrupo });
@@ -160,7 +163,8 @@ function somaDaRefeicao(itens, esc, campo) { let t = 0; itens.forEach(it => { t 
    1. gordura: começa no fator de energia, mas não abaixo de GORDURA_PISO (principal: tipo em REGRAS_CARDAPIO.principais), para a
       refeição não ficar sem a gordura que faz a vesícula esvaziar (R3) quando o resto do prato encolhe; desce enquanto o azeite ou
       óleo passar de azeiteMaxRefeicao ou a gordura da refeição passar de gordAlvoRefeicao (até ESCALA.energiaMin; se a refeição já passa do alvo sem a gordura de adição, fica no mínimo);
-   2. energia: desce enquanto a refeição passar de kcalMaxRefeicao (até ESCALA.energiaMin; proteína alta pode não caber nem assim).
+   2. energia: desce enquanto a refeição passar de kcalMaxRefeicao (até ESCALA.energiaMin);
+   3. proteína: só se a refeição ainda passar do teto de gordura (gordTetoRefeicao) ou de kcalMaxRefeicao, desce até caber (até ESCALA.energiaMin).
    Primeiro uma estimativa linear entre o mínimo e o fator do dia, depois o acerto fino com o arredondamento real das porções. */
 function fatorDaRefeicao(itens, esc, principal) {
   const RG = REGRAS_CARDAPIO, fMin = ESCALA.energiaMin, P = ESCALA.passo, e = { prot: esc.prot, energia: esc.energia, gordura: Math.max(principal ? GORDURA_PISO.principal : GORDURA_PISO.lanche, esc.energia) };
@@ -180,6 +184,9 @@ function fatorDaRefeicao(itens, esc, principal) {
   const linear = (campo, conta, max) => alto => { const v = nasPontas(campo, alto, conta); return v.b > v.a ? fMin + (max - v.a) / (v.b - v.a) * (alto - fMin) : fMin; };
   descer("gordura", () => azeite(e) > RG.azeiteMaxRefeicao.valor || gordura() > RG.gordAlvoRefeicao.valor, linear("gordura", gordura, RG.gordAlvoRefeicao.valor));
   descer("energia", () => kcal() > RG.kcalMaxRefeicao.valor, linear("energia", kcal, RG.kcalMaxRefeicao.valor));
+  // 3. proteína: só quando nem assim a refeição cabe no teto de gordura (gordTetoRefeicao) ou de kcal (auditoria 3, I1: na
+  //    vegetariana, ovo e soja são fontes de proteína com gordura, e o fator de proteína alto levava o prato acima do teto).
+  descer("prot", () => gordura() > RG.gordTetoRefeicao.valor || kcal() > RG.kcalMaxRefeicao.valor, () => fMin);
   return e;
 }
 function escalar(res, esc) {

@@ -13,7 +13,9 @@ const PERFIS = [PARECIDO,
   { peso: 55, altura: 155 }, { peso: 95, altura: 163 }, { peso: 130, altura: 170 },
   { peso: 55, altura: 155, metaKcal: 1300, metaProt: 80 }, { peso: 95, altura: 163, metaKcal: 1600, metaProt: 110 }, { peso: 130, altura: 170, metaKcal: 1800, metaProt: 130 },
   { peso: 62, altura: 150, idade: 58 }, { peso: 80, altura: 160 }, { peso: 70, altura: 165 }, { sexo: "M", peso: 110, altura: 180 },
-  { peso: 80, altura: 160, naoCome: ["lactose"] }, { peso: 80, altura: 160, naoCome: ["peixe"] }, { peso: 80, altura: 160, naoCome: ["ovo"] }];
+  { peso: 80, altura: 160, naoCome: ["lactose"] }, { peso: 80, altura: 160, naoCome: ["peixe"] }, { peso: 80, altura: 160, naoCome: ["ovo"] },
+  // Auditoria 3, I1: o cardápio de reserva vegetariano (troca semCarne em app/cardapio.js) também cumpre as regras.
+  { peso: 95, altura: 163, naoCome: ["vegetariana"] }, { peso: 55, altura: 155, metaKcal: 1300, metaProt: 80, naoCome: ["vegetariana"] }];
 
 test("regras: toda regra numérica tem fonte, força F/M/P e o número do relatório", () => {
   Object.keys(RG).filter(k => RG[k] && typeof RG[k] === "object" && !Array.isArray(RG[k])).forEach(k => {
@@ -56,4 +58,19 @@ test("perfil parecido: azeite até 10 g por refeição, nenhuma refeição acima
 
 test("cardápio base: cálcio não caiu com a troca para laticínio desnatado (média da semana a partir de 990 mg)", () => {
   assert.ok(base.media.ca >= 990, base.media.ca.toFixed(0));
+});
+
+test("auditoria 3, I1: perfil parecido vegetariano (sozinho e com lactose ou ovo) sem refeição acima de 500 kcal nem de 20 g de gordura, dia até 35%", () => {
+  [["vegetariana"], ["vegetariana", "lactose"], ["vegetariana", "ovo"]].forEach(nc => {
+    const r = conferirPerfil(Object.assign({}, PARECIDO, { naoCome: nc })), m = r.metas, rot = nc.join("+");
+    assert.deepStrictEqual(r.problemas, [], rot);
+    r.dias.slice(0, 7).forEach(d => {
+      assert.ok(d.pctGord <= RG.pctGordDia.max, rot + " " + d.nome + ": " + d.pctGord.toFixed(0) + "%");
+      d.refeicoes.forEach(x => assert.ok(x.kcal <= RG.kcalMaxRefeicao.valor && x.gord <= RG.gordTetoRefeicao.valor, rot + " " + d.nome + " / " + x.tipo));
+    });
+    assert.ok(!m.escalaNoLimite && m.planoProt >= m.prot * 0.97 - 1e-9, rot + ": proteína " + Math.round(m.planoProt) + " de " + m.prot);
+  });
+  // a troca vem da tabela do cardápio: no almoço de terça, o patinho vira soja e lentilha
+  const ter = conferirPerfil(Object.assign({}, PARECIDO, { naoCome: ["vegetariana"] })).planos[1].refeicoes[2];
+  assert.deepStrictEqual(ter.itens.filter(i => i.de === "carne_patinho").map(i => i.k), ["soja_cozida", "lentilha"]);
 });

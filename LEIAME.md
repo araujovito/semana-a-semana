@@ -203,7 +203,7 @@ Conferidas no código de `main` contra `auditoria-3.md`, `revisao-clinica-onda2.
 - Aviso de ritmo de perda só em Diário > Peso e no relatório, não em Hoje. Só aparece com uma pesagem de 14 a 28 dias antes.
 - O alerta de Diário > Sintomas (dor forte) usa o texto geral, sem os sinais da vesícula. O botão "Dor na barriga" de Hoje já usa os três níveis.
 - O relatório mostra quantos dias de dor forte, mas não as datas, e não cita vesícula, fígado nem cirurgia.
-- Cardápio de reserva vegetariano: `conferir_cardapio.js` ainda acusa almoços acima de 500 kcal e gordura do dia acima de 35% (auditoria 3, I1). Não se sabe se ela é vegetariana.
+- Cardápio de reserva vegetariano: passa nas regras da vesícula desde 22/11 (troca `semCarne` em `app/cardapio.js`), mas 13 refeições ficam entre 15 e 19,4 g de gordura (acima do alvo, abaixo do teto) e dois lanches chegam a 4 ovos; título e preparo ainda falam da carne (`empresa/relatorios/cardapio-vegetariano.md`). Não se sabe se ela é vegetariana.
 - Plano da nutricionista: café e jantar de algumas opções com pouca gordura, fibra abaixo de 25 g na maioria das combinações, óleo dos preparos fora da conta (`empresa/relatorios/plano-nutricionista-conferido.md`). São perguntas para a nutricionista, não erro do app.
 - Dia de enjoo ligado no meio do dia: o total do dia passa a contar só as refeições leves (nada é apagado).
 - Sub-abas do Diário e dias do Plano podem cortar com letra grande, sem sinal de que dá para arrastar.

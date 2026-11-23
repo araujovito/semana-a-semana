@@ -22,6 +22,20 @@ test("cardápio: todo item existe na base de alimentos e tem gramas válidas", (
   })));
 });
 
+test("troca vegetariana (semCarne): só em item com carne, alimentos existentes, sem carne e fora dos exclusivos do plano da nutricionista", () => {
+  let n = 0;
+  C.dias.concat([C.nausea]).forEach(d => d.refeicoes.forEach(x => x.itens.forEach(it => {
+    if (!it[2]) return;
+    n++;
+    assert.ok(A[it[0]].contem.indexOf("carne") >= 0, d.nome + ": semCarne em " + it[0]);
+    it[2].semCarne.forEach(v => {
+      assert.ok(A[v[0]] && A[v[0]].contem.indexOf("carne") < 0 && !A[v[0]].soPlanoNutri, d.nome + ": " + v[0]);
+      assert.ok(typeof v[1] === "number" && v[1] > 0, d.nome + ": gramas de " + v[0]);
+    });
+  })));
+  assert.strictEqual(n, 14, "uma troca para cada carne de segunda a domingo");
+});
+
 test("alimentos: todos têm setor do mercado, lista 'contem', grupo conhecido e os 18 nutrientes", () => {
   const campos = require("../../dados/conferir_cardapio").CAMPOS;
   Object.keys(A).forEach(k => {
