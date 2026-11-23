@@ -6,3 +6,6 @@ android/chave.keystore
 
 # Documentos pessoais da usuária (saúde): nunca versionar
 *.pdf
+
+# Worktrees e configurações locais do assistente
+.claude/
