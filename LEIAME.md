@@ -15,15 +15,15 @@ Os dados pessoais dela não ficam no código: ela preenche no Perfil. Os PDFs pe
 
 ## O que o app faz
 
-Conferido no código de `app/` no ramo `main` em 22/11/2026. O primeiro uso está descrito pelo ramo `onda2-uso`, que entra em `main` em seguida.
+Conferido no código de `app/` em `main` (cb9f833, 22/11/2026 às 23h10).
 
 **Primeiro uso** (nesta ordem)
 1. **PIN.** "Crie um PIN de 6 dígitos", digitado duas vezes. Depois aparece, uma vez só, o código de recuperação (4 grupos de 5 letras e números). Para seguir, ela redigita um grupo sorteado.
 2. **Antes de começar.** Para quem o app serve e quando falar com o médico antes: menos de 18 anos, gravidez ou amamentação, transtorno alimentar, pancreatite, câncer medular de tireoide ou NEM2.
-3. **Bem-vinda** (uma tela só, ramo `onda2-uso`): ano de nascimento, altura, peso no começo do tratamento e três perguntas em botões Sim / Não / Não sei: pedra na vesícula (se Sim, aguardando cirurgia), gordura no fígado, segue plano de nutricionista. As três são obrigatórias; "Não sei" conta como resposta e não liga avisos. Botão Começar.
+3. **Bem-vinda** (uma tela só): ano de nascimento, altura, peso no começo do tratamento e três perguntas em botões Sim / Não / Não sei: pedra na vesícula (se Sim, aguardando cirurgia), gordura no fígado, segue plano de nutricionista. As três são obrigatórias; "Não sei" conta como resposta e não liga avisos. Botão Começar.
    - Na mesma tela, o cartão "Já usava o app?" restaura uma cópia exportada, sem preencher nada.
    - Sexo, atividade, metas do médico, o que não come, diabetes, pílula e gravidez ficam em Perfil, em "Completar depois". Até lá o app usa feminino, sedentária, metas próprias e nenhuma restrição.
-   - Quem já tinha perfil antigo vê em Hoje uma faixa "O app ganhou três perguntas", com "Responder agora" e "Agora não" (auditoria 3, I7). Essa faixa ainda não tinha commit no ramo quando este texto foi escrito.
+   - Quem já tinha perfil antigo vê em Hoje uma faixa "O app ganhou três perguntas", com "Responder agora" e "Agora não" (auditoria 3, I7).
 
 **Barra de baixo:** Hoje · Semana · Comer · Mover · Guia. O ícone de Perfil fica no topo.
 Quando a aba tem mais de uma tela, aparecem sub-abas: Semana · Diário · Painel (aba Semana) e Plano · Caminhos (aba Comer).
@@ -33,18 +33,20 @@ Quando a aba tem mais de uma tela, aparecem sub-abas: Semana · Diário · Paine
   - Alvo de proteína único em Hoje, Painel e relatório: com o plano da nutricionista em uso, é o começo da faixa do plano dela; sem ele, a meta do app.
   - "Plano da sua nutricionista": as 5 refeições (café 7h30, almoço 13h, lanche 16h30, jantar 20h, ceia opcional). Em cada uma, a opção prescrita (lista de escolha) e quanto comeu: tudo, metade, um pouco, nada. Com pedra na vesícula, a frase "Gordura na medida".
   - "+ 10 g de proteína fora do plano", água em copos (+1 copo, +500 ml, −1 copo), botão "Dia de enjoo" (troca para as refeições leves do cardápio do app).
-  - "Como está hoje?": Bem, Enjoo leve, Enjoo forte, Sem fome, Dor na barriga. Grava no registro de sintomas do dia. "Enjoo forte" pergunta se troca pelas refeições leves. "Dor na barriga" grava a dor e abre os sinais em três níveis (192, pronto-socorro hoje, avisar o médico).
-  - Com pedra na vesícula: cartão curto com o botão "Dor na barriga: o que fazer".
+  - "Como está hoje?": Bem, Enjoo leve, Enjoo forte, Sem fome, Dor na barriga. Grava no registro de sintomas do dia. "Enjoo forte" pergunta se troca pelas refeições leves. "Dor na barriga" grava a anotação "Dor na barriga." (não marca dor forte) e abre os sinais em três níveis (192, pronto-socorro hoje, avisar o médico). Na folha, "Foi dor forte: registrar assim" marca a dor forte, que entra nas datas do relatório.
+  - Com pedra na vesícula: cartão curto com o botão "Dor na barriga: o que fazer". Se a perda média passar de 1% do peso por semana, linha "Ritmo de perda" com "ver" (no modo discreto, sem números de peso).
   - Atalhos: Comida, Água, Como estou, Aplicação, Dor na barriga, Para a consulta, Painel, Peso.
   - "Ainda hoje": próxima refeição do plano e caminhada opcional.
   - Navegação por dia: até 60 dias para trás.
   - Calorias, peso, marcas de 5/7/10% e vitaminas não aparecem em Hoje.
-- **Semana > Semana:** uma linha por semana do tratamento (aplicação no dia previsto ou não, peso, sintomas, enjoo, comida). No ramo `onda2-uso`, cada aplicação é medida pelo dia habitual que valia na época dela.
+- **Semana > Semana:** uma linha por semana do tratamento (aplicação no dia previsto ou não, peso, sintomas, enjoo, comida). Cada aplicação é medida pelo dia habitual que valia na época dela. Com pedra na vesícula, a semana atual traz o aviso de ritmo de perda.
 - **Semana > Diário:** sub-abas Aplicações, Peso, Sintomas e Relatório.
   - Aplicações: registrar, histórico, "Mudei o dia da aplicação".
   - Peso: peso e cintura, gráfico, aviso de ritmo de perda acima de 1% por semana.
-  - Relatório: texto dos últimos 30 dias com Compartilhar e Copiar, e embaixo a cópia de segurança.
+  - Sintomas: dor forte registrada abre a folha "Dor na barriga: o que fazer" (com pedra na vesícula) ou o aviso geral (sem).
+  - Relatório: texto dos últimos 30 dias com Compartilhar e Copiar, e embaixo a cópia de segurança. Começa por "PARA COMEÇAR": condições do perfil, datas de dor forte e, com fígado ou cirurgia marcados, a perda até 5, 7 e 10%.
 - **Semana > Painel:** proteína e calorias de hoje em anéis; gráficos de 7 ou 30 dias (tocar ou arrastar o dedo mostra o dia; "Ver como tabela"); médias e dias na faixa.
+  - Com o plano da nutricionista em uso, calorias e proteína são comparadas com a faixa do plano dela (o gráfico mostra a faixa) e o dia conta como "comeu pouco" abaixo de 800 kcal. Sem o plano, valem a meta e o piso do cardápio do app. O relatório cita a mesma referência.
 - **Comer > Plano:** interruptor "Usar o plano da minha nutricionista" (ligado por padrão); faixa do dia dela (1.009 a 1.392 kcal, 91 a 146 g de proteína, estimativa do app); as opções de cada refeição; cartões da vesícula e do fígado. Abaixo, o cardápio do app de segunda a domingo e o dia de enjoo, como reserva.
 - **Comer > Caminhos:** o plano da nutricionista no topo, "Em uso". Abaixo, os caminhos A a E (mediterrânea brasileira, prato dividido, menos açúcar e farinha branca, redução do fígado antes da cirurgia, dia leve), com prós, contras e cuidados com a vesícula. Não trocam o plano: o que ela marcar entra no relatório da consulta.
 - **Mover:** treino em casa ou na academia, treinos A e B, fases pela semana, "Concluí hoje".
