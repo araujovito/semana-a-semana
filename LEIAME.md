@@ -108,12 +108,22 @@ Para olhar no computador: abra `app/index.html` no navegador.
 
 Sem Gradle: aapt2, javac, d8, zipalign e apksigner, build-tools 34, alvo Android 14 (API 34), mínimo Android 8 (API 26). O APK e `build/` não entram no git.
 
+**Onde ficam os números da versão** (nenhum script sobe sozinho):
+
+| Número | Arquivo | Em `main` (cb9f833) | Próxima entrega (23/11) |
+|---|---|---|---|
+| `android:versionCode` | `android/AndroidManifest.xml`, linha do `<manifest>` | 3 | 4 |
+| `android:versionName` (o que aparece nas configurações do Android) | mesmo lugar | 2.0 | 2.1 |
+| `VERSAO_APP` (nome do cache da versão web, ano.mês.dia-n) | `app/sw.js`, perto do topo | 2026.11.22-3 | 2026.11.23-1 |
+
+`montar-apk.sh` não lê nem muda esses números: só imprime o `VERSAO_APP` no fim, como lembrete. O `versionCode` entra no APK pelo manifesto (`aapt2 link`).
+
 **Antes de entregar uma versão nova:**
-1. Suba `VERSAO_APP` em `app/sw.js` (ano.mês.dia-n; hoje `2026.11.22-2`). O cache da versão web leva esse nome. Sem a troca, a versão web instalada continua com os arquivos antigos.
-2. Suba `android:versionCode` e `android:versionName` em `android/AndroidManifest.xml` (hoje 2 e 1.1). O número precisa ser maior que o do APK já instalado no celular. O APK de 22/11 já saiu com 2: a próxima entrega precisa de 3.
+1. Suba `VERSAO_APP` em `app/sw.js`. Sem a troca, a versão web instalada continua com os arquivos antigos (o APK não usa esse cache).
+2. Suba `android:versionCode` e `android:versionName` em `android/AndroidManifest.xml`. O `versionCode` precisa ser maior que o do APK instalado; com o mesmo número ou menor, o Android recusa a atualização. Para a entrega de 23/11 a instalação é do zero, mas o 4 já deixa as próximas atualizações por cima funcionarem.
 3. `bash testar.sh` verde.
-4. `bash montar-apk.sh`. Ele imprime o certificado e lembra o `VERSAO_APP`.
-5. Confira o APK: `unzip -l semana-a-semana.apk` deve listar `assets/cifra.js` e `assets/planonutri.js`. O `semana-a-semana.apk` da raiz, de 22/11 às 16h27, ainda não tem o PIN nem o plano da nutricionista: precisa ser compilado de novo.
+4. `bash montar-apk.sh`. Ele imprime o certificado e o `VERSAO_APP`.
+5. Confira o APK: `unzip -l semana-a-semana.apk` deve listar `assets/cifra.js` e `assets/planonutri.js`. `~/Android/Sdk/build-tools/34.0.0/aapt2 dump badging semana-a-semana.apk | head -1` mostra `versionCode` e `versionName`.
 
 ## Chave de assinatura (importante)
 
