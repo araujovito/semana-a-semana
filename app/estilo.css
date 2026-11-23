@@ -72,6 +72,7 @@ main { padding: 12px 12px 88px; max-width: 640px; margin: 0 auto; }
 .cartao h3 { margin: 12px 0 4px; font-size: 16px; font-weight: 600; }
 .sub { color: var(--suave); font-size: 15px; }
 .linha { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.linha > button { flex-shrink: 0; } /* com letra grande, quem quebra linha é o texto ao lado; o botão não espreme o rótulo */
 .grande { font-size: 30px; font-weight: 700; line-height: 1.1; font-variant-numeric: lining-nums tabular-nums; }
 .duas { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .tres { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
