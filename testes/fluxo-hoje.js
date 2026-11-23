@@ -198,13 +198,20 @@ const diaVazio = extra => Object.assign({ enjoo: false, comido: [], agua: 0, pro
   await p.click("#folha [data-ac=fecharFolha]");
   await p.click("[data-ac=como][data-k=bem]");
   ss = (await t.ler()).sintomas;
-  ok(ss.length === 1 && ss[0].enjoo === 0 && !ss[0].dor && !/Sem fome/.test(ss[0].nota || ""), "Bem desfaz enjoo, dor e sem fome no registro de hoje");
+  ok(ss.length === 1 && ss[0].enjoo === 0 && ss[0].dor === true && !/Sem fome/.test(ss[0].nota || "") && /Diário > Sintomas/.test(await p.locator("#aviso").innerText()),
+    "Bem desfaz enjoo e sem fome, mas a dor forte do dia continua no registro (só se corrige no Diário)");
   ok((await p.locator(".atalhos button.atalho").allInnerTexts()).map(x => x.trim()).join(",") === "Comida,Água,Como estou,Aplicação,Dor na barriga,Para a consulta,Painel,Peso", "atalhos na ordem do uso: Comida, Água, Como estou, Aplicação / Dor na barriga, Para a consulta, Painel, Peso");
   const agua0 = (await t.ler()).dias[d(0)].agua || 0;
   await p.click(".atalhos .a-agua");
   ok((await t.ler()).dias[d(0)].agua === agua0 + 200, "atalho Água soma 1 copo");
+  // A dor forte de hoje continua registrada depois de "Bem"; o atalho então não oferece registrar de novo.
   await p.click(".atalhos .a-dor"); await p.waitForSelector("#folha:not([hidden])");
-  ok(await p.locator("#folha [data-ac=registrarDor]").count() === 1, "atalho Dor na barriga abre os sinais e oferece registrar (sem registrar sozinho)");
+  ok(await p.locator("#folha [data-ac=registrarDor]").count() === 0 && (await t.ler()).sintomas.length === 1, "com dor forte já registrada hoje, o atalho abre os sinais sem oferecer registrar de novo");
+  await p.click("#folha [data-ac=fecharFolha]");
+  // Corrigida no Diário (aqui direto no estado), o atalho volta a oferecer registrar, sem registrar sozinho.
+  await p.evaluate(() => { E.sintomas = []; salvar(); render(); });
+  await p.click(".atalhos .a-dor"); await p.waitForSelector("#folha:not([hidden])");
+  ok(await p.locator("#folha [data-ac=registrarDor]").count() === 1 && (await t.ler()).sintomas.length === 0, "atalho Dor na barriga abre os sinais e oferece registrar (sem registrar sozinho)");
   await p.click("#folha [data-ac=fecharFolha]");
   ok(await p.locator(".hoje-topo [data-dose]").count() === 1 && /Semana 1 do tratamento/.test(await p.locator(".hoje-topo").innerText()) && /Próxima aplicação: em 3 dias/.test(await p.locator(".hoje-topo").innerText()), "topo com a semana, a dose e a próxima aplicação");
   const y = await p.evaluate(() => document.querySelector(".refeicao[data-i='0'] label.opcao").getBoundingClientRect().top + scrollY);

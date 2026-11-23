@@ -90,7 +90,7 @@ function sintomaDeHoje() { const h = hoje(); return E.sintomas.find(s => s.data 
 function comoAtivo(s, k) {
   if (!s) return false;
   const semFome = String(s.nota || "").indexOf(NOTA_SEM_FOME) >= 0;
-  return k === "bem" ? !s.enjoo && !s.dor && !s.vomito && !semFome : k === "leve" ? s.enjoo === 1 || s.enjoo === 2 : k === "forte" ? s.enjoo === 3 : k === "semFome" ? semFome : (!!s.dor || String(s.nota || "").indexOf(NOTA_DOR) >= 0);
+  return k === "bem" ? !s.enjoo && !semFome && !s.dor && !s.vomito && String(s.nota || "").indexOf(NOTA_DOR) < 0 : k === "leve" ? s.enjoo === 1 || s.enjoo === 2 : k === "forte" ? s.enjoo === 3 : k === "semFome" ? semFome : (!!s.dor || String(s.nota || "").indexOf(NOTA_DOR) >= 0);
 }
 function cartaoComo() {
   const s = sintomaDeHoje();
@@ -261,7 +261,9 @@ Object.assign(AC, {
     if (!s) s = { id: novoId(), data: h, enjoo: 0, intestino: "Normal", vomito: false, refluxo: false, tontura: false, cansaco: false, dor: false, nota: "" };
     s = Object.assign({}, s); const ativo = !novo && comoAtivo(s, k), tirarSemFome = () => { s.nota = String(s.nota || "").replace(NOTA_SEM_FOME, "").trim(); }, tirarDor = () => { s.nota = String(s.nota || "").replace(NOTA_DOR, "").trim(); };
     let perguntaLeve = false;
-    if (k === "bem") { s.enjoo = 0; s.dor = false; s.vomito = false; tirarSemFome(); tirarDor(); }
+    /* "Bem" mexe só no enjoo e no "sem fome": dor (forte ou anotada) e vômito são registro clínico e só se corrigem no Diário.
+       Antes, "Bem" apagava a dor forte do dia, e o relatório dizia "nenhum registro" (revisão clínica de 22/11, B1). */
+    if (k === "bem") { s.enjoo = 0; tirarSemFome(); }
     else if (k === "leve") s.enjoo = ativo ? 0 : 1;
     else if (k === "forte") { s.enjoo = ativo ? 0 : 3; perguntaLeve = !ativo && !dia(h).enjoo; }
     else if (k === "semFome") { if (ativo) tirarSemFome(); else s.nota = (String(s.nota || "").trim() + " " + NOTA_SEM_FOME).trim(); }
@@ -272,6 +274,7 @@ Object.assign(AC, {
     if (k === "dor") abrirSinaisDor(s.dor ? true : "leve");
     else if (k === "dorForte") { abrirSinaisDor(true); }
     else if (perguntaLeve) confirmar("Enjoo forte registrado. Trocar as refeições de hoje pelas leves?", function () { const r = arrumarDia(dia(h)); r.enjoo = true; gravarDia(h, r); render(); }, "Trocar pelas leves");
+    else if (k === "bem" && (s.dor || s.vomito || String(s.nota || "").indexOf(NOTA_DOR) >= 0)) aviso("Registrado. A dor ou o vômito de hoje continuam no registro; para corrigir, use Diário > Sintomas.");
     else aviso("Registrado.");
   },
   sinaisDor() { const s = sintomaDeHoje(); abrirSinaisDor(s && s.dor ? true : s && String(s.nota || "").indexOf(NOTA_DOR) >= 0 ? "leve" : false); },
